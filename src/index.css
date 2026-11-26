@@ -1,0 +1,139 @@
+@import "tailwindcss";
+
+:root {
+  --font-display: 'Cormorant Garamond', Georgia, serif;
+  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+
+  /* Default: Architectural Obsidian Dark */
+  --bg-primary: #0A0B0E;
+  --bg-secondary: #111319;
+  --bg-elevated: #171A22;
+  --bg-glass: rgba(10, 11, 14, 0.82);
+  --border-subtle: rgba(255, 255, 255, 0.09);
+  --border-strong: rgba(212, 163, 115, 0.35);
+  --text-primary: #F5F2EB;
+  --text-secondary: #A9B0BE;
+  --text-muted: #767E8E;
+  --accent: #D4A373;
+  --accent-hover: #E3B88D;
+  --accent-soft: rgba(212, 163, 115, 0.14);
+  --accent-ink: #0A0B0E;
+  --blueprint-bg: #0D1016;
+  --blueprint-grid: rgba(212, 163, 115, 0.08);
+  --shadow-card: 0 24px 60px -20px rgba(0, 0, 0, 0.65);
+}
+
+html.light {
+  /* Warm Limestone Light Theme */
+  --bg-primary: #F5F2EB;
+  --bg-secondary: #FFFFFF;
+  --bg-elevated: #ECE7DC;
+  --bg-glass: rgba(245, 242, 235, 0.88);
+  --border-subtle: rgba(22, 24, 29, 0.11);
+  --border-strong: rgba(154, 102, 54, 0.42);
+  --text-primary: #14161B;
+  --text-secondary: #484E5A;
+  --text-muted: #676E7B;
+  --accent: #A56E38;
+  --accent-hover: #8C5A2B;
+  --accent-soft: rgba(165, 110, 56, 0.12);
+  --accent-ink: #FFFFFF;
+  --blueprint-bg: #FAF8F3;
+  --blueprint-grid: rgba(165, 110, 56, 0.12);
+  --shadow-card: 0 20px 50px -22px rgba(20, 22, 27, 0.16);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+}
+
+body {
+  margin: 0;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  overflow-x: hidden;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+.font-display {
+  font-family: var(--font-display);
+}
+
+.font-mono-tabular {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Custom architectural range slider */
+input[type='range'].kinetix-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  border-radius: 999px;
+  background: var(--border-subtle);
+  outline: none;
+  cursor: pointer;
+}
+
+input[type='range'].kinetix-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  background: var(--accent);
+  border: 2.5px solid var(--bg-primary);
+  box-shadow: 0 0 0 1px var(--accent), 0 4px 12px rgba(0, 0, 0, 0.35);
+  transition: transform 0.15s ease, background-color 0.15s ease;
+}
+
+input[type='range'].kinetix-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.14);
+  background: var(--accent-hover);
+}
+
+input[type='range'].kinetix-slider::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  background: var(--accent);
+  border: 2.5px solid var(--bg-primary);
+  box-shadow: 0 0 0 1px var(--accent);
+  cursor: pointer;
+}
+
+/* Subtle architectural grid background for blueprint cards */
+.architectural-grid {
+  background-image:
+    linear-gradient(to right, var(--blueprint-grid) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--blueprint-grid) 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+
+/* Thin custom scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-subtle);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent);
+}
