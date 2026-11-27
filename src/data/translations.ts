@@ -4,6 +4,7 @@ export interface CopyBundle {
   nav: {
     tower: string;
     solar: string;
+    market: string;
     simulator: string;
     compare: string;
     vault: string;
@@ -327,6 +328,7 @@ export const TRANSLATIONS: Record<Language, CopyBundle> = {
     nav: {
       tower: 'Tháp & Mặt Bằng',
       solar: 'Hướng Nắng',
+      market: 'Bản Đồ & Tài Sản',
       simulator: 'Tính Vay & ROI',
       compare: 'So Sánh',
       vault: 'VIP Vault',
@@ -686,6 +688,7 @@ export const TRANSLATIONS: Record<Language, CopyBundle> = {
     nav: {
       tower: 'Tower & Floorplans',
       solar: 'Sun-Path Lab',
+      market: 'Corridors & Alpha',
       simulator: 'Mortgage & ROI',
       compare: 'Compare',
       vault: 'VIP Vault',

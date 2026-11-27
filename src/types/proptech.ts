@@ -291,3 +291,117 @@ export interface LeverageComparisonResult {
   capitalFreedVnd: number;
   yearlyComparison: LeverageYearPoint[];
 }
+
+export type SaigonDistrictId =
+  | 'thu-thiem'
+  | 'ben-nghe'
+  | 'thao-dien'
+  | 'phu-my-hung'
+  | 'ba-son'
+  | 'binh-thanh';
+
+export type CorridorHeatMetric = 'YIELD' | 'PRICE' | 'APPRECIATION';
+
+export interface SaigonDistrictMapGeometry {
+  cx: number;
+  cy: number;
+  polygon: string;
+  labelX: number;
+  labelY: number;
+  anchor: 'start' | 'middle' | 'end';
+}
+
+export interface SaigonDistrictProfile {
+  id: SaigonDistrictId;
+  code: string;
+  nameVi: string;
+  nameEn: string;
+  zoneTagVi: string;
+  zoneTagEn: string;
+  pricePerSqmVnd: number;
+  pricePerSqmUsd: number;
+  grossRentalYieldPct: number;
+  netRentalYieldPct: number;
+  occupancyPct: number;
+  fiveYearAppreciationCagrPct: number;
+  commuteToCbdMin: number;
+  nearestMetroStationVi: string;
+  nearestMetroStationEn: string;
+  metroTransitMin: number;
+  catalystHeadlineVi: string;
+  catalystHeadlineEn: string;
+  catalystTagsVi: string[];
+  catalystTagsEn: string[];
+  supplyScarcityScore: number;
+  foreignQuotaDemandPct: number;
+  isKinetixHome: boolean;
+  map: SaigonDistrictMapGeometry;
+}
+
+export type AssetClassId =
+  | 'KINETIX_PROPERTY'
+  | 'VN_BANK_DEPOSIT'
+  | 'SJC_GOLD'
+  | 'SP500_USD';
+
+export interface AssetBenchmarkInputs {
+  /** Buyer's down payment equity capital in VND (default 5B - 30B VND) */
+  initialCapitalVnd: number;
+  horizonYears?: number;
+  /** Bank Loan-to-Value ratio for leveraged Kinetix residence (default 70%) */
+  ltvPct?: number;
+  mortgageInterestRatePct?: number;
+  loanTermYears?: number;
+  propertyAppreciationPct?: number;
+  propertyGrossYieldPct?: number;
+  bankDepositRatePct?: number;
+  goldAnnualReturnPct?: number;
+  sp500UsdReturnPct?: number;
+  /** Historical VND depreciation hedge tailwind for USD-denominated S&P 500 (default 2.2%/yr) */
+  vndDepreciationPct?: number;
+  includeFxHedge?: boolean;
+}
+
+export interface AssetYearPoint {
+  year: number;
+  kinetixPropertyVnd: number;
+  vnBankDepositVnd: number;
+  sjcGoldVnd: number;
+  sp500UsdVnd: number;
+}
+
+export interface AssetClassSummary {
+  id: AssetClassId;
+  labelVi: string;
+  labelEn: string;
+  subtitleVi: string;
+  subtitleEn: string;
+  initialCapitalVnd: number;
+  endingWealthVnd: number;
+  totalNetProfitVnd: number;
+  equityMultiple: number;
+  netIrrPct: number;
+  annualVolatilityPct: number;
+  sharpeRatio: number;
+  liquidityTier: 'HIGH' | 'MEDIUM' | 'LOW';
+  inflationHedgeScore: number;
+  yearlyWealthVnd: number[];
+}
+
+export interface AssetBenchmarkResult {
+  initialCapitalVnd: number;
+  impliedPropertyValueVnd: number;
+  impliedLoanPrincipalVnd: number;
+  ltvPct: number;
+  horizonYears: number;
+  riskFreeRatePct: number;
+  propertyAppreciationPct: number;
+  propertyGrossYieldPct: number;
+  effectiveSp500VndReturnPct: number;
+  winnerAssetId: AssetClassId;
+  propertyAlphaVsBankVnd: number;
+  propertyAlphaVsGoldVnd: number;
+  propertyAlphaVsSp500Vnd: number;
+  assets: AssetClassSummary[];
+  trajectory: AssetYearPoint[];
+}

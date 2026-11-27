@@ -8,6 +8,7 @@ import {
   CloseIcon,
   CompareIcon,
   KinetixMark,
+  MapPinIcon,
   MoonIcon,
   SunIcon,
   VaultIcon,
@@ -177,38 +178,46 @@ export const Header: React.FC<HeaderProps> = ({
           </a>
 
           {/* Primary Desktop Magazine Navigation */}
-          <nav className="hidden items-center gap-5 lg:flex" aria-label="Main navigation">
+          <nav className="hidden items-center gap-3.5 xl:gap-5 lg:flex" aria-label="Main navigation">
             <a
               href="#tower-explorer"
-              className="flex items-center gap-1.5 border-b border-transparent py-1 text-[11px] font-semibold tracking-[0.14em] uppercase transition-colors hover:border-[#B48A3E]"
+              className="flex items-center gap-1.5 whitespace-nowrap border-b border-transparent py-1 text-[10.5px] font-semibold tracking-[0.11em] uppercase transition-colors hover:border-[#B48A3E]"
               style={{ color: 'var(--text-primary)' }}
             >
-              <BuildingIcon className="h-3.5 w-3.5" style={{ color: 'var(--accent)' }} />
+              <BuildingIcon className="h-3.5 w-3.5 shrink-0" style={{ color: 'var(--accent)' }} />
               <span>{copy.tower}</span>
             </a>
             <a
               href="#solar-lab"
-              className="flex items-center gap-1.5 border-b border-transparent py-1 text-[11px] font-semibold tracking-[0.14em] uppercase transition-colors hover:border-[#B48A3E]"
+              className="flex items-center gap-1.5 whitespace-nowrap border-b border-transparent py-1 text-[10.5px] font-semibold tracking-[0.11em] uppercase transition-colors hover:border-[#B48A3E]"
               style={{ color: 'var(--text-primary)' }}
             >
-              <SunIcon className="h-3.5 w-3.5" style={{ color: 'var(--accent)' }} />
+              <SunIcon className="h-3.5 w-3.5 shrink-0" style={{ color: 'var(--accent)' }} />
               <span>{copy.solar}</span>
             </a>
             <a
-              href="#mortgage-simulator"
-              className="flex items-center gap-1.5 border-b border-transparent py-1 text-[11px] font-semibold tracking-[0.14em] uppercase transition-colors hover:border-[#B48A3E]"
+              href="#saigon-market"
+              className="flex items-center gap-1.5 whitespace-nowrap border-b border-transparent py-1 text-[10.5px] font-semibold tracking-[0.11em] uppercase transition-colors hover:border-[#B48A3E]"
               style={{ color: 'var(--text-primary)' }}
             >
-              <CalculatorIcon className="h-3.5 w-3.5" style={{ color: 'var(--accent)' }} />
+              <MapPinIcon className="h-3.5 w-3.5 shrink-0" style={{ color: 'var(--accent)' }} />
+              <span>{copy.market}</span>
+            </a>
+            <a
+              href="#mortgage-simulator"
+              className="flex items-center gap-1.5 whitespace-nowrap border-b border-transparent py-1 text-[10.5px] font-semibold tracking-[0.11em] uppercase transition-colors hover:border-[#B48A3E]"
+              style={{ color: 'var(--text-primary)' }}
+            >
+              <CalculatorIcon className="h-3.5 w-3.5 shrink-0" style={{ color: 'var(--accent)' }} />
               <span>{copy.simulator}</span>
             </a>
             <button
               type="button"
               onClick={onOpenCompare}
-              className="flex cursor-pointer items-center gap-1.5 border-b border-transparent py-1 text-[11px] font-semibold tracking-[0.14em] uppercase transition-colors hover:border-[#B48A3E]"
+              className="flex cursor-pointer items-center gap-1.5 whitespace-nowrap border-b border-transparent py-1 text-[10.5px] font-semibold tracking-[0.11em] uppercase transition-colors hover:border-[#B48A3E]"
               style={{ color: compareCount > 0 ? 'var(--text-heading)' : 'var(--text-secondary)' }}
             >
-              <CompareIcon className="h-3.5 w-3.5" style={{ color: 'var(--accent)' }} />
+              <CompareIcon className="h-3.5 w-3.5 shrink-0" style={{ color: 'var(--accent)' }} />
               <span>{copy.compare}</span>
               <span
                 className="font-mono-tabular rounded-sm border px-1.5 py-0.5 text-[10px] font-semibold"
@@ -224,10 +233,10 @@ export const Header: React.FC<HeaderProps> = ({
             <button
               type="button"
               onClick={onOpenVault}
-              className="flex cursor-pointer items-center gap-1.5 border-b border-transparent py-1 text-[11px] font-semibold tracking-[0.14em] uppercase transition-colors hover:border-[#B48A3E]"
+              className="flex cursor-pointer items-center gap-1.5 whitespace-nowrap border-b border-transparent py-1 text-[10.5px] font-semibold tracking-[0.11em] uppercase transition-colors hover:border-[#B48A3E]"
               style={{ color: vaultCount > 0 ? 'var(--text-heading)' : 'var(--text-secondary)' }}
             >
-              <VaultIcon className="h-3.5 w-3.5" style={{ color: 'var(--accent)' }} />
+              <VaultIcon className="h-3.5 w-3.5 shrink-0" style={{ color: 'var(--accent)' }} />
               <span>{copy.vault}</span>
               <span
                 className="font-mono-tabular rounded-sm border px-1.5 py-0.5 text-[10px] font-semibold"
@@ -243,11 +252,11 @@ export const Header: React.FC<HeaderProps> = ({
           </nav>
 
           {/* Right CTA & Mobile Menu Trigger */}
-          <div className="flex items-center gap-2">
+          <div className="flex shrink-0 items-center gap-2">
             <button
               type="button"
               onClick={onOpenScheduler}
-              className="hidden cursor-pointer items-center gap-2 rounded-sm border px-4 py-2 text-[11px] font-semibold tracking-[0.14em] uppercase transition-all hover:opacity-92 md:inline-flex"
+              className="hidden cursor-pointer items-center gap-2 whitespace-nowrap rounded-sm border px-3.5 py-2 text-[10.5px] font-semibold tracking-[0.12em] uppercase transition-all hover:opacity-92 md:inline-flex"
               style={{
                 backgroundColor: 'var(--cta-bg)',
                 borderColor: 'var(--cta-bg)',
@@ -349,6 +358,15 @@ export const Header: React.FC<HeaderProps> = ({
             >
               <SunIcon className="h-4 w-4" style={{ color: 'var(--accent)' }} />
               <span>{copy.solar}</span>
+            </a>
+            <a
+              href="#saigon-market"
+              onClick={() => setMobileOpen(false)}
+              className="flex items-center gap-2.5 rounded-sm border px-3.5 py-2.5 text-xs font-semibold tracking-[0.12em] uppercase"
+              style={{ borderColor: 'var(--border-subtle)', color: 'var(--text-primary)' }}
+            >
+              <MapPinIcon className="h-4 w-4" style={{ color: 'var(--accent)' }} />
+              <span>{copy.market}</span>
             </a>
             <a
               href="#mortgage-simulator"

@@ -32,6 +32,9 @@ import { Footer } from './components/Footer';
 const SolarDaylightLab = lazy(() =>
   import('./components/SolarDaylightLab').then((m) => ({ default: m.SolarDaylightLab }))
 );
+const SaigonYieldMapLab = lazy(() =>
+  import('./components/SaigonYieldMapLab').then((m) => ({ default: m.SaigonYieldMapLab }))
+);
 const MortgageSimulator = lazy(() =>
   import('./components/MortgageSimulator').then((m) => ({ default: m.MortgageSimulator }))
 );
@@ -280,6 +283,16 @@ export const App: React.FC = () => {
             selectedResidence={selectedResidence}
             lang={lang}
             copy={copy.solar}
+          />
+        </Suspense>
+
+        <Suspense fallback={<SectionSkeleton />}>
+          <SaigonYieldMapLab
+            currency={currency}
+            lang={lang}
+            simulatorDownPaymentVnd={analysis.downPaymentVnd}
+            simulatorInterestRatePct={simInputs.annualInterestRatePct}
+            simulatorLoanTermYears={simInputs.loanTermYears}
           />
         </Suspense>
 

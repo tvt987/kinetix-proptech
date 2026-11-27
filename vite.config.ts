@@ -18,6 +18,9 @@ export default defineConfig({
           if (id.includes('/src/engines/') || id.includes('\\src\\engines\\')) {
             return 'engines';
           }
+          if (id.includes('/src/data/') || id.includes('\\src\\data\\')) {
+            return 'catalog';
+          }
           return undefined;
         },
       },

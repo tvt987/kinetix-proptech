@@ -211,3 +211,25 @@ export const PulseIcon: React.FC<IconProps> = ({ className = 'w-4 h-4', style })
     <path d="M3 12h4l2.5-6 4 12 2.5-6H21" strokeLinecap="round" strokeLinejoin="round" />
   </svg>
 );
+
+export const MapPinIcon: React.FC<IconProps> = ({ className = 'w-4 h-4', style }) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" className={className} style={style} aria-hidden="true">
+    <path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 1 1 13 0c0 5.4-6.5 11-6.5 11Z" strokeLinejoin="round" />
+    <circle cx="12" cy="10" r="2.3" />
+  </svg>
+);
+
+export const ChartLineIcon: React.FC<IconProps> = ({ className = 'w-4 h-4', style }) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" className={className} style={style} aria-hidden="true">
+    <path d="M4 19.5h16" strokeLinecap="round" />
+    <path d="m5 15 4.2-4.2 3.3 2.7L19 6.5" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M15.5 6.5H19V10" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
+
+export const TransitIcon: React.FC<IconProps> = ({ className = 'w-4 h-4', style }) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" className={className} style={style} aria-hidden="true">
+    <rect x="6" y="4" width="12" height="13" rx="2.5" />
+    <path d="M6 11h12M9 14.2h.01M15 14.2h.01M8 20l2-3M16 20l-2-3" strokeLinecap="round" />
+  </svg>
+);

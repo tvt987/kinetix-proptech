@@ -224,7 +224,7 @@ export const MortgageSimulator: React.FC<MortgageSimulatorProps> = ({
           <div className="max-w-2xl">
             <div className="flex items-center gap-3">
               <span className="font-mono-tabular text-xs font-semibold" style={{ color: 'var(--accent)' }}>
-                03
+                04
               </span>
               <span className="h-px w-8" style={{ backgroundColor: 'var(--accent)' }} />
               <span

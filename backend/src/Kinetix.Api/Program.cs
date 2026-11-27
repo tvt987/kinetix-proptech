@@ -34,6 +34,8 @@ builder.Services.AddSingleton<ResidenceCatalog>();
 builder.Services.AddSingleton<MortgageUnderwritingEngine>();
 builder.Services.AddSingleton<SaigonSolarEngine>();
 builder.Services.AddSingleton<UnitEscrowLocker>();
+builder.Services.AddSingleton<SaigonMarketCatalog>();
+builder.Services.AddSingleton<AssetBenchmarkEngine>();
 
 var app = builder.Build();
 
@@ -50,15 +52,16 @@ app.Use(async (context, next) =>
 });
 
 // GET /health
-app.MapGet("/health", (UnitEscrowLocker escrow, ResidenceCatalog catalog) =>
+app.MapGet("/health", (UnitEscrowLocker escrow, ResidenceCatalog catalog, SaigonMarketCatalog marketCatalog) =>
 {
     return Results.Ok(new
     {
         status = "healthy",
         service = "Kinetix.Api",
-        version = "3.0.0",
+        version = "4.0.0",
         runtime = ".NET 10",
         residencesLoaded = catalog.GetAll().Count,
+        saigonDistrictsLoaded = marketCatalog.GetAll().Count,
         activeEscrowHolds = escrow.ActiveHoldCount,
         timestampUtc = DateTimeOffset.UtcNow
     });
@@ -250,6 +253,47 @@ v1.MapPost("/architecture/solar-exposure", (
 
     var exposure = solarEngine.ComputeExposure(request);
     return Results.Ok(exposure);
+});
+
+// GET /api/v1/market/saigon-districts
+v1.MapGet("/market/saigon-districts", (string? sortBy, SaigonMarketCatalog marketCatalog) =>
+{
+    try
+    {
+        var summary = marketCatalog.GetMarketSummary(sortBy);
+        return Results.Ok(summary);
+    }
+    catch (ArgumentException ex)
+    {
+        return Results.BadRequest(new ProblemDetails
+        {
+            Status = StatusCodes.Status400BadRequest,
+            Title = "Invalid sortBy parameter",
+            Detail = ex.Message
+        });
+    }
+});
+
+// POST /api/v1/investment/asset-benchmark
+v1.MapPost("/investment/asset-benchmark", (
+    AssetBenchmarkRequest request,
+    AssetBenchmarkEngine benchmarkEngine) =>
+{
+    if (request.InitialCapitalVnd < 1_000_000_000L || request.InitialCapitalVnd > 500_000_000_000L ||
+        request.HorizonYears < 1 || request.HorizonYears > 20 ||
+        request.LtvPct < 0m || request.LtvPct > 85m ||
+        request.MortgageInterestRatePct < 0m || request.MortgageInterestRatePct > 30m ||
+        request.LoanTermYears < 5 || request.LoanTermYears > 35 ||
+        request.BankDepositRatePct < 0m || request.BankDepositRatePct > 25m)
+    {
+        return Results.ValidationProblem(new Dictionary<string, string[]>
+        {
+            ["request"] = ["InitialCapitalVnd must be in [1B, 500B] VND, HorizonYears in [1, 20], LtvPct in [0, 85], LoanTermYears in [5, 35], and rates within institutional bounds."]
+        });
+    }
+
+    var result = benchmarkEngine.ComputeBenchmark(request);
+    return Results.Ok(result);
 });
 
 app.Run();

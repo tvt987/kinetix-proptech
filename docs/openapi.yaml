@@ -1,13 +1,14 @@
 openapi: 3.1.0
 info:
-  title: Kinetix PropTech Escrow, Underwriting & Solar Geometry API
-  version: 3.0.0
+  title: Kinetix PropTech Escrow, Underwriting, Market Cartography & Multi-Asset API
+  version: 4.0.0
   summary: Institutional .NET 10 Minimal API for The Kinetix Residences (Thu Thiem Riverfront)
   description: |
     Production Clean Architecture backend powering luxury residence inventory queries,
     idempotent unit escrow locking with strict concurrency guards, fixed-annuity & reducing-balance
     mortgage underwriting with +0%/+2%/+4% floating-rate DTI stress tests, 10-year Cash vs 70% Leverage
-    IRR modeling, and Ho Chi Minh City (10.7725° N, 106.7219° E) solar exposure physics.
+    IRR modeling, Ho Chi Minh City (10.7725° N, 106.7219° E) solar exposure physics,
+    6-corridor Saigon luxury yield/Metro Line-1/Bridge-4 telemetry, and 10-year multi-asset wealth benchmarking.
   contact:
     name: Truong Van Tinh (TVT Studio)
     email: tinhkun102@gmail.com
@@ -28,6 +29,10 @@ tags:
     description: Idempotent unit hold locking with atomic single-winner concurrency protection
   - name: Architecture
     description: Ho Chi Minh City astronomical solar path and Low-E thermal load modeling
+  - name: Market
+    description: Ho Chi Minh City 6 luxury corridor yield, price/m², Metro Line-1 & Bridge-4 telemetry
+  - name: Investment
+    description: 10-year multi-asset wealth benchmark comparing Leveraged Property, Bank Deposit, SJC Gold & S&P 500 USD
 
 paths:
   /health:
@@ -42,7 +47,7 @@ paths:
             application/json:
               schema:
                 type: object
-                required: [status, service, version, runtime, residencesLoaded, activeEscrowHolds, timestampUtc]
+                required: [status, service, version, runtime, residencesLoaded, saigonDistrictsLoaded, activeEscrowHolds, timestampUtc]
                 properties:
                   status:
                     type: string
@@ -52,13 +57,16 @@ paths:
                     example: Kinetix.Api
                   version:
                     type: string
-                    example: 3.0.0
+                    example: 4.0.0
                   runtime:
                     type: string
                     example: .NET 10
                   residencesLoaded:
                     type: integer
                     example: 12
+                  saigonDistrictsLoaded:
+                    type: integer
+                    example: 6
                   activeEscrowHolds:
                     type: integer
                     example: 0
@@ -294,6 +302,58 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetails'
 
+  /api/v1/market/saigon-districts:
+    get:
+      tags: [Market]
+      operationId: listSaigonLuxuryDistricts
+      summary: Retrieve calibrated Q4 2026 telemetry across Ho Chi Minh City's 6 luxury residential corridors
+      parameters:
+        - name: sortBy
+          in: query
+          required: false
+          description: Optional corridor ordering metric
+          schema:
+            type: string
+            enum: [yield, price, appreciation, commute]
+      responses:
+        '200':
+          description: Saigon 6-corridor yield, pricing, Metro Line-1 & Bridge-4 appreciation telemetry
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SaigonMarketSummaryResponse'
+        '400':
+          description: Unsupported sortBy value
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+
+  /api/v1/investment/asset-benchmark:
+    post:
+      tags: [Investment]
+      operationId: computeMultiAssetBenchmark
+      summary: Compare 10-year compounding of buyer down-payment capital across Kinetix 70% LTV Property, VN Bank Deposit, SJC Gold & S&P 500 USD
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssetBenchmarkRequest'
+      responses:
+        '200':
+          description: 10-year multi-asset wealth trajectories, exact Net IRR, Equity Multiple & Sharpe ratio telemetry
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssetBenchmarkResponse'
+        '400':
+          description: Invalid capital, LTV, horizon, or rate inputs
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+
 components:
   schemas:
     ResidenceUnit:
@@ -519,6 +579,122 @@ components:
               interiorSolarGainWm2: { type: integer }
               daylightLux: { type: integer }
               directSunHit: { type: boolean }
+
+    SaigonDistrictTelemetry:
+      type: object
+      properties:
+        id: { type: string, example: thu-thiem }
+        code: { type: string, example: TT-01 }
+        nameEn: { type: string, example: Thu Thiem Peninsula }
+        nameVi: { type: string, example: Bán Đảo Thủ Thiêm }
+        zoneTagEn: { type: string }
+        zoneTagVi: { type: string }
+        pricePerSqmVnd: { type: integer, format: int64, example: 198000000 }
+        pricePerSqmUsd: { type: integer, example: 7795 }
+        grossRentalYieldPct: { type: number, example: 6.8 }
+        netRentalYieldPct: { type: number, example: 5.4 }
+        occupancyPct: { type: number, example: 94.2 }
+        fiveYearAppreciationCagrPct: { type: number, example: 8.4 }
+        commuteToCbdMin: { type: integer, example: 4 }
+        nearestMetroStationEn: { type: string }
+        nearestMetroStationVi: { type: string }
+        metroTransitMin: { type: integer, example: 5 }
+        catalystHeadlineEn: { type: string }
+        catalystHeadlineVi: { type: string }
+        catalystTagsEn:
+          type: array
+          items: { type: string }
+        supplyScarcityScore: { type: integer, example: 95 }
+        foreignQuotaDemandPct: { type: integer, example: 98 }
+        isKinetixHome: { type: boolean, example: true }
+
+    SaigonMarketSummaryResponse:
+      type: object
+      properties:
+        city: { type: string, example: Ho Chi Minh City }
+        referenceQuarter: { type: string, example: Q4 2026 }
+        fxRateVndPerUsd: { type: integer, example: 25400 }
+        districtCount: { type: integer, example: 6 }
+        averagePricePerSqmVnd: { type: integer, format: int64 }
+        averageNetYieldPct: { type: number }
+        averageAppreciationPct: { type: number }
+        highestYieldDistrictId: { type: string, example: thao-dien }
+        highestAppreciationDistrictId: { type: string, example: thu-thiem }
+        fastestCommuteDistrictId: { type: string, example: ben-nghe }
+        districts:
+          type: array
+          items:
+            $ref: '#/components/schemas/SaigonDistrictTelemetry'
+
+    AssetBenchmarkRequest:
+      type: object
+      required: [initialCapitalVnd]
+      properties:
+        initialCapitalVnd: { type: integer, format: int64, minimum: 1000000000, maximum: 500000000000, example: 15000000000 }
+        horizonYears: { type: integer, minimum: 1, maximum: 20, default: 10 }
+        ltvPct: { type: number, minimum: 0, maximum: 85, default: 70.0 }
+        mortgageInterestRatePct: { type: number, minimum: 0, maximum: 30, default: 7.2 }
+        loanTermYears: { type: integer, minimum: 5, maximum: 35, default: 20 }
+        propertyAppreciationPct: { type: number, default: 8.4 }
+        propertyGrossYieldPct: { type: number, default: 6.8 }
+        bankDepositRatePct: { type: number, default: 5.8 }
+        goldAnnualReturnPct: { type: number, default: 8.5 }
+        sp500UsdReturnPct: { type: number, default: 9.5 }
+        vndDepreciationPct: { type: number, default: 2.2 }
+        includeFxHedge: { type: boolean, default: true }
+
+    AssetYearPoint:
+      type: object
+      properties:
+        year: { type: integer }
+        kinetixPropertyVnd: { type: integer, format: int64 }
+        vnBankDepositVnd: { type: integer, format: int64 }
+        sjcGoldVnd: { type: integer, format: int64 }
+        sp500UsdVnd: { type: integer, format: int64 }
+
+    AssetClassMetrics:
+      type: object
+      properties:
+        id: { type: string, enum: [kinetixProperty, vnBankDeposit, sjcGold, sp500Usd] }
+        labelEn: { type: string }
+        labelVi: { type: string }
+        initialCapitalVnd: { type: integer, format: int64 }
+        endingWealthVnd: { type: integer, format: int64 }
+        totalNetProfitVnd: { type: integer, format: int64 }
+        equityMultiple: { type: number }
+        netIrrPct: { type: number }
+        annualVolatilityPct: { type: number }
+        sharpeRatio: { type: number }
+        liquidityTier: { type: string, enum: [HIGH, MEDIUM, LOW] }
+        inflationHedgeScore: { type: integer }
+        yearlyWealthVnd:
+          type: array
+          items: { type: integer, format: int64 }
+
+    AssetBenchmarkResponse:
+      type: object
+      properties:
+        initialCapitalVnd: { type: integer, format: int64 }
+        impliedPropertyValueVnd: { type: integer, format: int64 }
+        impliedLoanPrincipalVnd: { type: integer, format: int64 }
+        ltvPct: { type: number }
+        horizonYears: { type: integer }
+        riskFreeRatePct: { type: number }
+        propertyAppreciationPct: { type: number }
+        propertyGrossYieldPct: { type: number }
+        effectiveSp500VndReturnPct: { type: number }
+        winnerAssetId: { type: string, enum: [kinetixProperty, vnBankDeposit, sjcGold, sp500Usd] }
+        propertyAlphaVsBankVnd: { type: integer, format: int64 }
+        propertyAlphaVsGoldVnd: { type: integer, format: int64 }
+        propertyAlphaVsSp500Vnd: { type: integer, format: int64 }
+        assets:
+          type: array
+          items:
+            $ref: '#/components/schemas/AssetClassMetrics'
+        trajectory:
+          type: array
+          items:
+            $ref: '#/components/schemas/AssetYearPoint'
 
     ProblemDetails:
       type: object
