@@ -9,42 +9,51 @@ interface FooterProps {
 export const Footer: React.FC<FooterProps> = ({ copy }) => {
   return (
     <footer
-      className="no-print border-t py-12"
+      className="no-print border-t-2 py-14"
       style={{
-        borderColor: 'var(--border-subtle)',
-        backgroundColor: 'var(--bg-secondary)',
+        borderColor: 'var(--accent)',
+        backgroundColor: 'var(--masthead-bg)',
+        color: 'var(--masthead-ink)',
       }}
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-12">
+        <div className="grid grid-cols-1 gap-10 md:grid-cols-12">
           {/* Brand Summary */}
           <div className="md:col-span-5">
-            <div className="flex items-center gap-2.5">
+            <div className="flex items-center gap-3">
               <span
-                className="flex h-8 w-8 items-center justify-center rounded-lg border"
+                className="flex h-9 w-9 items-center justify-center rounded-sm border"
                 style={{
-                  borderColor: 'var(--border-strong)',
-                  backgroundColor: 'var(--accent-soft)',
+                  borderColor: 'var(--masthead-border)',
+                  backgroundColor: 'rgba(250, 248, 244, 0.06)',
                   color: 'var(--accent)',
                 }}
               >
                 <KinetixMark className="h-5 w-5" />
               </span>
-              <span className="font-display text-lg font-semibold tracking-[0.14em]" style={{ color: 'var(--text-primary)' }}>
-                KINETIX PROPTECH
-              </span>
+              <div className="flex flex-col leading-none">
+                <span className="font-display text-xl font-semibold tracking-[0.18em]" style={{ color: 'var(--masthead-ink)' }}>
+                  THE KINETIX
+                </span>
+                <span className="font-mono-tabular mt-0.5 text-[9.5px] tracking-[0.22em] uppercase" style={{ color: 'var(--accent)' }}>
+                  INTERNATIONAL RESIDENCES · PROPTECH
+                </span>
+              </div>
             </div>
-            <p className="mt-3 max-w-sm text-xs leading-relaxed sm:text-sm" style={{ color: 'var(--text-secondary)' }}>
+            <p className="mt-4 max-w-sm text-xs leading-relaxed sm:text-sm" style={{ color: 'var(--masthead-muted)' }}>
               {copy.brandDesc}
             </p>
           </div>
 
           {/* Architecture Specs */}
           <div className="md:col-span-2">
-            <h4 className="font-mono-tabular text-[11px] font-semibold tracking-[0.18em] uppercase" style={{ color: 'var(--accent)' }}>
+            <h4
+              className="font-mono-tabular border-b pb-2 text-[10.5px] font-semibold tracking-[0.2em] uppercase"
+              style={{ color: 'var(--accent)', borderColor: 'var(--masthead-border)' }}
+            >
               {copy.colArchitecture}
             </h4>
-            <ul className="font-mono-tabular mt-3 space-y-1.5 text-xs" style={{ color: 'var(--text-secondary)' }}>
+            <ul className="font-mono-tabular mt-3.5 space-y-2 text-xs" style={{ color: 'var(--masthead-muted)' }}>
               <li>42 Floors · 178m</li>
               <li>128 Sky Residences</li>
               <li>Low-E Triple Glazing</li>
@@ -54,10 +63,13 @@ export const Footer: React.FC<FooterProps> = ({ copy }) => {
 
           {/* FinTech Specs */}
           <div className="md:col-span-2">
-            <h4 className="font-mono-tabular text-[11px] font-semibold tracking-[0.18em] uppercase" style={{ color: 'var(--accent)' }}>
+            <h4
+              className="font-mono-tabular border-b pb-2 text-[10.5px] font-semibold tracking-[0.2em] uppercase"
+              style={{ color: 'var(--accent)', borderColor: 'var(--masthead-border)' }}
+            >
               {copy.colFintech}
             </h4>
-            <ul className="font-mono-tabular mt-3 space-y-1.5 text-xs" style={{ color: 'var(--text-secondary)' }}>
+            <ul className="font-mono-tabular mt-3.5 space-y-2 text-xs" style={{ color: 'var(--masthead-muted)' }}>
               <li>Annuity PMT Engine</li>
               <li>FX 25,400 VNĐ/USD</li>
               <li>Net Yield (Post-Tax)</li>
@@ -67,10 +79,13 @@ export const Footer: React.FC<FooterProps> = ({ copy }) => {
 
           {/* Private Client Desk */}
           <div className="md:col-span-3">
-            <h4 className="font-mono-tabular text-[11px] font-semibold tracking-[0.18em] uppercase" style={{ color: 'var(--accent)' }}>
+            <h4
+              className="font-mono-tabular border-b pb-2 text-[10.5px] font-semibold tracking-[0.2em] uppercase"
+              style={{ color: 'var(--accent)', borderColor: 'var(--masthead-border)' }}
+            >
               {copy.colAdvisory}
             </h4>
-            <ul className="mt-3 space-y-1.5 text-xs" style={{ color: 'var(--text-secondary)' }}>
+            <ul className="mt-3.5 space-y-2 text-xs" style={{ color: 'var(--masthead-muted)' }}>
               <li>Kinetix Riverfront Gallery, Thủ Thiêm</li>
               <li className="font-mono-tabular">Hotline: +84 931 467 024</li>
               <li className="font-mono-tabular">tinhkun102@gmail.com</li>
@@ -79,8 +94,8 @@ export const Footer: React.FC<FooterProps> = ({ copy }) => {
         </div>
 
         <div
-          className="mt-10 flex flex-col justify-between gap-3 border-t pt-6 text-xs sm:flex-row sm:items-center"
-          style={{ borderColor: 'var(--border-subtle)', color: 'var(--text-muted)' }}
+          className="mt-12 flex flex-col justify-between gap-3 border-t pt-6 text-xs sm:flex-row sm:items-center"
+          style={{ borderColor: 'var(--masthead-border)', color: 'var(--masthead-muted)' }}
         >
           <p className="max-w-2xl leading-relaxed">{copy.disclaimer}</p>
           <span className="font-mono-tabular shrink-0 font-medium" style={{ color: 'var(--accent)' }}>

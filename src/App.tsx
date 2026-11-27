@@ -53,7 +53,7 @@ function createInputsFromResidence(unit: Residence, prev?: MortgageInputs): Mort
 export const App: React.FC = () => {
   const [lang, setLang] = useState<Language>('vi');
   const [currency, setCurrency] = useState<Currency>('VND');
-  const [theme, setTheme] = useState<ThemeMode>('dark');
+  const [theme, setTheme] = useState<ThemeMode>('light');
 
   const [selectedResidence, setSelectedResidence] = useState<Residence>(INITIAL_RESIDENCE);
   const [compareIds, setCompareIds] = useState<string[]>(['knx-28a', 'knx-40p']);

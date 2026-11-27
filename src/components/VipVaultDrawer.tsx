@@ -114,17 +114,21 @@ export const VipVaultDrawer: React.FC<VipVaultDrawerProps> = ({
 
   return (
     <div
-      className="no-print fixed inset-0 z-50 flex items-center justify-center bg-black/75 p-3 backdrop-blur-sm sm:p-6"
+      className="no-print fixed inset-0 z-50 flex items-center justify-center p-3 backdrop-blur-sm sm:p-6"
+      style={{ backgroundColor: 'var(--backdrop-veil)' }}
       role="dialog"
       aria-modal="true"
       aria-label={copy.title}
       onClick={onClose}
     >
       <div
-        className="flex max-h-[90vh] w-full max-w-4xl flex-col overflow-hidden rounded-2xl border shadow-2xl"
+        className="flex max-h-[90vh] w-full max-w-4xl flex-col overflow-hidden border-t-2 border-r border-b border-l shadow-2xl"
         style={{
           backgroundColor: 'var(--bg-secondary)',
-          borderColor: 'var(--border-strong)',
+          borderTopColor: 'var(--cta-bg)',
+          borderRightColor: 'var(--border-subtle)',
+          borderBottomColor: 'var(--border-subtle)',
+          borderLeftColor: 'var(--border-subtle)',
         }}
         onClick={(e) => e.stopPropagation()}
       >
@@ -134,11 +138,11 @@ export const VipVaultDrawer: React.FC<VipVaultDrawerProps> = ({
           style={{ borderColor: 'var(--border-subtle)' }}
         >
           <div>
-            <div className="font-mono-tabular flex items-center gap-2 text-[11px] font-semibold tracking-[0.2em] uppercase" style={{ color: 'var(--accent)' }}>
+            <div className="font-mono-tabular flex items-center gap-2 text-[10.5px] font-semibold tracking-[0.2em] uppercase" style={{ color: 'var(--accent)' }}>
               <VaultIcon className="h-3.5 w-3.5" />
               <span>{copy.eyebrow}</span>
             </div>
-            <h3 className="font-display mt-1 text-2xl font-semibold sm:text-3xl" style={{ color: 'var(--text-primary)' }}>
+            <h3 className="font-display mt-1 text-2xl font-semibold sm:text-3xl" style={{ color: 'var(--text-heading)' }}>
               {copy.title}
             </h3>
             <p className="mt-1 text-xs" style={{ color: 'var(--text-secondary)' }}>
@@ -149,7 +153,7 @@ export const VipVaultDrawer: React.FC<VipVaultDrawerProps> = ({
             type="button"
             onClick={onClose}
             aria-label="Close VIP Vault"
-            className="flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-lg border"
+            className="flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-sm border"
             style={{ borderColor: 'var(--border-subtle)', color: 'var(--text-primary)' }}
           >
             <CloseIcon className="h-4 w-4" />
@@ -159,23 +163,23 @@ export const VipVaultDrawer: React.FC<VipVaultDrawerProps> = ({
         {/* Tab Bar */}
         <div
           className="flex flex-wrap items-center justify-between gap-3 border-b px-5 py-3 sm:px-6"
-          style={{ borderColor: 'var(--border-subtle)', backgroundColor: 'var(--bg-elevated)' }}
+          style={{ borderColor: 'var(--border-subtle)', backgroundColor: 'var(--bg-primary)' }}
         >
-          <div className="inline-flex rounded-xl border p-1" style={{ borderColor: 'var(--border-subtle)', backgroundColor: 'var(--bg-secondary)' }} role="tablist">
+          <div className="inline-flex rounded-sm border p-0.5" style={{ borderColor: 'var(--border-subtle)', backgroundColor: 'var(--bg-secondary)' }} role="tablist">
             <button
               type="button"
               role="tab"
               aria-selected={activeTab === 'shortlist'}
               onClick={() => setActiveTab('shortlist')}
-              className="flex cursor-pointer items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-xs font-semibold transition-all"
+              className="flex cursor-pointer items-center gap-1.5 rounded-sm px-3.5 py-1.5 text-xs font-semibold transition-all"
               style={{
-                backgroundColor: activeTab === 'shortlist' ? 'var(--accent)' : 'transparent',
-                color: activeTab === 'shortlist' ? 'var(--accent-ink)' : 'var(--text-secondary)',
+                backgroundColor: activeTab === 'shortlist' ? 'var(--cta-bg)' : 'transparent',
+                color: activeTab === 'shortlist' ? 'var(--cta-ink)' : 'var(--text-secondary)',
               }}
             >
               <BookmarkIcon className="h-3.5 w-3.5" filled={activeTab === 'shortlist'} />
               <span>{copy.tabShortlist}</span>
-              <span className="font-mono-tabular rounded-full bg-black/15 px-1.5 py-0.5 text-[10px]">
+              <span className="font-mono-tabular rounded-sm px-1.5 py-0.5 text-[10px]" style={{ backgroundColor: 'rgba(180, 138, 62, 0.22)' }}>
                 {shortlistResidences.length}
               </span>
             </button>
@@ -184,15 +188,15 @@ export const VipVaultDrawer: React.FC<VipVaultDrawerProps> = ({
               role="tab"
               aria-selected={activeTab === 'passes'}
               onClick={() => setActiveTab('passes')}
-              className="flex cursor-pointer items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-xs font-semibold transition-all"
+              className="flex cursor-pointer items-center gap-1.5 rounded-sm px-3.5 py-1.5 text-xs font-semibold transition-all"
               style={{
-                backgroundColor: activeTab === 'passes' ? 'var(--accent)' : 'transparent',
-                color: activeTab === 'passes' ? 'var(--accent-ink)' : 'var(--text-secondary)',
+                backgroundColor: activeTab === 'passes' ? 'var(--cta-bg)' : 'transparent',
+                color: activeTab === 'passes' ? 'var(--cta-ink)' : 'var(--text-secondary)',
               }}
             >
               <CalendarIcon className="h-3.5 w-3.5" />
               <span>{copy.tabPasses}</span>
-              <span className="font-mono-tabular rounded-full bg-black/15 px-1.5 py-0.5 text-[10px]">
+              <span className="font-mono-tabular rounded-sm px-1.5 py-0.5 text-[10px]" style={{ backgroundColor: 'rgba(180, 138, 62, 0.22)' }}>
                 {vipPasses.length}
               </span>
             </button>
@@ -207,8 +211,14 @@ export const VipVaultDrawer: React.FC<VipVaultDrawerProps> = ({
         <div className="flex-1 overflow-y-auto p-5 sm:p-6">
           {/* Recorded Refundable Hold Receipts Banner */}
           {depositHolds.length > 0 && (
-            <div className="mb-5 rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-3.5">
-              <div className="flex items-center gap-1.5 text-xs font-semibold text-emerald-500">
+            <div
+              className="mb-5 border p-3.5"
+              style={{
+                borderColor: 'var(--status-available-border)',
+                backgroundColor: 'var(--status-available-bg)',
+              }}
+            >
+              <div className="flex items-center gap-1.5 text-xs font-semibold" style={{ color: 'var(--status-available)' }}>
                 <ShieldCheckIcon className="h-4 w-4" />
                 <span>{copy.activeHoldsTitle} ({depositHolds.length})</span>
               </div>
@@ -216,18 +226,18 @@ export const VipVaultDrawer: React.FC<VipVaultDrawerProps> = ({
                 {depositHolds.slice(0, 4).map((hold) => (
                   <div
                     key={hold.holdId}
-                    className="flex items-center justify-between gap-2 rounded-lg border px-3 py-2 text-xs"
+                    className="flex items-center justify-between gap-2 border px-3 py-2 text-xs"
                     style={{ borderColor: 'var(--border-subtle)', backgroundColor: 'var(--bg-secondary)' }}
                   >
                     <div className="min-w-0">
-                      <div className="font-mono-tabular font-semibold" style={{ color: 'var(--accent)' }}>
+                      <div className="font-mono-tabular font-semibold" style={{ color: 'var(--text-heading)' }}>
                         {hold.holdId} · {hold.residenceCode}
                       </div>
                       <div className="font-mono-tabular truncate text-[10px]" style={{ color: 'var(--text-muted)' }}>
                         TCB {hold.accountNumber} · {hold.transferMemo}
                       </div>
                     </div>
-                    <span className="font-mono-tabular shrink-0 font-semibold text-emerald-500">
+                    <span className="font-mono-tabular shrink-0 font-semibold" style={{ color: 'var(--status-available)' }}>
                       {formatCurrency(hold.amountVnd, currency, lang, { compact: true })}
                     </span>
                   </div>
@@ -238,8 +248,8 @@ export const VipVaultDrawer: React.FC<VipVaultDrawerProps> = ({
 
           {activeTab === 'shortlist' ? (
             shortlistResidences.length === 0 ? (
-              <div className="rounded-2xl border p-10 text-center" style={{ borderColor: 'var(--border-subtle)', backgroundColor: 'var(--bg-elevated)' }}>
-                <BookmarkIcon className="mx-auto h-8 w-8 opacity-40" style={{ color: 'var(--accent)' }} />
+              <div className="border p-10 text-center" style={{ borderColor: 'var(--border-subtle)', backgroundColor: 'var(--bg-primary)' }}>
+                <BookmarkIcon className="mx-auto h-8 w-8 opacity-45" style={{ color: 'var(--accent)' }} />
                 <p className="mx-auto mt-3 max-w-md text-sm" style={{ color: 'var(--text-secondary)' }}>
                   {copy.emptyShortlist}
                 </p>
@@ -252,22 +262,27 @@ export const VipVaultDrawer: React.FC<VipVaultDrawerProps> = ({
                   return (
                     <div
                       key={unit.id}
-                      className="flex flex-col overflow-hidden rounded-2xl border"
-                      style={{ borderColor: 'var(--border-subtle)', backgroundColor: 'var(--bg-elevated)' }}
+                      className="flex flex-col overflow-hidden border"
+                      style={{ borderColor: 'var(--border-subtle)', backgroundColor: 'var(--bg-primary)' }}
                     >
-                      <div className="relative h-32 w-full overflow-hidden">
+                      <div className="relative h-36 w-full overflow-hidden">
                         <img
                           src={unit.heroImage}
                           alt={lang === 'vi' ? unit.nameVi : unit.nameEn}
                           className="h-full w-full object-cover"
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
                         <div className="absolute top-2.5 left-2.5 flex items-center gap-1.5">
-                          <span className="font-mono-tabular rounded bg-black/75 px-2 py-0.5 text-[11px] font-semibold text-[#F2D5B3]">
+                          <span
+                            className="font-mono-tabular rounded-sm px-2 py-0.5 text-[10.5px] font-semibold"
+                            style={{ backgroundColor: 'rgba(15, 29, 54, 0.88)', color: '#FAF8F4' }}
+                          >
                             {unit.code} · F{unit.floor}
                           </span>
                           {hasHold && (
-                            <span className="font-mono-tabular rounded bg-emerald-500/90 px-2 py-0.5 text-[10px] font-semibold text-[#0A0B0E]">
+                            <span
+                              className="font-mono-tabular rounded-sm px-2 py-0.5 text-[10px] font-semibold text-white"
+                              style={{ backgroundColor: '#157356' }}
+                            >
                               HOLD LOGGED
                             </span>
                           )}
@@ -276,25 +291,25 @@ export const VipVaultDrawer: React.FC<VipVaultDrawerProps> = ({
                           type="button"
                           onClick={() => onRemoveShortlist(unit.id)}
                           aria-label={`${copy.removeBtn} ${unit.code}`}
-                          className="absolute top-2.5 right-2.5 flex h-7 w-7 cursor-pointer items-center justify-center rounded-lg bg-black/70 text-white hover:bg-red-500/80"
+                          className="absolute top-2.5 right-2.5 flex h-7 w-7 cursor-pointer items-center justify-center rounded-sm bg-white/90 text-[#0F1D36] hover:bg-[#B5343A] hover:text-white"
                         >
                           <TrashIcon className="h-3.5 w-3.5" />
                         </button>
-                        <div className="absolute right-3 bottom-2 left-3">
-                          <div className="font-display text-lg font-semibold text-white">
-                            {lang === 'vi' ? unit.nameVi : unit.nameEn}
-                          </div>
-                        </div>
                       </div>
 
-                      <div className="flex flex-1 flex-col justify-between p-3.5">
-                        <div className="flex items-baseline justify-between gap-2">
-                          <span className="font-mono-tabular text-base font-semibold" style={{ color: 'var(--accent)' }}>
-                            {formatCurrency(unit.priceVnd, currency, lang, { compact: true })}
-                          </span>
-                          <span className="font-mono-tabular text-xs font-semibold text-emerald-500">
-                            {unit.areaSqm}m² · {netYield.toFixed(1)}% {lang === 'vi' ? 'ròng' : 'net'}
-                          </span>
+                      <div className="flex flex-1 flex-col justify-between p-4">
+                        <div>
+                          <div className="font-display text-lg font-semibold" style={{ color: 'var(--text-heading)' }}>
+                            {lang === 'vi' ? unit.nameVi : unit.nameEn}
+                          </div>
+                          <div className="mt-1 flex items-baseline justify-between gap-2">
+                            <span className="font-mono-tabular text-base font-semibold" style={{ color: 'var(--text-heading)' }}>
+                              {formatCurrency(unit.priceVnd, currency, lang, { compact: true })}
+                            </span>
+                            <span className="font-mono-tabular text-xs font-semibold" style={{ color: 'var(--status-available)' }}>
+                              {unit.areaSqm}m² · {netYield.toFixed(1)}% {lang === 'vi' ? 'ròng' : 'net'}
+                            </span>
+                          </div>
                         </div>
 
                         <div className="mt-3 grid grid-cols-2 gap-1.5">
@@ -304,8 +319,8 @@ export const VipVaultDrawer: React.FC<VipVaultDrawerProps> = ({
                               onInspectUnit(unit);
                               onClose();
                             }}
-                            className="cursor-pointer rounded-lg border px-2.5 py-1.5 text-[11px] font-semibold"
-                            style={{ borderColor: 'var(--border-subtle)', backgroundColor: 'var(--bg-secondary)', color: 'var(--text-primary)' }}
+                            className="cursor-pointer rounded-sm border px-2.5 py-1.5 text-[11px] font-semibold"
+                            style={{ borderColor: 'var(--border-subtle)', backgroundColor: 'var(--bg-secondary)', color: 'var(--text-heading)' }}
                           >
                             {copy.inspectBtn}
                           </button>
@@ -315,10 +330,10 @@ export const VipVaultDrawer: React.FC<VipVaultDrawerProps> = ({
                               onSimulateUnit(unit);
                               onClose();
                             }}
-                            className="inline-flex cursor-pointer items-center justify-center gap-1 rounded-lg border px-2.5 py-1.5 text-[11px] font-semibold"
-                            style={{ borderColor: 'var(--border-subtle)', backgroundColor: 'var(--bg-secondary)', color: 'var(--text-primary)' }}
+                            className="inline-flex cursor-pointer items-center justify-center gap-1 rounded-sm border px-2.5 py-1.5 text-[11px] font-semibold"
+                            style={{ borderColor: 'var(--border-subtle)', backgroundColor: 'var(--bg-secondary)', color: 'var(--text-heading)' }}
                           >
-                            <CalculatorIcon className="h-3 w-3" />
+                            <CalculatorIcon className="h-3 w-3" style={{ color: 'var(--accent)' }} />
                             <span>{copy.simulateBtn}</span>
                           </button>
                           <button
@@ -327,10 +342,10 @@ export const VipVaultDrawer: React.FC<VipVaultDrawerProps> = ({
                               onClose();
                               onOpenDeposit(unit);
                             }}
-                            className="inline-flex cursor-pointer items-center justify-center gap-1 rounded-lg border px-2.5 py-1.5 text-[11px] font-semibold"
-                            style={{ borderColor: 'var(--border-strong)', backgroundColor: 'var(--accent-soft)', color: 'var(--accent)' }}
+                            className="inline-flex cursor-pointer items-center justify-center gap-1 rounded-sm border px-2.5 py-1.5 text-[11px] font-semibold"
+                            style={{ borderColor: 'var(--border-strong)', backgroundColor: 'var(--accent-soft)', color: 'var(--text-heading)' }}
                           >
-                            <QrCodeIcon className="h-3 w-3" />
+                            <QrCodeIcon className="h-3 w-3" style={{ color: 'var(--accent)' }} />
                             <span>{copy.depositBtn}</span>
                           </button>
                           <button
@@ -339,10 +354,10 @@ export const VipVaultDrawer: React.FC<VipVaultDrawerProps> = ({
                               onClose();
                               onBookUnit(unit);
                             }}
-                            className="inline-flex cursor-pointer items-center justify-center gap-1 rounded-lg px-2.5 py-1.5 text-[11px] font-semibold"
-                            style={{ backgroundColor: 'var(--accent)', color: 'var(--accent-ink)' }}
+                            className="inline-flex cursor-pointer items-center justify-center gap-1 rounded-sm px-2.5 py-1.5 text-[11px] font-semibold"
+                            style={{ backgroundColor: 'var(--cta-bg)', color: 'var(--cta-ink)' }}
                           >
-                            <CalendarIcon className="h-3 w-3" />
+                            <CalendarIcon className="h-3 w-3" style={{ color: 'var(--accent)' }} />
                             <span>{copy.bookBtn}</span>
                           </button>
                         </div>
@@ -353,8 +368,8 @@ export const VipVaultDrawer: React.FC<VipVaultDrawerProps> = ({
               </div>
             )
           ) : vipPasses.length === 0 ? (
-            <div className="rounded-2xl border p-10 text-center" style={{ borderColor: 'var(--border-subtle)', backgroundColor: 'var(--bg-elevated)' }}>
-              <CalendarIcon className="mx-auto h-8 w-8 opacity-40" style={{ color: 'var(--accent)' }} />
+            <div className="border p-10 text-center" style={{ borderColor: 'var(--border-subtle)', backgroundColor: 'var(--bg-primary)' }}>
+              <CalendarIcon className="mx-auto h-8 w-8 opacity-45" style={{ color: 'var(--accent)' }} />
               <p className="mx-auto mt-3 max-w-md text-sm" style={{ color: 'var(--text-secondary)' }}>
                 {copy.emptyPasses}
               </p>
@@ -364,10 +379,10 @@ export const VipVaultDrawer: React.FC<VipVaultDrawerProps> = ({
                   onClose();
                   onBookUnit(residences[10] ?? residences[0]);
                 }}
-                className="mt-4 inline-flex cursor-pointer items-center gap-1.5 rounded-xl px-4 py-2.5 text-xs font-semibold"
-                style={{ backgroundColor: 'var(--accent)', color: 'var(--accent-ink)' }}
+                className="mt-4 inline-flex cursor-pointer items-center gap-1.5 rounded-sm px-4 py-2.5 text-xs font-semibold tracking-wider uppercase"
+                style={{ backgroundColor: 'var(--cta-bg)', color: 'var(--cta-ink)' }}
               >
-                <CalendarIcon className="h-3.5 w-3.5" />
+                <CalendarIcon className="h-3.5 w-3.5" style={{ color: 'var(--accent)' }} />
                 <span>{copy.bookNewViewingBtn}</span>
               </button>
             </div>
@@ -378,7 +393,7 @@ export const VipVaultDrawer: React.FC<VipVaultDrawerProps> = ({
                 return (
                   <div
                     key={pass.passCode}
-                    className="architectural-grid rounded-2xl border p-4 sm:p-5"
+                    className="architectural-grid border p-4 sm:p-5"
                     style={{
                       borderColor: 'var(--border-strong)',
                       backgroundColor: 'var(--blueprint-bg)',
@@ -387,10 +402,17 @@ export const VipVaultDrawer: React.FC<VipVaultDrawerProps> = ({
                     <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
                       <div className="min-w-0 flex-1 space-y-2">
                         <div className="flex flex-wrap items-center gap-2">
-                          <span className="font-mono-tabular text-lg font-bold tracking-wider" style={{ color: 'var(--accent)' }}>
+                          <span className="font-mono-tabular text-lg font-bold tracking-wider" style={{ color: 'var(--text-heading)' }}>
                             {pass.passCode}
                           </span>
-                          <span className="rounded-full bg-emerald-500/15 px-2.5 py-0.5 text-[10px] font-semibold text-emerald-500">
+                          <span
+                            className="rounded-sm border px-2 py-0.5 text-[10px] font-semibold"
+                            style={{
+                              borderColor: 'var(--status-available-border)',
+                              backgroundColor: 'var(--status-available-bg)',
+                              color: 'var(--status-available)',
+                            }}
+                          >
                             {pass.format === 'GALLERY_ONSITE' ? schedulerCopy.formatOnsite : schedulerCopy.format3d}
                           </span>
                         </div>
@@ -398,11 +420,11 @@ export const VipVaultDrawer: React.FC<VipVaultDrawerProps> = ({
                         <div className="grid grid-cols-1 gap-1 text-xs sm:grid-cols-2">
                           <div>
                             <span style={{ color: 'var(--text-muted)' }}>{schedulerCopy.passHolderLabel}: </span>
-                            <strong style={{ color: 'var(--text-primary)' }}>{pass.clientName}</strong>
+                            <strong style={{ color: 'var(--text-heading)' }}>{pass.clientName}</strong>
                           </div>
                           <div>
                             <span style={{ color: 'var(--text-muted)' }}>{schedulerCopy.passResidenceLabel}: </span>
-                            <strong className="font-mono-tabular" style={{ color: 'var(--text-primary)' }}>
+                            <strong className="font-mono-tabular" style={{ color: 'var(--text-heading)' }}>
                               {pass.residenceCode}{unit ? ` · F${unit.floor}` : ''}
                             </strong>
                           </div>
@@ -414,7 +436,7 @@ export const VipVaultDrawer: React.FC<VipVaultDrawerProps> = ({
                           </div>
                           <div>
                             <span style={{ color: 'var(--text-muted)' }}>{schedulerCopy.passAdvisorLabel}: </span>
-                            <strong style={{ color: 'var(--text-primary)' }}>{pass.advisorName}</strong>
+                            <strong style={{ color: 'var(--text-heading)' }}>{pass.advisorName}</strong>
                           </div>
                         </div>
 
@@ -422,10 +444,10 @@ export const VipVaultDrawer: React.FC<VipVaultDrawerProps> = ({
                           <button
                             type="button"
                             onClick={() => handleDownloadIcs(pass)}
-                            className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg px-3 py-1.5 text-[11px] font-semibold"
-                            style={{ backgroundColor: 'var(--accent)', color: 'var(--accent-ink)' }}
+                            className="inline-flex cursor-pointer items-center gap-1.5 rounded-sm px-3 py-1.5 text-[11px] font-semibold"
+                            style={{ backgroundColor: 'var(--cta-bg)', color: 'var(--cta-ink)' }}
                           >
-                            <CalendarPlusIcon className="h-3.5 w-3.5" />
+                            <CalendarPlusIcon className="h-3.5 w-3.5" style={{ color: 'var(--accent)' }} />
                             <span>{copy.downloadIcsBtn}</span>
                           </button>
                           {unit && (
@@ -435,17 +457,17 @@ export const VipVaultDrawer: React.FC<VipVaultDrawerProps> = ({
                                 onClose();
                                 onOpenDeposit(unit, pass.passCode);
                               }}
-                              className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border px-3 py-1.5 text-[11px] font-semibold"
-                              style={{ borderColor: 'var(--border-strong)', backgroundColor: 'var(--accent-soft)', color: 'var(--accent)' }}
+                              className="inline-flex cursor-pointer items-center gap-1.5 rounded-sm border px-3 py-1.5 text-[11px] font-semibold"
+                              style={{ borderColor: 'var(--border-strong)', backgroundColor: 'var(--accent-soft)', color: 'var(--text-heading)' }}
                             >
-                              <QrCodeIcon className="h-3.5 w-3.5" />
+                              <QrCodeIcon className="h-3.5 w-3.5" style={{ color: 'var(--accent)' }} />
                               <span>{copy.depositBtn}</span>
                             </button>
                           )}
                           <button
                             type="button"
                             onClick={() => handleDownloadTxt(pass)}
-                            className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border px-3 py-1.5 text-[11px] font-semibold"
+                            className="inline-flex cursor-pointer items-center gap-1.5 rounded-sm border px-3 py-1.5 text-[11px] font-semibold"
                             style={{ borderColor: 'var(--border-subtle)', backgroundColor: 'var(--bg-secondary)', color: 'var(--text-primary)' }}
                           >
                             <DownloadIcon className="h-3.5 w-3.5" />
@@ -455,8 +477,12 @@ export const VipVaultDrawer: React.FC<VipVaultDrawerProps> = ({
                             type="button"
                             onClick={() => onRemovePass(pass.passCode)}
                             aria-label={`${copy.removeBtn} ${pass.passCode}`}
-                            className="inline-flex cursor-pointer items-center gap-1 rounded-lg border px-2.5 py-1.5 text-[11px] font-medium text-red-400"
-                            style={{ borderColor: 'rgba(239, 68, 68, 0.3)', backgroundColor: 'rgba(239, 68, 68, 0.08)' }}
+                            className="inline-flex cursor-pointer items-center gap-1 rounded-sm border px-2.5 py-1.5 text-[11px] font-medium"
+                            style={{
+                              borderColor: 'var(--status-sold-border)',
+                              backgroundColor: 'var(--status-sold-bg)',
+                              color: 'var(--status-sold)',
+                            }}
                           >
                             <TrashIcon className="h-3.5 w-3.5" />
                             <span>{copy.removeBtn}</span>
@@ -465,7 +491,7 @@ export const VipVaultDrawer: React.FC<VipVaultDrawerProps> = ({
                       </div>
 
                       {/* Inline Deterministic 21x21 QR */}
-                      <div className="flex shrink-0 flex-col items-center self-center rounded-xl bg-white p-2 shadow">
+                      <div className="flex shrink-0 flex-col items-center self-center border bg-white p-2 shadow-sm" style={{ borderColor: 'var(--border-subtle)' }}>
                         <svg
                           viewBox="0 0 21 21"
                           className="h-20 w-20"
@@ -477,12 +503,12 @@ export const VipVaultDrawer: React.FC<VipVaultDrawerProps> = ({
                           {pass.qrMatrix.map((row, rIdx) =>
                             row.map((cell, cIdx) =>
                               cell ? (
-                                <rect key={`${rIdx}-${cIdx}`} x={cIdx} y={rIdx} width={1} height={1} fill="#0A0B0E" />
+                                <rect key={`${rIdx}-${cIdx}`} x={cIdx} y={rIdx} width={1} height={1} fill="#0F1D36" />
                               ) : null
                             )
                           )}
                         </svg>
-                        <span className="font-mono-tabular mt-1 text-[9px] font-semibold text-[#0A0B0E]">
+                        <span className="font-mono-tabular mt-1 text-[9px] font-semibold text-[#0F1D36]">
                           {pass.passCode}
                         </span>
                       </div>

@@ -52,10 +52,25 @@ interface ResidenceExplorerProps {
 
 const DEFAULT_MAX_PRICE = 85_000_000_000;
 
-const STATUS_STYLE: Record<UnitStatus, { dot: string; bg: string; text: string }> = {
-  AVAILABLE: { dot: '#10B981', bg: 'rgba(16, 185, 129, 0.14)', text: '#10B981' },
-  RESERVED: { dot: '#F59E0B', bg: 'rgba(245, 158, 11, 0.14)', text: '#F59E0B' },
-  SOLD: { dot: '#EF4444', bg: 'rgba(239, 68, 68, 0.14)', text: '#EF4444' },
+const STATUS_STYLE: Record<UnitStatus, { dot: string; bg: string; border: string; text: string }> = {
+  AVAILABLE: {
+    dot: 'var(--status-available)',
+    bg: 'var(--status-available-bg)',
+    border: 'var(--status-available-border)',
+    text: 'var(--status-available)',
+  },
+  RESERVED: {
+    dot: 'var(--status-reserved)',
+    bg: 'var(--status-reserved-bg)',
+    border: 'var(--status-reserved-border)',
+    text: 'var(--status-reserved)',
+  },
+  SOLD: {
+    dot: 'var(--status-sold)',
+    bg: 'var(--status-sold-bg)',
+    border: 'var(--status-sold-border)',
+    text: 'var(--status-sold)',
+  },
 };
 
 export const ResidenceExplorer: React.FC<ResidenceExplorerProps> = ({
@@ -132,17 +147,26 @@ export const ResidenceExplorer: React.FC<ResidenceExplorerProps> = ({
   const statusPalette = STATUS_STYLE[selectedResidence.status];
 
   return (
-    <section id="tower-explorer" className="no-print mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
-      {/* Section Heading */}
-      <div className="mb-10 flex flex-col justify-between gap-4 lg:flex-row lg:items-end">
+    <section id="tower-explorer" className="no-print mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-22">
+      {/* Editorial Chapter Header */}
+      <div className="mb-10 flex flex-col justify-between gap-5 border-b pb-7 lg:flex-row lg:items-end" style={{ borderColor: 'var(--border-subtle)' }}>
         <div className="max-w-2xl">
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-3">
+            <span className="font-mono-tabular text-xs font-semibold" style={{ color: 'var(--accent)' }}>
+              01
+            </span>
             <span className="h-px w-8" style={{ backgroundColor: 'var(--accent)' }} />
-            <span className="font-mono-tabular text-[11px] font-semibold tracking-[0.22em] uppercase" style={{ color: 'var(--accent)' }}>
+            <span
+              className="font-mono-tabular text-[10.5px] font-semibold tracking-[0.22em] uppercase"
+              style={{ color: 'var(--accent)' }}
+            >
               {copy.eyebrow}
             </span>
           </div>
-          <h2 className="font-display mt-3 text-3xl font-semibold tracking-tight sm:text-4xl lg:text-5xl" style={{ color: 'var(--text-primary)' }}>
+          <h2
+            className="font-display mt-3 text-3xl font-semibold tracking-tight sm:text-4xl lg:text-5xl"
+            style={{ color: 'var(--text-heading)' }}
+          >
             {copy.title}
           </h2>
           <p className="mt-3 text-sm leading-relaxed sm:text-base" style={{ color: 'var(--text-secondary)' }}>
@@ -151,33 +175,36 @@ export const ResidenceExplorer: React.FC<ResidenceExplorerProps> = ({
         </div>
 
         <div
-          className="font-mono-tabular inline-flex items-center gap-2 self-start rounded-xl border px-4 py-2.5 text-xs font-medium lg:self-end"
+          className="font-mono-tabular inline-flex items-baseline gap-2 self-start border px-4 py-2.5 text-xs font-medium lg:self-end"
           style={{
             borderColor: 'var(--border-subtle)',
             backgroundColor: 'var(--bg-secondary)',
             color: 'var(--text-secondary)',
           }}
         >
-          <span className="text-base font-semibold" style={{ color: 'var(--accent)' }}>
+          <span className="font-display text-2xl leading-none font-semibold" style={{ color: 'var(--text-heading)' }}>
             {filteredResidences.length}
           </span>
           <span>/ {residences.length} {copy.matchingCount}</span>
         </div>
       </div>
 
-      {/* Filter Control Console */}
+      {/* Architectural Catalogue Filter Index Bar */}
       <div
-        className="mb-8 rounded-2xl border p-4 sm:p-5"
+        className="mb-8 border-t-2 border-r border-b border-l p-4 sm:p-5"
         style={{
           backgroundColor: 'var(--bg-secondary)',
-          borderColor: 'var(--border-subtle)',
+          borderTopColor: 'var(--accent)',
+          borderRightColor: 'var(--border-subtle)',
+          borderBottomColor: 'var(--border-subtle)',
+          borderLeftColor: 'var(--border-subtle)',
           boxShadow: 'var(--shadow-card)',
         }}
       >
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-12 lg:items-end">
           {/* Bedroom Tier Pills */}
           <div className="lg:col-span-5">
-            <div className="mb-2 text-[11px] font-semibold tracking-wider uppercase" style={{ color: 'var(--text-muted)' }}>
+            <div className="mb-2 text-[10.5px] font-semibold tracking-[0.16em] uppercase" style={{ color: 'var(--text-muted)' }}>
               {copy.tierLabels.ALL}
             </div>
             <div className="flex flex-wrap gap-1.5">
@@ -188,11 +215,11 @@ export const ResidenceExplorer: React.FC<ResidenceExplorerProps> = ({
                     key={tier}
                     type="button"
                     onClick={() => setFilters((prev) => ({ ...prev, tier, floor: null }))}
-                    className="cursor-pointer rounded-lg border px-3 py-1.5 text-xs font-medium transition-all"
+                    className="cursor-pointer rounded-sm border px-3 py-1.5 text-xs font-medium transition-all"
                     style={{
-                      borderColor: active ? 'var(--accent)' : 'var(--border-subtle)',
-                      backgroundColor: active ? 'var(--accent)' : 'var(--bg-elevated)',
-                      color: active ? 'var(--accent-ink)' : 'var(--text-secondary)',
+                      borderColor: active ? 'var(--cta-bg)' : 'var(--border-subtle)',
+                      backgroundColor: active ? 'var(--cta-bg)' : 'var(--bg-primary)',
+                      color: active ? 'var(--cta-ink)' : 'var(--text-secondary)',
                     }}
                   >
                     {tier === 'ALL' ? copy.filterAll : copy.tierLabels[tier]}
@@ -208,11 +235,11 @@ export const ResidenceExplorer: React.FC<ResidenceExplorerProps> = ({
                     floor: null,
                   }))
                 }
-                className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-medium transition-all"
+                className="inline-flex cursor-pointer items-center gap-1.5 rounded-sm border px-3 py-1.5 text-xs font-medium transition-all"
                 style={{
                   borderColor: filters.shortlistOnly ? 'var(--accent)' : 'var(--border-subtle)',
-                  backgroundColor: filters.shortlistOnly ? 'var(--accent)' : 'var(--bg-elevated)',
-                  color: filters.shortlistOnly ? 'var(--accent-ink)' : 'var(--text-secondary)',
+                  backgroundColor: filters.shortlistOnly ? 'var(--accent-soft)' : 'var(--bg-primary)',
+                  color: filters.shortlistOnly ? 'var(--accent)' : 'var(--text-secondary)',
                 }}
               >
                 <BookmarkIcon className="h-3.5 w-3.5" filled={Boolean(filters.shortlistOnly)} />
@@ -222,12 +249,12 @@ export const ResidenceExplorer: React.FC<ResidenceExplorerProps> = ({
             </div>
           </div>
 
-          {/* Orientation Select */}
+          {/* Orientation & Sort Selects */}
           <div className="sm:grid sm:grid-cols-2 sm:gap-3 lg:col-span-4">
             <div>
               <label
                 htmlFor="orientation-filter"
-                className="mb-2 block text-[11px] font-semibold tracking-wider uppercase"
+                className="mb-2 block text-[10.5px] font-semibold tracking-[0.16em] uppercase"
                 style={{ color: 'var(--text-muted)' }}
               >
                 {copy.orientationLabels.ALL}
@@ -242,10 +269,10 @@ export const ResidenceExplorer: React.FC<ResidenceExplorerProps> = ({
                     floor: null,
                   }))
                 }
-                className="w-full cursor-pointer rounded-lg border px-3 py-2 text-xs font-medium outline-none"
+                className="w-full cursor-pointer rounded-sm border px-3 py-2 text-xs font-medium outline-none"
                 style={{
                   borderColor: 'var(--border-subtle)',
-                  backgroundColor: 'var(--bg-elevated)',
+                  backgroundColor: 'var(--bg-primary)',
                   color: 'var(--text-primary)',
                 }}
               >
@@ -260,7 +287,7 @@ export const ResidenceExplorer: React.FC<ResidenceExplorerProps> = ({
             <div className="mt-3 sm:mt-0">
               <label
                 htmlFor="sort-filter"
-                className="mb-2 block text-[11px] font-semibold tracking-wider uppercase"
+                className="mb-2 block text-[10.5px] font-semibold tracking-[0.16em] uppercase"
                 style={{ color: 'var(--text-muted)' }}
               >
                 {lang === 'vi' ? 'Sắp Xếp Quỹ Căn' : 'Sort Inventory'}
@@ -271,10 +298,10 @@ export const ResidenceExplorer: React.FC<ResidenceExplorerProps> = ({
                 onChange={(e) =>
                   setFilters((prev) => ({ ...prev, sortBy: e.target.value as SortOption }))
                 }
-                className="w-full cursor-pointer rounded-lg border px-3 py-2 text-xs font-medium outline-none"
+                className="w-full cursor-pointer rounded-sm border px-3 py-2 text-xs font-medium outline-none"
                 style={{
                   borderColor: 'var(--border-subtle)',
-                  backgroundColor: 'var(--bg-elevated)',
+                  backgroundColor: 'var(--bg-primary)',
                   color: 'var(--text-primary)',
                 }}
               >
@@ -289,11 +316,11 @@ export const ResidenceExplorer: React.FC<ResidenceExplorerProps> = ({
 
           {/* Max Budget Slider */}
           <div className="lg:col-span-3">
-            <div className="mb-2 flex items-center justify-between text-[11px]">
-              <span className="font-semibold tracking-wider uppercase" style={{ color: 'var(--text-muted)' }}>
+            <div className="mb-2 flex items-center justify-between text-[10.5px]">
+              <span className="font-semibold tracking-[0.16em] uppercase" style={{ color: 'var(--text-muted)' }}>
                 {copy.maxBudgetLabel}
               </span>
-              <span className="font-mono-tabular font-semibold" style={{ color: 'var(--accent)' }}>
+              <span className="font-mono-tabular font-semibold" style={{ color: 'var(--text-heading)' }}>
                 {formatCurrency(filters.maxPriceVnd, currency, lang, { compact: true })}
               </span>
             </div>
@@ -317,10 +344,10 @@ export const ResidenceExplorer: React.FC<ResidenceExplorerProps> = ({
         </div>
       </div>
 
-      {/* Main 12-Col Explorer: Left Tower Elevation Stack | Right Residence Dossier + Inventory Grid */}
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-12 lg:items-start">
+      {/* Main 12-Col Explorer: Left Tower Elevation Stack | Right Residence Dossier + Catalogue Grid */}
+      <div className="grid grid-cols-1 gap-7 lg:grid-cols-12 lg:items-start">
         {/* Left Column: Interactive Tower Elevation */}
-        <div className="lg:col-span-4">
+        <div className="min-w-0 lg:sticky lg:top-28 lg:col-span-4">
           <TowerElevationSvg
             residences={residences}
             matchingIds={matchingIds}
@@ -337,74 +364,93 @@ export const ResidenceExplorer: React.FC<ResidenceExplorerProps> = ({
           />
         </div>
 
-        {/* Right Column: Selected Residence Architectural Inspector + Unit Cards */}
-        <div className="space-y-6 lg:col-span-8">
-          {/* Selected Residence Dossier Card */}
+        {/* Right Column: Selected Residence Gallery Monograph + Curated Listing Cards */}
+        <div className="min-w-0 space-y-8 lg:col-span-8">
+          {/* Selected Residence Architectural Monograph Dossier */}
           <div
-            className="overflow-hidden rounded-2xl border p-4 sm:p-6"
+            className="overflow-hidden border-t-2 border-r border-b border-l p-5 sm:p-7"
             style={{
               backgroundColor: 'var(--bg-secondary)',
-              borderColor: 'var(--border-strong)',
-              boxShadow: 'var(--shadow-card)',
+              borderTopColor: 'var(--cta-bg)',
+              borderRightColor: 'var(--border-subtle)',
+              borderBottomColor: 'var(--border-subtle)',
+              borderLeftColor: 'var(--border-subtle)',
+              boxShadow: 'var(--shadow-editorial)',
             }}
           >
             {/* Dossier Top Header */}
-            <div className="flex flex-col justify-between gap-4 border-b pb-5 sm:flex-row sm:items-start" style={{ borderColor: 'var(--border-subtle)' }}>
+            <div
+              className="flex flex-col justify-between gap-4 border-b pb-5 sm:flex-row sm:items-start"
+              style={{ borderColor: 'var(--border-subtle)' }}
+            >
               <div>
-                <div className="flex flex-wrap items-center gap-2">
-                  <span className="font-mono-tabular text-[11px] font-semibold tracking-[0.2em] uppercase" style={{ color: 'var(--accent)' }}>
+                <div className="flex flex-wrap items-center gap-2.5">
+                  <span
+                    className="font-mono-tabular text-[10.5px] font-semibold tracking-[0.2em] uppercase"
+                    style={{ color: 'var(--accent)' }}
+                  >
                     {copy.selectedUnitEyebrow}
                   </span>
                   <span
-                    className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[11px] font-semibold"
-                    style={{ backgroundColor: statusPalette.bg, color: statusPalette.text }}
+                    className="inline-flex items-center gap-1.5 rounded-sm border px-2 py-0.5 text-[10.5px] font-semibold"
+                    style={{
+                      backgroundColor: statusPalette.bg,
+                      borderColor: statusPalette.border,
+                      color: statusPalette.text,
+                    }}
                   >
                     <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: statusPalette.dot }} />
                     {copy.statusLabels[selectedResidence.status]}
                   </span>
                 </div>
 
-                <h3 className="font-display mt-2 text-2xl font-semibold sm:text-3xl" style={{ color: 'var(--text-primary)' }}>
-                  <span className="font-mono-tabular mr-2 text-xl" style={{ color: 'var(--accent)' }}>
+                <h3
+                  className="font-display mt-2.5 text-2xl font-semibold sm:text-3xl lg:text-[2rem]"
+                  style={{ color: 'var(--text-heading)' }}
+                >
+                  <span className="font-mono-tabular mr-2.5 text-lg font-semibold" style={{ color: 'var(--accent)' }}>
                     {selectedResidence.code}
                   </span>
                   {lang === 'vi' ? selectedResidence.nameVi : selectedResidence.nameEn}
                 </h3>
 
-                <div className="mt-1.5 flex flex-wrap items-center gap-3 text-xs" style={{ color: 'var(--text-secondary)' }}>
+                <div className="mt-2 flex flex-wrap items-center gap-3 text-xs" style={{ color: 'var(--text-secondary)' }}>
                   <span className="font-mono-tabular">
                     {copy.floorPrefix} {selectedResidence.floor} · {selectedResidence.wing}
                   </span>
-                  <span>·</span>
+                  <span style={{ color: 'var(--accent)' }}>·</span>
                   <span className="inline-flex items-center gap-1">
-                    <CompassIcon className="h-3.5 w-3.5" style={{ color: 'var(--accent)' } as React.CSSProperties} />
+                    <CompassIcon className="h-3.5 w-3.5" style={{ color: 'var(--accent)' }} />
                     {copy.orientationLabels[selectedResidence.orientation]}
                   </span>
-                  <span>·</span>
+                  <span style={{ color: 'var(--accent)' }}>·</span>
                   <span className="inline-flex items-center gap-1">
-                    <KeyIcon className="h-3.5 w-3.5" style={{ color: 'var(--accent)' } as React.CSSProperties} />
+                    <KeyIcon className="h-3.5 w-3.5" style={{ color: 'var(--accent)' }} />
                     {selectedResidence.privateLift ? copy.privateLiftYes : copy.privateLiftNo}
                   </span>
                 </div>
               </div>
 
               <div className="shrink-0 sm:text-right">
-                <div className="font-mono-tabular text-2xl font-semibold sm:text-3xl" style={{ color: 'var(--accent)' }}>
+                <div
+                  className="font-mono-tabular text-2xl font-semibold sm:text-3xl"
+                  style={{ color: 'var(--text-heading)' }}
+                >
                   {formatCurrency(selectedResidence.priceVnd, currency, lang)}
                 </div>
                 <div className="font-mono-tabular mt-1 text-xs" style={{ color: 'var(--text-muted)' }}>
                   {formatPricePerSqm(selectedResidence.priceVnd, selectedResidence.areaSqm, currency, lang)} ·{' '}
-                  <span className="text-emerald-500">
+                  <span className="font-semibold" style={{ color: 'var(--status-available)' }}>
                     {netYieldPct.toFixed(1)}% {lang === 'vi' ? 'ròng' : 'net'}
                   </span>
                 </div>
               </div>
             </div>
 
-            {/* Tab Toggle: Photography Gallery vs Architectural SVG Floorplan */}
+            {/* Tab Toggle: Interior Photography vs Architectural CAD Floorplan */}
             <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
               <div
-                className="inline-flex rounded-xl border p-1"
+                className="inline-flex rounded-sm border p-0.5"
                 style={{ borderColor: 'var(--border-subtle)', backgroundColor: 'var(--bg-elevated)' }}
                 role="tablist"
               >
@@ -413,10 +459,10 @@ export const ResidenceExplorer: React.FC<ResidenceExplorerProps> = ({
                   role="tab"
                   aria-selected={detailTab === 'gallery'}
                   onClick={() => setDetailTab('gallery')}
-                  className="flex cursor-pointer items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-xs font-semibold transition-all"
+                  className="flex cursor-pointer items-center gap-1.5 rounded-sm px-3.5 py-1.5 text-xs font-semibold transition-all"
                   style={{
-                    backgroundColor: detailTab === 'gallery' ? 'var(--accent)' : 'transparent',
-                    color: detailTab === 'gallery' ? 'var(--accent-ink)' : 'var(--text-secondary)',
+                    backgroundColor: detailTab === 'gallery' ? 'var(--cta-bg)' : 'transparent',
+                    color: detailTab === 'gallery' ? 'var(--cta-ink)' : 'var(--text-secondary)',
                   }}
                 >
                   <PhotoIcon className="h-3.5 w-3.5" />
@@ -427,10 +473,10 @@ export const ResidenceExplorer: React.FC<ResidenceExplorerProps> = ({
                   role="tab"
                   aria-selected={detailTab === 'floorplan'}
                   onClick={() => setDetailTab('floorplan')}
-                  className="flex cursor-pointer items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-xs font-semibold transition-all"
+                  className="flex cursor-pointer items-center gap-1.5 rounded-sm px-3.5 py-1.5 text-xs font-semibold transition-all"
                   style={{
-                    backgroundColor: detailTab === 'floorplan' ? 'var(--accent)' : 'transparent',
-                    color: detailTab === 'floorplan' ? 'var(--accent-ink)' : 'var(--text-secondary)',
+                    backgroundColor: detailTab === 'floorplan' ? 'var(--cta-bg)' : 'transparent',
+                    color: detailTab === 'floorplan' ? 'var(--cta-ink)' : 'var(--text-secondary)',
                   }}
                 >
                   <BlueprintIcon className="h-3.5 w-3.5" />
@@ -440,35 +486,43 @@ export const ResidenceExplorer: React.FC<ResidenceExplorerProps> = ({
 
               <span className="font-mono-tabular text-xs" style={{ color: 'var(--text-muted)' }}>
                 {copy.estGrossYield}:{' '}
-                <strong className="text-emerald-500">{grossYieldPct.toFixed(2)}%</strong>
+                <strong style={{ color: 'var(--status-available)' }}>{grossYieldPct.toFixed(2)}%</strong>
               </span>
             </div>
 
-            {/* Visual Stage: Gallery OR Interactive Blueprint */}
+            {/* Visual Stage: Daylight Framed Gallery OR Interactive CAD Blueprint */}
             <div className="mt-4">
               {detailTab === 'gallery' ? (
                 <div className="space-y-3">
-                  <div className="relative aspect-[16/10] w-full overflow-hidden rounded-xl border" style={{ borderColor: 'var(--border-subtle)' }}>
-                    <img
-                      src={activePhoto.src}
-                      alt={lang === 'vi' ? activePhoto.captionVi : activePhoto.captionEn}
-                      className="h-full w-full object-cover transition-all duration-300"
-                    />
-                    <div
-                      className="absolute inset-x-0 bottom-0 p-4"
+                  <figure
+                    className="m-0 overflow-hidden border"
+                    style={{ borderColor: 'var(--border-subtle)', backgroundColor: 'var(--bg-primary)' }}
+                  >
+                    <div className="relative aspect-[16/10] w-full overflow-hidden">
+                      <img
+                        src={activePhoto.src}
+                        alt={lang === 'vi' ? activePhoto.captionVi : activePhoto.captionEn}
+                        className="h-full w-full object-cover transition-all duration-300"
+                      />
+                    </div>
+                    <figcaption
+                      className="flex flex-wrap items-center justify-between gap-2 border-t px-4 py-3"
                       style={{
-                        background:
-                          'linear-gradient(180deg, rgba(10,11,14,0) 0%, rgba(10,11,14,0.88) 100%)',
+                        borderColor: 'var(--border-subtle)',
+                        backgroundColor: 'var(--bg-primary)',
                       }}
                     >
-                      <span className="font-mono-tabular inline-block rounded bg-[#D4A373]/25 px-2 py-0.5 text-[10px] font-semibold tracking-wider text-[#F2D5B3] uppercase backdrop-blur-sm">
+                      <span
+                        className="font-mono-tabular inline-block border-l-2 pl-2 text-[10px] font-semibold tracking-[0.16em] uppercase"
+                        style={{ borderColor: 'var(--accent)', color: 'var(--accent)' }}
+                      >
                         {lang === 'vi' ? activePhoto.tagVi : activePhoto.tagEn}
                       </span>
-                      <p className="mt-1 text-xs text-white/90 sm:text-sm">
+                      <p className="text-xs sm:text-sm" style={{ color: 'var(--text-secondary)' }}>
                         {lang === 'vi' ? activePhoto.captionVi : activePhoto.captionEn}
                       </p>
-                    </div>
-                  </div>
+                    </figcaption>
+                  </figure>
 
                   {/* Gallery Thumbnails */}
                   <div className="grid grid-cols-3 gap-2.5 sm:grid-cols-4">
@@ -479,18 +533,27 @@ export const ResidenceExplorer: React.FC<ResidenceExplorerProps> = ({
                           key={`${img.src}-${idx}`}
                           type="button"
                           onClick={() => setActivePhotoIndex(idx)}
-                          className="group relative aspect-[4/3] cursor-pointer overflow-hidden rounded-lg border transition-all"
+                          className="group flex cursor-pointer flex-col overflow-hidden border text-left transition-all"
                           style={{
                             borderColor: active ? 'var(--accent)' : 'var(--border-subtle)',
-                            opacity: active ? 1 : 0.72,
+                            backgroundColor: 'var(--bg-primary)',
+                            opacity: active ? 1 : 0.78,
                           }}
                         >
-                          <img
-                            src={img.src}
-                            alt={lang === 'vi' ? img.tagVi : img.tagEn}
-                            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                          />
-                          <div className="absolute inset-x-0 bottom-0 bg-black/65 px-2 py-1 text-left text-[10px] font-medium text-white">
+                          <div className="aspect-[16/10] w-full overflow-hidden">
+                            <img
+                              src={img.src}
+                              alt={lang === 'vi' ? img.tagVi : img.tagEn}
+                              className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                            />
+                          </div>
+                          <div
+                            className="truncate px-2 py-1.5 text-[10px] font-semibold"
+                            style={{
+                              color: active ? 'var(--accent)' : 'var(--text-secondary)',
+                              borderTop: '1px solid var(--border-subtle)',
+                            }}
+                          >
                             {lang === 'vi' ? img.tagVi : img.tagEn}
                           </div>
                         </button>
@@ -507,81 +570,108 @@ export const ResidenceExplorer: React.FC<ResidenceExplorerProps> = ({
               )}
             </div>
 
-            {/* Precision Specification Grid */}
-            <div className="mt-5 grid grid-cols-2 gap-2.5 sm:grid-cols-3">
-              <div className="rounded-xl border p-3" style={{ borderColor: 'var(--border-subtle)', backgroundColor: 'var(--bg-elevated)' }}>
-                <div className="text-[11px]" style={{ color: 'var(--text-muted)' }}>{copy.areaLabel}</div>
-                <div className="font-mono-tabular mt-1 text-base font-semibold" style={{ color: 'var(--text-primary)' }}>
+            {/* Precision Architectural Specification Ledger */}
+            <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3">
+              <div className="border p-3.5" style={{ borderColor: 'var(--border-subtle)', backgroundColor: 'var(--bg-primary)' }}>
+                <div className="text-[10.5px] font-medium tracking-wider uppercase" style={{ color: 'var(--text-muted)' }}>
+                  {copy.areaLabel}
+                </div>
+                <div className="font-mono-tabular mt-1.5 text-base font-semibold" style={{ color: 'var(--text-heading)' }}>
                   {selectedResidence.areaSqm} m²
                 </div>
-                <div className="font-mono-tabular text-[10px]" style={{ color: 'var(--text-muted)' }}>
+                <div className="font-mono-tabular text-[10.5px]" style={{ color: 'var(--text-muted)' }}>
                   +{selectedResidence.terraceSqm}m² {copy.terraceIncluded}
                 </div>
               </div>
 
-              <div className="rounded-xl border p-3" style={{ borderColor: 'var(--border-subtle)', backgroundColor: 'var(--bg-elevated)' }}>
-                <div className="text-[11px]" style={{ color: 'var(--text-muted)' }}>{copy.pricePerSqmLabel}</div>
-                <div className="font-mono-tabular mt-1 text-base font-semibold" style={{ color: 'var(--accent)' }}>
+              <div className="border p-3.5" style={{ borderColor: 'var(--border-subtle)', backgroundColor: 'var(--bg-primary)' }}>
+                <div className="text-[10.5px] font-medium tracking-wider uppercase" style={{ color: 'var(--text-muted)' }}>
+                  {copy.pricePerSqmLabel}
+                </div>
+                <div className="font-mono-tabular mt-1.5 text-base font-semibold" style={{ color: 'var(--accent)' }}>
                   {formatPricePerSqm(selectedResidence.priceVnd, selectedResidence.areaSqm, currency, lang)}
                 </div>
-                <div className="font-mono-tabular text-[10px]" style={{ color: 'var(--text-muted)' }}>
+                <div className="font-mono-tabular text-[10.5px]" style={{ color: 'var(--text-muted)' }}>
                   {selectedResidence.bedrooms}BR · {selectedResidence.bathrooms}BA
                 </div>
               </div>
 
-              <div className="rounded-xl border p-3" style={{ borderColor: 'var(--border-subtle)', backgroundColor: 'var(--bg-elevated)' }}>
-                <div className="text-[11px]" style={{ color: 'var(--text-muted)' }}>{copy.maintenanceLabel}</div>
-                <div className="font-mono-tabular mt-1 text-base font-semibold" style={{ color: 'var(--text-primary)' }}>
+              <div className="border p-3.5" style={{ borderColor: 'var(--border-subtle)', backgroundColor: 'var(--bg-primary)' }}>
+                <div className="text-[10.5px] font-medium tracking-wider uppercase" style={{ color: 'var(--text-muted)' }}>
+                  {copy.maintenanceLabel}
+                </div>
+                <div className="font-mono-tabular mt-1.5 text-base font-semibold" style={{ color: 'var(--text-heading)' }}>
                   {formatCurrency(monthlyMaintenanceVnd, currency, lang, { compact: true })}
                 </div>
-                <div className="font-mono-tabular text-[10px]" style={{ color: 'var(--text-muted)' }}>
+                <div className="font-mono-tabular text-[10.5px]" style={{ color: 'var(--text-muted)' }}>
                   {selectedResidence.maintenanceFeePerSqmVnd.toLocaleString('en-US')} VNĐ/m²
                 </div>
               </div>
 
-              <div className="rounded-xl border p-3" style={{ borderColor: 'var(--border-subtle)', backgroundColor: 'var(--bg-elevated)' }}>
-                <div className="text-[11px]" style={{ color: 'var(--text-muted)' }}>{copy.riverScoreLabel}</div>
-                <div className="font-mono-tabular mt-1 text-base font-semibold text-emerald-500">
+              <div className="border p-3.5" style={{ borderColor: 'var(--border-subtle)', backgroundColor: 'var(--bg-primary)' }}>
+                <div className="text-[10.5px] font-medium tracking-wider uppercase" style={{ color: 'var(--text-muted)' }}>
+                  {copy.riverScoreLabel}
+                </div>
+                <div className="font-mono-tabular mt-1.5 text-base font-semibold" style={{ color: 'var(--status-available)' }}>
                   {selectedResidence.riverViewScore}/100
                 </div>
-                <div className="mt-1 h-1 w-full overflow-hidden rounded-full bg-black/20">
+                <div className="mt-1.5 h-1 w-full overflow-hidden rounded-full" style={{ backgroundColor: 'var(--track-bg)' }}>
                   <div
-                    className="h-full rounded-full bg-emerald-500"
-                    style={{ width: `${selectedResidence.riverViewScore}%` }}
+                    className="h-full rounded-full"
+                    style={{
+                      width: `${selectedResidence.riverViewScore}%`,
+                      backgroundColor: 'var(--status-available)',
+                    }}
                   />
                 </div>
               </div>
 
-              <div className="rounded-xl border p-3" style={{ borderColor: 'var(--border-subtle)', backgroundColor: 'var(--bg-elevated)' }}>
-                <div className="text-[11px]" style={{ color: 'var(--text-muted)' }}>{copy.ceilingLabel}</div>
-                <div className="font-mono-tabular mt-1 text-base font-semibold" style={{ color: 'var(--text-primary)' }}>
+              <div className="border p-3.5" style={{ borderColor: 'var(--border-subtle)', backgroundColor: 'var(--bg-primary)' }}>
+                <div className="text-[10.5px] font-medium tracking-wider uppercase" style={{ color: 'var(--text-muted)' }}>
+                  {copy.ceilingLabel}
+                </div>
+                <div className="font-mono-tabular mt-1.5 text-base font-semibold" style={{ color: 'var(--text-heading)' }}>
                   {selectedResidence.ceilingHeightM.toFixed(1)} m
                 </div>
-                <div className="font-mono-tabular text-[10px]" style={{ color: 'var(--text-muted)' }}>
+                <div className="font-mono-tabular text-[10.5px]" style={{ color: 'var(--text-muted)' }}>
                   {selectedResidence.parkingSlots} Valet Bay{selectedResidence.parkingSlots > 1 ? 's' : ''}
                 </div>
               </div>
 
-              <div className="rounded-xl border p-3" style={{ borderColor: 'var(--border-subtle)', backgroundColor: 'var(--bg-elevated)' }}>
-                <div className="text-[11px]" style={{ color: 'var(--text-muted)' }}>{copy.handoverLabel}</div>
-                <div className="font-mono-tabular mt-1 text-base font-semibold" style={{ color: 'var(--text-primary)' }}>
+              <div className="border p-3.5" style={{ borderColor: 'var(--border-subtle)', backgroundColor: 'var(--bg-primary)' }}>
+                <div className="text-[10.5px] font-medium tracking-wider uppercase" style={{ color: 'var(--text-muted)' }}>
+                  {copy.handoverLabel}
+                </div>
+                <div className="font-mono-tabular mt-1.5 text-base font-semibold" style={{ color: 'var(--text-heading)' }}>
                   {selectedResidence.handoverQuarter}
                 </div>
-                <div className="font-mono-tabular text-[10px]" style={{ color: 'var(--text-muted)' }}>
+                <div className="font-mono-tabular text-[10.5px]" style={{ color: 'var(--text-muted)' }}>
                   {formatCurrency(selectedResidence.estMonthlyRentVnd, currency, lang, { compact: true })} {copy.perMonth}
                 </div>
               </div>
             </div>
 
             {/* Architectural Finish Highlights */}
-            <div className="mt-5 rounded-xl border p-4" style={{ borderColor: 'var(--border-subtle)', backgroundColor: 'var(--bg-primary)' }}>
-              <div className="mb-2.5 text-[11px] font-semibold tracking-wider uppercase" style={{ color: 'var(--accent)' }}>
+            <div
+              className="mt-5 border-l-2 border-t border-r border-b p-4"
+              style={{
+                borderLeftColor: 'var(--accent)',
+                borderTopColor: 'var(--border-subtle)',
+                borderRightColor: 'var(--border-subtle)',
+                borderBottomColor: 'var(--border-subtle)',
+                backgroundColor: 'var(--bg-elevated)',
+              }}
+            >
+              <div
+                className="mb-2.5 text-[10.5px] font-semibold tracking-[0.18em] uppercase"
+                style={{ color: 'var(--accent)' }}
+              >
                 {copy.highlightsTitle}
               </div>
               <ul className="space-y-2">
                 {(lang === 'vi' ? selectedResidence.highlightsVi : selectedResidence.highlightsEn).map((item, i) => (
-                  <li key={i} className="flex items-start gap-2 text-xs sm:text-sm" style={{ color: 'var(--text-secondary)' }}>
-                    <CheckIcon className="mt-0.5 h-4 w-4 shrink-0" style={{ color: 'var(--accent)' } as React.CSSProperties} />
+                  <li key={i} className="flex items-start gap-2.5 text-xs sm:text-sm" style={{ color: 'var(--text-secondary)' }}>
+                    <CheckIcon className="mt-0.5 h-4 w-4 shrink-0" style={{ color: 'var(--accent)' }} />
                     <span>{item}</span>
                   </li>
                 ))}
@@ -589,39 +679,39 @@ export const ResidenceExplorer: React.FC<ResidenceExplorerProps> = ({
             </div>
 
             {/* Primary Action Bar */}
-            <div className="mt-5 flex flex-wrap items-center gap-2.5">
+            <div className="mt-6 flex flex-wrap items-center gap-2.5">
               <button
                 type="button"
                 onClick={() => onBookViewing(selectedResidence)}
-                className="inline-flex cursor-pointer items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-semibold transition-all hover:brightness-110 sm:text-sm"
-                style={{ backgroundColor: 'var(--accent)', color: 'var(--accent-ink)' }}
+                className="inline-flex cursor-pointer items-center gap-2 rounded-sm px-4 py-2.5 text-xs font-semibold tracking-[0.08em] uppercase transition-all hover:opacity-92"
+                style={{ backgroundColor: 'var(--cta-bg)', color: 'var(--cta-ink)' }}
               >
-                <CalendarIcon className="h-4 w-4" />
+                <CalendarIcon className="h-4 w-4" style={{ color: 'var(--accent)' }} />
                 <span>{copy.bookViewingBtn}</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => onOpenDeposit(selectedResidence)}
-                className="inline-flex cursor-pointer items-center gap-2 rounded-xl border px-4 py-2.5 text-xs font-semibold transition-all sm:text-sm"
+                className="inline-flex cursor-pointer items-center gap-2 rounded-sm border px-4 py-2.5 text-xs font-semibold tracking-[0.06em] uppercase transition-all"
                 style={{
                   borderColor: 'var(--border-strong)',
                   backgroundColor: 'var(--accent-soft)',
-                  color: 'var(--accent)',
+                  color: 'var(--text-heading)',
                 }}
               >
-                <QrCodeIcon className="h-4 w-4" />
+                <QrCodeIcon className="h-4 w-4" style={{ color: 'var(--accent)' }} />
                 <span>{copy.holdDepositBtn}</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => onSimulateResidence(selectedResidence)}
-                className="inline-flex cursor-pointer items-center gap-2 rounded-xl border px-4 py-2.5 text-xs font-semibold transition-all sm:text-sm"
+                className="inline-flex cursor-pointer items-center gap-2 rounded-sm border px-4 py-2.5 text-xs font-semibold transition-all hover:border-[#B48A3E]"
                 style={{
-                  borderColor: 'var(--border-subtle)',
-                  backgroundColor: 'var(--bg-elevated)',
-                  color: 'var(--text-primary)',
+                  borderColor: 'var(--border-navy)',
+                  backgroundColor: 'var(--bg-secondary)',
+                  color: 'var(--text-heading)',
                 }}
               >
                 <CalculatorIcon className="h-4 w-4" style={{ color: 'var(--accent)' }} />
@@ -631,10 +721,10 @@ export const ResidenceExplorer: React.FC<ResidenceExplorerProps> = ({
               <button
                 type="button"
                 onClick={() => onToggleShortlist(selectedResidence.id)}
-                className="inline-flex cursor-pointer items-center gap-2 rounded-xl border px-3.5 py-2.5 text-xs font-semibold transition-all sm:text-sm"
+                className="inline-flex cursor-pointer items-center gap-2 rounded-sm border px-3.5 py-2.5 text-xs font-semibold transition-all"
                 style={{
                   borderColor: isSelectedShortlisted ? 'var(--accent)' : 'var(--border-subtle)',
-                  backgroundColor: isSelectedShortlisted ? 'var(--accent-soft)' : 'var(--bg-elevated)',
+                  backgroundColor: isSelectedShortlisted ? 'var(--accent-soft)' : 'var(--bg-primary)',
                   color: isSelectedShortlisted ? 'var(--accent)' : 'var(--text-primary)',
                 }}
               >
@@ -646,10 +736,10 @@ export const ResidenceExplorer: React.FC<ResidenceExplorerProps> = ({
                 type="button"
                 disabled={compareIsFull}
                 onClick={() => onToggleCompare(selectedResidence.id)}
-                className="inline-flex cursor-pointer items-center gap-2 rounded-xl border px-3.5 py-2.5 text-xs font-semibold transition-all disabled:cursor-not-allowed disabled:opacity-45 sm:text-sm"
+                className="inline-flex cursor-pointer items-center gap-2 rounded-sm border px-3.5 py-2.5 text-xs font-semibold transition-all disabled:cursor-not-allowed disabled:opacity-45"
                 style={{
                   borderColor: isSelectedCompared ? 'var(--accent)' : 'var(--border-subtle)',
-                  backgroundColor: isSelectedCompared ? 'var(--accent-soft)' : 'var(--bg-elevated)',
+                  backgroundColor: isSelectedCompared ? 'var(--accent-soft)' : 'var(--bg-primary)',
                   color: isSelectedCompared ? 'var(--accent)' : 'var(--text-primary)',
                 }}
               >
@@ -668,10 +758,10 @@ export const ResidenceExplorer: React.FC<ResidenceExplorerProps> = ({
                 onClick={onPrintDossier}
                 title={copy.printDossierBtn}
                 aria-label={copy.printDossierBtn}
-                className="inline-flex cursor-pointer items-center gap-1.5 rounded-xl border px-3 py-2.5 text-xs font-semibold transition-all sm:text-sm"
+                className="inline-flex cursor-pointer items-center gap-1.5 rounded-sm border px-3 py-2.5 text-xs font-semibold transition-all"
                 style={{
                   borderColor: 'var(--border-subtle)',
-                  backgroundColor: 'var(--bg-elevated)',
+                  backgroundColor: 'var(--bg-primary)',
                   color: 'var(--text-secondary)',
                 }}
               >
@@ -681,11 +771,11 @@ export const ResidenceExplorer: React.FC<ResidenceExplorerProps> = ({
             </div>
           </div>
 
-          {/* Curated 12-Residence Inventory Cards */}
+          {/* Curated 12-Residence Editorial Listing Catalogue */}
           <div>
             {filteredResidences.length === 0 ? (
               <div
-                className="rounded-2xl border p-8 text-center"
+                className="border p-10 text-center"
                 style={{ borderColor: 'var(--border-subtle)', backgroundColor: 'var(--bg-secondary)' }}
               >
                 <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
@@ -694,14 +784,14 @@ export const ResidenceExplorer: React.FC<ResidenceExplorerProps> = ({
                 <button
                   type="button"
                   onClick={resetAllFilters}
-                  className="mt-4 cursor-pointer rounded-lg px-4 py-2 text-xs font-semibold"
-                  style={{ backgroundColor: 'var(--accent)', color: 'var(--accent-ink)' }}
+                  className="mt-4 cursor-pointer rounded-sm px-4 py-2 text-xs font-semibold tracking-wider uppercase"
+                  style={{ backgroundColor: 'var(--cta-bg)', color: 'var(--cta-ink)' }}
                 >
                   {copy.resetFilters}
                 </button>
               </div>
             ) : (
-              <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 {filteredResidences.map((unit) => {
                   const isSelected = unit.id === selectedResidence.id;
                   const inCompare = compareIds.includes(unit.id);
@@ -722,34 +812,39 @@ export const ResidenceExplorer: React.FC<ResidenceExplorerProps> = ({
                           onSelectResidence(unit);
                         }
                       }}
-                      className="group flex cursor-pointer flex-col overflow-hidden rounded-2xl border transition-all hover:-translate-y-0.5"
+                      className="group flex cursor-pointer flex-col overflow-hidden border transition-all hover:-translate-y-0.5"
                       style={{
                         backgroundColor: 'var(--bg-secondary)',
                         borderColor: isSelected ? 'var(--accent)' : 'var(--border-subtle)',
-                        boxShadow: isSelected ? '0 0 0 1px var(--accent)' : undefined,
+                        boxShadow: isSelected ? '0 0 0 1px var(--accent), var(--shadow-card)' : 'var(--shadow-card)',
                       }}
                     >
-                      <div className="relative h-36 w-full overflow-hidden">
+                      {/* Clean Daylight Listing Plate */}
+                      <div className="relative h-44 w-full overflow-hidden">
                         <img
                           src={unit.heroImage}
                           alt={lang === 'vi' ? unit.nameVi : unit.nameEn}
                           className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/15 to-transparent" />
 
+                        {/* Minimal Architectural Code & Status Badges */}
                         <div className="absolute top-2.5 left-2.5 flex items-center gap-1.5">
-                          <span className="font-mono-tabular rounded bg-black/70 px-2 py-0.5 text-[11px] font-semibold text-[#F2D5B3] backdrop-blur-sm">
+                          <span
+                            className="font-mono-tabular rounded-sm px-2 py-0.5 text-[10.5px] font-semibold tracking-wider"
+                            style={{ backgroundColor: 'rgba(15, 29, 54, 0.88)', color: '#FAF8F4' }}
+                          >
                             {unit.code} · F{unit.floor}
                           </span>
                           <span
-                            className="inline-flex items-center gap-1 rounded px-2 py-0.5 text-[10px] font-semibold backdrop-blur-sm"
-                            style={{ backgroundColor: 'rgba(10,11,14,0.78)', color: unitStatus.text }}
+                            className="inline-flex items-center gap-1 rounded-sm px-2 py-0.5 text-[10px] font-semibold"
+                            style={{ backgroundColor: 'rgba(255, 255, 255, 0.94)', color: unitStatus.text }}
                           >
                             <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: unitStatus.dot }} />
                             {copy.statusLabels[unit.status]}
                           </span>
                         </div>
 
+                        {/* Action Icons */}
                         <div className="absolute top-2.5 right-2.5 flex items-center gap-1.5">
                           <button
                             type="button"
@@ -758,11 +853,11 @@ export const ResidenceExplorer: React.FC<ResidenceExplorerProps> = ({
                               onToggleShortlist(unit.id);
                             }}
                             aria-label={`Bookmark ${unit.code}`}
-                            className="flex cursor-pointer items-center justify-center rounded-md border p-1 backdrop-blur-md transition-colors"
+                            className="flex cursor-pointer items-center justify-center rounded-sm border p-1.5 transition-colors"
                             style={{
-                              borderColor: isShortlisted ? '#D4A373' : 'rgba(255,255,255,0.25)',
-                              backgroundColor: isShortlisted ? '#D4A373' : 'rgba(10,11,14,0.68)',
-                              color: isShortlisted ? '#0A0B0E' : '#FFFFFF',
+                              borderColor: isShortlisted ? '#B48A3E' : 'rgba(15, 29, 54, 0.2)',
+                              backgroundColor: isShortlisted ? '#B48A3E' : 'rgba(255, 255, 255, 0.92)',
+                              color: isShortlisted ? '#FFFFFF' : '#0F1D36',
                             }}
                           >
                             <BookmarkIcon className="h-3.5 w-3.5" filled={isShortlisted} />
@@ -776,38 +871,41 @@ export const ResidenceExplorer: React.FC<ResidenceExplorerProps> = ({
                               onToggleCompare(unit.id);
                             }}
                             aria-label={`Compare ${unit.code}`}
-                            className="flex cursor-pointer items-center gap-1 rounded-md border px-2 py-1 text-[10px] font-semibold backdrop-blur-md transition-colors disabled:opacity-40"
+                            className="flex cursor-pointer items-center gap-1 rounded-sm border px-2 py-1 text-[10px] font-semibold transition-colors disabled:opacity-40"
                             style={{
-                              borderColor: inCompare ? '#D4A373' : 'rgba(255,255,255,0.25)',
-                              backgroundColor: inCompare ? '#D4A373' : 'rgba(10,11,14,0.68)',
-                              color: inCompare ? '#0A0B0E' : '#FFFFFF',
+                              borderColor: inCompare ? '#0F1D36' : 'rgba(15, 29, 54, 0.2)',
+                              backgroundColor: inCompare ? '#0F1D36' : 'rgba(255, 255, 255, 0.92)',
+                              color: inCompare ? '#FAF8F4' : '#0F1D36',
                             }}
                           >
                             <CompareIcon className="h-3 w-3" />
                             {inCompare ? <CheckIcon className="h-3 w-3" /> : <span>+</span>}
                           </button>
                         </div>
-
-                        <div className="absolute right-3 bottom-2.5 left-3 flex items-end justify-between">
-                          <div className="font-display text-lg leading-tight font-semibold text-white">
-                            {lang === 'vi' ? unit.nameVi : unit.nameEn}
-                          </div>
-                        </div>
                       </div>
 
-                      <div className="flex flex-1 flex-col justify-between p-3.5">
-                        <div className="flex items-center justify-between text-xs" style={{ color: 'var(--text-secondary)' }}>
-                          <span className="font-mono-tabular">
-                            {unit.areaSqm}m² · {unit.bedrooms}BR
-                          </span>
-                          <span>{copy.orientationLabels[unit.orientation]}</span>
+                      {/* Editorial Listing Details Below Photo */}
+                      <div className="flex flex-1 flex-col justify-between p-4">
+                        <div>
+                          <div className="font-display text-xl leading-snug font-semibold" style={{ color: 'var(--text-heading)' }}>
+                            {lang === 'vi' ? unit.nameVi : unit.nameEn}
+                          </div>
+                          <div className="mt-1.5 flex items-center justify-between text-xs" style={{ color: 'var(--text-secondary)' }}>
+                            <span className="font-mono-tabular">
+                              {unit.areaSqm}m² · {unit.bedrooms}BR
+                            </span>
+                            <span>{copy.orientationLabels[unit.orientation]}</span>
+                          </div>
                         </div>
 
-                        <div className="mt-3 flex items-baseline justify-between border-t pt-2.5" style={{ borderColor: 'var(--border-subtle)' }}>
-                          <div className="font-mono-tabular text-base font-semibold" style={{ color: 'var(--accent)' }}>
+                        <div
+                          className="mt-3.5 flex items-baseline justify-between border-t pt-3"
+                          style={{ borderColor: 'var(--border-subtle)' }}
+                        >
+                          <div className="font-mono-tabular text-base font-semibold" style={{ color: 'var(--text-heading)' }}>
                             {formatCurrency(unit.priceVnd, currency, lang, { compact: true })}
                           </div>
-                          <div className="font-mono-tabular text-xs font-semibold text-emerald-500">
+                          <div className="font-mono-tabular text-xs font-semibold" style={{ color: 'var(--status-available)' }}>
                             {unitNetYield.toFixed(1)}% {lang === 'vi' ? 'ròng' : 'net'}
                           </div>
                         </div>

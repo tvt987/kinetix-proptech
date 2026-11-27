@@ -52,9 +52,21 @@ const BANK_PRESETS = [
 const SHOCK_PRESETS = [0, 2, 4] as const;
 
 const DTI_STYLE: Record<DtiSafetyTier, { bg: string; border: string; text: string }> = {
-  SAFE: { bg: 'rgba(16, 185, 129, 0.14)', border: 'rgba(16, 185, 129, 0.35)', text: '#10B981' },
-  CAUTION: { bg: 'rgba(245, 158, 11, 0.14)', border: 'rgba(245, 158, 11, 0.35)', text: '#F59E0B' },
-  HIGH_RISK: { bg: 'rgba(239, 68, 68, 0.14)', border: 'rgba(239, 68, 68, 0.35)', text: '#EF4444' },
+  SAFE: {
+    bg: 'var(--status-available-bg)',
+    border: 'var(--status-available-border)',
+    text: 'var(--status-available)',
+  },
+  CAUTION: {
+    bg: 'var(--status-reserved-bg)',
+    border: 'var(--status-reserved-border)',
+    text: 'var(--status-reserved)',
+  },
+  HIGH_RISK: {
+    bg: 'var(--status-sold-bg)',
+    border: 'var(--status-sold-border)',
+    text: 'var(--status-sold)',
+  },
 };
 
 export const MortgageSimulator: React.FC<MortgageSimulatorProps> = ({
@@ -193,20 +205,32 @@ export const MortgageSimulator: React.FC<MortgageSimulatorProps> = ({
   return (
     <section
       id="mortgage-simulator"
-      className="no-print border-t py-16 lg:py-20"
-      style={{ borderColor: 'var(--border-subtle)', backgroundColor: 'var(--bg-primary)' }}
+      className="no-print border-t py-16 lg:py-22"
+      style={{ borderColor: 'var(--border-subtle)', backgroundColor: 'var(--bg-elevated)' }}
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        {/* Header & Mode Switch */}
-        <div className="mb-10 flex flex-col justify-between gap-5 lg:flex-row lg:items-end">
+        {/* Editorial Chapter Header & Mode Switch */}
+        <div
+          className="mb-10 flex flex-col justify-between gap-5 border-b pb-7 lg:flex-row lg:items-end"
+          style={{ borderColor: 'var(--border-subtle)' }}
+        >
           <div className="max-w-2xl">
-            <div className="flex items-center gap-2.5">
+            <div className="flex items-center gap-3">
+              <span className="font-mono-tabular text-xs font-semibold" style={{ color: 'var(--accent)' }}>
+                02
+              </span>
               <span className="h-px w-8" style={{ backgroundColor: 'var(--accent)' }} />
-              <span className="font-mono-tabular text-[11px] font-semibold tracking-[0.22em] uppercase" style={{ color: 'var(--accent)' }}>
+              <span
+                className="font-mono-tabular text-[10.5px] font-semibold tracking-[0.22em] uppercase"
+                style={{ color: 'var(--accent)' }}
+              >
                 {copy.eyebrow}
               </span>
             </div>
-            <h2 className="font-display mt-3 text-3xl font-semibold tracking-tight sm:text-4xl lg:text-5xl" style={{ color: 'var(--text-primary)' }}>
+            <h2
+              className="font-display mt-3 text-3xl font-semibold tracking-tight sm:text-4xl lg:text-5xl"
+              style={{ color: 'var(--text-heading)' }}
+            >
               {copy.title}
             </h2>
             <p className="mt-3 text-sm leading-relaxed sm:text-base" style={{ color: 'var(--text-secondary)' }}>
@@ -214,18 +238,18 @@ export const MortgageSimulator: React.FC<MortgageSimulatorProps> = ({
             </p>
           </div>
 
-          {/* Synced vs Custom Mode Pills */}
+          {/* Synced vs Custom Mode Switch */}
           <div
-            className="inline-flex self-start rounded-xl border p-1 lg:self-end"
+            className="inline-flex self-start rounded-sm border p-1 lg:self-end"
             style={{ borderColor: 'var(--border-subtle)', backgroundColor: 'var(--bg-secondary)' }}
           >
             <button
               type="button"
               onClick={() => onToggleMode(false)}
-              className="cursor-pointer rounded-lg px-3.5 py-2 text-xs font-semibold transition-all"
+              className="cursor-pointer rounded-sm px-3.5 py-2 text-xs font-semibold transition-all"
               style={{
-                backgroundColor: !isCustomMode ? 'var(--accent)' : 'transparent',
-                color: !isCustomMode ? 'var(--accent-ink)' : 'var(--text-secondary)',
+                backgroundColor: !isCustomMode ? 'var(--cta-bg)' : 'transparent',
+                color: !isCustomMode ? 'var(--cta-ink)' : 'var(--text-secondary)',
               }}
             >
               {copy.modeResidence}
@@ -233,10 +257,10 @@ export const MortgageSimulator: React.FC<MortgageSimulatorProps> = ({
             <button
               type="button"
               onClick={() => onToggleMode(true)}
-              className="cursor-pointer rounded-lg px-3.5 py-2 text-xs font-semibold transition-all"
+              className="cursor-pointer rounded-sm px-3.5 py-2 text-xs font-semibold transition-all"
               style={{
-                backgroundColor: isCustomMode ? 'var(--accent)' : 'transparent',
-                color: isCustomMode ? 'var(--accent-ink)' : 'var(--text-secondary)',
+                backgroundColor: isCustomMode ? 'var(--cta-bg)' : 'transparent',
+                color: isCustomMode ? 'var(--cta-ink)' : 'var(--text-secondary)',
               }}
             >
               {copy.modeCustom}
@@ -244,14 +268,17 @@ export const MortgageSimulator: React.FC<MortgageSimulatorProps> = ({
           </div>
         </div>
 
-        {/* Main 12-Col FinTech Layout */}
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-12 lg:items-start">
-          {/* Left Panel: Interactive Financial Parameters (sticky on desktop) */}
+        {/* Main 12-Col Private Wealth Layout */}
+        <div className="grid grid-cols-1 gap-7 lg:grid-cols-12 lg:items-start">
+          {/* Left Panel: Sticky Underwriting Parameters Folio */}
           <div
-            className="flex flex-col justify-between rounded-2xl border p-5 sm:p-6 lg:sticky lg:top-20 lg:col-span-5"
+            className="min-w-0 flex flex-col justify-between border-t-2 border-r border-b border-l p-5 sm:p-6 lg:sticky lg:top-28 lg:col-span-5"
             style={{
               backgroundColor: 'var(--bg-secondary)',
-              borderColor: 'var(--border-subtle)',
+              borderTopColor: 'var(--cta-bg)',
+              borderRightColor: 'var(--border-subtle)',
+              borderBottomColor: 'var(--border-subtle)',
+              borderLeftColor: 'var(--border-subtle)',
               boxShadow: 'var(--shadow-card)',
             }}
           >
@@ -259,18 +286,24 @@ export const MortgageSimulator: React.FC<MortgageSimulatorProps> = ({
               {/* Synced Residence Banner */}
               {!isCustomMode && (
                 <div
-                  className="flex items-center justify-between gap-3 rounded-xl border px-3.5 py-2.5"
-                  style={{ borderColor: 'var(--border-strong)', backgroundColor: 'var(--accent-soft)' }}
+                  className="flex items-center justify-between gap-3 border-l-2 border-t border-r border-b px-3.5 py-2.5"
+                  style={{
+                    borderLeftColor: 'var(--accent)',
+                    borderTopColor: 'var(--border-subtle)',
+                    borderRightColor: 'var(--border-subtle)',
+                    borderBottomColor: 'var(--border-subtle)',
+                    backgroundColor: 'var(--bg-primary)',
+                  }}
                 >
                   <div>
-                    <div className="text-[11px]" style={{ color: 'var(--text-secondary)' }}>
+                    <div className="text-[10.5px] tracking-wider uppercase" style={{ color: 'var(--text-muted)' }}>
                       {copy.syncedWith}
                     </div>
-                    <div className="font-mono-tabular text-xs font-semibold" style={{ color: 'var(--accent)' }}>
+                    <div className="font-mono-tabular mt-0.5 text-xs font-semibold" style={{ color: 'var(--text-heading)' }}>
                       {selectedResidence.code} · {lang === 'vi' ? selectedResidence.nameVi : selectedResidence.nameEn}
                     </div>
                   </div>
-                  <span className="font-mono-tabular text-xs font-semibold" style={{ color: 'var(--text-primary)' }}>
+                  <span className="font-mono-tabular text-xs font-semibold" style={{ color: 'var(--accent)' }}>
                     {selectedResidence.areaSqm}m²
                   </span>
                 </div>
@@ -282,7 +315,7 @@ export const MortgageSimulator: React.FC<MortgageSimulatorProps> = ({
                   <label htmlFor="sim-price" className="text-xs font-semibold" style={{ color: 'var(--text-secondary)' }}>
                     {copy.propertyValueLabel}
                   </label>
-                  <span className="font-mono-tabular text-base font-semibold" style={{ color: 'var(--accent)' }}>
+                  <span className="font-mono-tabular text-base font-semibold" style={{ color: 'var(--text-heading)' }}>
                     {formatCurrency(inputs.propertyPriceVnd, currency, lang)}
                   </span>
                 </div>
@@ -309,10 +342,10 @@ export const MortgageSimulator: React.FC<MortgageSimulatorProps> = ({
                     {copy.downPaymentLabel}
                   </label>
                   <div className="font-mono-tabular text-right">
-                    <span className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>
+                    <span className="text-sm font-semibold" style={{ color: 'var(--text-heading)' }}>
                       {inputs.downPaymentPct}%
                     </span>
-                    <span className="ml-2 text-xs" style={{ color: 'var(--accent)' }}>
+                    <span className="ml-2 text-xs font-semibold" style={{ color: 'var(--accent)' }}>
                       ({formatCurrency(analysis.downPaymentVnd, currency, lang, { compact: true })})
                     </span>
                   </div>
@@ -342,7 +375,7 @@ export const MortgageSimulator: React.FC<MortgageSimulatorProps> = ({
                   <label htmlFor="sim-term" className="text-xs font-semibold" style={{ color: 'var(--text-secondary)' }}>
                     {copy.loanTermLabel}
                   </label>
-                  <span className="font-mono-tabular text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>
+                  <span className="font-mono-tabular text-sm font-semibold" style={{ color: 'var(--text-heading)' }}>
                     {inputs.loanTermYears} {copy.yearsUnit}
                   </span>
                 </div>
@@ -403,11 +436,11 @@ export const MortgageSimulator: React.FC<MortgageSimulatorProps> = ({
                         onClick={() =>
                           onChangeInputs((prev) => ({ ...prev, annualInterestRatePct: preset.rate }))
                         }
-                        className="font-mono-tabular cursor-pointer rounded border px-2 py-0.5 text-[10px] font-semibold transition-colors"
+                        className="font-mono-tabular cursor-pointer rounded-sm border px-2 py-0.5 text-[10px] font-semibold transition-colors"
                         style={{
-                          borderColor: active ? 'var(--accent)' : 'var(--border-subtle)',
-                          backgroundColor: active ? 'var(--accent-soft)' : 'var(--bg-elevated)',
-                          color: active ? 'var(--accent)' : 'var(--text-secondary)',
+                          borderColor: active ? 'var(--cta-bg)' : 'var(--border-subtle)',
+                          backgroundColor: active ? 'var(--cta-bg)' : 'var(--bg-primary)',
+                          color: active ? 'var(--cta-ink)' : 'var(--text-secondary)',
                         }}
                       >
                         {preset.label}
@@ -423,7 +456,7 @@ export const MortgageSimulator: React.FC<MortgageSimulatorProps> = ({
                   <label htmlFor="sim-rent" className="text-xs font-semibold" style={{ color: 'var(--text-secondary)' }}>
                     {copy.monthlyRentLabel}
                   </label>
-                  <span className="font-mono-tabular text-sm font-semibold text-emerald-500">
+                  <span className="font-mono-tabular text-sm font-semibold" style={{ color: 'var(--status-available)' }}>
                     {formatCurrency(inputs.estimatedMonthlyRentVnd, currency, lang, { compact: true })}
                   </span>
                 </div>
@@ -450,7 +483,7 @@ export const MortgageSimulator: React.FC<MortgageSimulatorProps> = ({
                   <label htmlFor="sim-appreciation" className="text-xs font-semibold" style={{ color: 'var(--text-secondary)' }}>
                     {copy.appreciationLabel}
                   </label>
-                  <span className="font-mono-tabular text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>
+                  <span className="font-mono-tabular text-sm font-semibold" style={{ color: 'var(--text-heading)' }}>
                     {inputs.annualAppreciationPct.toFixed(1)}% / yr
                   </span>
                 </div>
@@ -478,49 +511,49 @@ export const MortgageSimulator: React.FC<MortgageSimulatorProps> = ({
                 <button
                   type="button"
                   onClick={handleExportCsv}
-                  className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl px-3.5 py-2.5 text-xs font-semibold transition-all hover:brightness-110"
-                  style={{ backgroundColor: 'var(--accent)', color: 'var(--accent-ink)' }}
+                  className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-sm px-3.5 py-2.5 text-xs font-semibold tracking-wide transition-all hover:opacity-92"
+                  style={{ backgroundColor: 'var(--cta-bg)', color: 'var(--cta-ink)' }}
                 >
-                  <FileSpreadsheetIcon className="h-4 w-4" />
+                  <FileSpreadsheetIcon className="h-4 w-4" style={{ color: 'var(--accent)' }} />
                   <span>{exportStatus === 'csv' ? copy.copiedLabel : copy.exportCsvBtn}</span>
                 </button>
                 <button
                   type="button"
                   onClick={onPrintDossier}
-                  className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl border px-3.5 py-2.5 text-xs font-semibold transition-all"
+                  className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-sm border px-3.5 py-2.5 text-xs font-semibold transition-all"
                   style={{
                     borderColor: 'var(--border-strong)',
                     backgroundColor: 'var(--accent-soft)',
-                    color: 'var(--accent)',
+                    color: 'var(--text-heading)',
                   }}
                 >
-                  <PrinterIcon className="h-4 w-4" />
+                  <PrinterIcon className="h-4 w-4" style={{ color: 'var(--accent)' }} />
                   <span>{copy.printPdfBtn}</span>
                 </button>
                 <button
                   type="button"
                   onClick={handleExportMd}
-                  className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl border px-3.5 py-2 text-xs font-semibold transition-all"
+                  className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-sm border px-3.5 py-2 text-xs font-semibold transition-all"
                   style={{
                     borderColor: 'var(--border-subtle)',
-                    backgroundColor: 'var(--bg-elevated)',
+                    backgroundColor: 'var(--bg-primary)',
                     color: 'var(--text-primary)',
                   }}
                 >
-                  <DownloadIcon className="h-3.5 w-3.5" />
+                  <DownloadIcon className="h-3.5 w-3.5" style={{ color: 'var(--accent)' }} />
                   <span>{exportStatus === 'md' ? copy.copiedLabel : copy.exportMdBtn}</span>
                 </button>
                 <button
                   type="button"
                   onClick={handleExportJson}
-                  className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl border px-3.5 py-2 text-xs font-semibold transition-all"
+                  className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-sm border px-3.5 py-2 text-xs font-semibold transition-all"
                   style={{
                     borderColor: 'var(--border-subtle)',
-                    backgroundColor: 'var(--bg-elevated)',
+                    backgroundColor: 'var(--bg-primary)',
                     color: 'var(--text-primary)',
                   }}
                 >
-                  <DownloadIcon className="h-3.5 w-3.5" />
+                  <DownloadIcon className="h-3.5 w-3.5" style={{ color: 'var(--accent)' }} />
                   <span>{exportStatus === 'json' ? copy.copiedLabel : copy.exportJsonBtn}</span>
                 </button>
               </div>
@@ -530,53 +563,66 @@ export const MortgageSimulator: React.FC<MortgageSimulatorProps> = ({
             </div>
           </div>
 
-          {/* Right Panel: Live KPI Telemetry + 10-Year Equity SVG Chart + Amortization */}
-          <div className="space-y-6 lg:col-span-7">
-            {/* Hero PMT & Principal/Interest Breakdown */}
+          {/* Right Panel: Institutional Telemetry Folios + Stress Test + 10Y Chart + Ledger */}
+          <div className="min-w-0 space-y-6 lg:col-span-7">
+            {/* Hero PMT & Principal/Interest Folio */}
             <div
-              className="rounded-2xl border p-5 sm:p-6"
+              className="border-t-2 border-r border-b border-l p-5 sm:p-6"
               style={{
                 backgroundColor: 'var(--bg-secondary)',
-                borderColor: 'var(--border-strong)',
+                borderTopColor: 'var(--accent)',
+                borderRightColor: 'var(--border-subtle)',
+                borderBottomColor: 'var(--border-subtle)',
+                borderLeftColor: 'var(--border-subtle)',
                 boxShadow: 'var(--shadow-card)',
               }}
             >
               <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
                 <div className="sm:col-span-2">
-                  <div className="font-mono-tabular text-[11px] font-semibold tracking-[0.18em] uppercase" style={{ color: 'var(--accent)' }}>
+                  <div
+                    className="font-mono-tabular text-[10.5px] font-semibold tracking-[0.2em] uppercase"
+                    style={{ color: 'var(--accent)' }}
+                  >
                     {copy.monthlyPmtTitle}
                   </div>
-                  <div className="font-mono-tabular mt-2 text-3xl font-semibold sm:text-4xl" style={{ color: 'var(--text-primary)' }}>
+                  <div
+                    className="font-mono-tabular mt-2 text-3xl font-semibold sm:text-4xl"
+                    style={{ color: 'var(--text-heading)' }}
+                  >
                     {formatCurrency(analysis.monthlyPaymentVnd, currency, lang)}
                   </div>
-                  <div className="mt-2 flex flex-wrap gap-4 text-xs" style={{ color: 'var(--text-secondary)' }}>
+                  <div className="mt-2.5 flex flex-wrap gap-4 text-xs" style={{ color: 'var(--text-secondary)' }}>
                     <span>
                       {copy.loanPrincipalLabel}:{' '}
-                      <strong className="font-mono-tabular" style={{ color: 'var(--text-primary)' }}>
+                      <strong className="font-mono-tabular" style={{ color: 'var(--text-heading)' }}>
                         {formatCurrency(analysis.loanPrincipalVnd, currency, lang, { compact: true })}
                       </strong>
                     </span>
                     <span>
                       {copy.totalInterestLabel}:{' '}
-                      <strong className="font-mono-tabular text-amber-500">
+                      <strong className="font-mono-tabular" style={{ color: 'var(--status-reserved)' }}>
                         {formatCurrency(analysis.totalInterestVnd, currency, lang, { compact: true })}
                       </strong>
                     </span>
                   </div>
                 </div>
 
-                {/* Cash-on-Cash / Cashflow Pill */}
+                {/* Cash-on-Cash / Cashflow Well */}
                 <div
-                  className="flex flex-col justify-center rounded-xl border p-3.5"
-                  style={{ borderColor: 'var(--border-subtle)', backgroundColor: 'var(--bg-elevated)' }}
+                  className="flex flex-col justify-center border p-3.5"
+                  style={{ borderColor: 'var(--border-subtle)', backgroundColor: 'var(--bg-primary)' }}
                 >
-                  <div className="text-[11px]" style={{ color: 'var(--text-muted)' }}>
+                  <div className="text-[10.5px] font-medium tracking-wider uppercase" style={{ color: 'var(--text-muted)' }}>
                     {copy.monthlyCashFlowLabel}
                   </div>
                   <div
-                    className={`font-mono-tabular mt-1 text-lg font-semibold ${
-                      analysis.monthlyNetCashFlowVnd >= 0 ? 'text-emerald-500' : 'text-amber-500'
-                    }`}
+                    className="font-mono-tabular mt-1 text-lg font-semibold"
+                    style={{
+                      color:
+                        analysis.monthlyNetCashFlowVnd >= 0
+                          ? 'var(--status-available)'
+                          : 'var(--status-reserved)',
+                    }}
                   >
                     {formatCurrency(analysis.monthlyNetCashFlowVnd, currency, lang, {
                       compact: true,
@@ -597,36 +643,36 @@ export const MortgageSimulator: React.FC<MortgageSimulatorProps> = ({
                     {copy.principalLabel} {principalPct.toFixed(0)}% · {copy.interestLabel} {interestPct.toFixed(0)}%
                   </span>
                 </div>
-                <div className="flex h-3 w-full overflow-hidden rounded-full bg-black/25">
+                <div className="flex h-2.5 w-full overflow-hidden rounded-sm" style={{ backgroundColor: 'var(--track-bg)' }}>
                   <div
                     className="h-full transition-all duration-300"
-                    style={{ width: `${principalPct}%`, backgroundColor: 'var(--accent)' }}
+                    style={{ width: `${principalPct}%`, backgroundColor: 'var(--cta-bg)' }}
                   />
                   <div
-                    className="h-full bg-amber-500/75 transition-all duration-300"
-                    style={{ width: `${interestPct}%` }}
+                    className="h-full transition-all duration-300"
+                    style={{ width: `${interestPct}%`, backgroundColor: 'var(--accent)' }}
                   />
                 </div>
               </div>
 
-              {/* 4 Financial Yield & ROI KPI Tiles */}
+              {/* 4 Financial Yield & ROI Ledger Tiles */}
               <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
-                <div className="rounded-xl border p-3" style={{ borderColor: 'var(--border-subtle)', backgroundColor: 'var(--bg-primary)' }}>
-                  <div className="text-[11px]" style={{ color: 'var(--text-muted)' }}>{copy.grossYieldLabel}</div>
-                  <div className="font-mono-tabular mt-1 text-lg font-semibold" style={{ color: 'var(--text-primary)' }}>
+                <div className="border p-3" style={{ borderColor: 'var(--border-subtle)', backgroundColor: 'var(--bg-primary)' }}>
+                  <div className="text-[10.5px]" style={{ color: 'var(--text-muted)' }}>{copy.grossYieldLabel}</div>
+                  <div className="font-mono-tabular mt-1 text-lg font-semibold" style={{ color: 'var(--text-heading)' }}>
                     {analysis.grossRentalYieldPct.toFixed(2)}%
                   </div>
                 </div>
 
-                <div className="rounded-xl border p-3" style={{ borderColor: 'var(--border-subtle)', backgroundColor: 'var(--bg-primary)' }}>
-                  <div className="text-[11px]" style={{ color: 'var(--text-muted)' }}>{copy.netYieldLabel}</div>
-                  <div className="font-mono-tabular mt-1 text-lg font-semibold text-emerald-500">
+                <div className="border p-3" style={{ borderColor: 'var(--border-subtle)', backgroundColor: 'var(--bg-primary)' }}>
+                  <div className="text-[10.5px]" style={{ color: 'var(--text-muted)' }}>{copy.netYieldLabel}</div>
+                  <div className="font-mono-tabular mt-1 text-lg font-semibold" style={{ color: 'var(--status-available)' }}>
                     {analysis.netRentalYieldPct.toFixed(2)}%
                   </div>
                 </div>
 
-                <div className="rounded-xl border p-3" style={{ borderColor: 'var(--border-subtle)', backgroundColor: 'var(--bg-primary)' }}>
-                  <div className="text-[11px]" style={{ color: 'var(--text-muted)' }}>{copy.tenYearEquityLabel}</div>
+                <div className="border p-3" style={{ borderColor: 'var(--border-subtle)', backgroundColor: 'var(--bg-primary)' }}>
+                  <div className="text-[10.5px]" style={{ color: 'var(--text-muted)' }}>{copy.tenYearEquityLabel}</div>
                   <div className="font-mono-tabular mt-1 text-lg font-semibold" style={{ color: 'var(--accent)' }}>
                     {formatCurrency(
                       analysis.tenYearProjection[9]?.netEquityVnd ?? 0,
@@ -637,31 +683,34 @@ export const MortgageSimulator: React.FC<MortgageSimulatorProps> = ({
                   </div>
                 </div>
 
-                <div className="rounded-xl border p-3" style={{ borderColor: 'var(--border-subtle)', backgroundColor: 'var(--bg-primary)' }}>
-                  <div className="text-[11px]" style={{ color: 'var(--text-muted)' }}>{copy.tenYearRoiLabel}</div>
-                  <div className="font-mono-tabular mt-1 text-lg font-semibold text-emerald-500">
+                <div className="border p-3" style={{ borderColor: 'var(--border-subtle)', backgroundColor: 'var(--bg-primary)' }}>
+                  <div className="text-[10.5px]" style={{ color: 'var(--text-muted)' }}>{copy.tenYearRoiLabel}</div>
+                  <div className="font-mono-tabular mt-1 text-lg font-semibold" style={{ color: 'var(--status-available)' }}>
                     +{analysis.tenYearTotalRoiPct.toFixed(0)}%
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Live Interest-Rate Stress Test (+0% / +2% / +4%) & DTI Safety Rating */}
+            {/* Live Interest-Rate Stress Test (+0% / +2% / +4%) & Bank DTI Underwriting */}
             <div
-              className="rounded-2xl border p-5 sm:p-6"
+              className="border p-5 sm:p-6"
               style={{
                 backgroundColor: 'var(--bg-secondary)',
                 borderColor: 'var(--border-subtle)',
                 boxShadow: 'var(--shadow-card)',
               }}
             >
-              <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-start">
+              <div className="flex flex-col justify-between gap-3 border-b pb-4 sm:flex-row sm:items-start" style={{ borderColor: 'var(--border-subtle)' }}>
                 <div>
-                  <div className="font-mono-tabular flex items-center gap-1.5 text-[10px] font-semibold tracking-[0.2em] uppercase" style={{ color: 'var(--accent)' }}>
+                  <div
+                    className="font-mono-tabular flex items-center gap-1.5 text-[10px] font-semibold tracking-[0.2em] uppercase"
+                    style={{ color: 'var(--accent)' }}
+                  >
                     <PulseIcon className="h-3.5 w-3.5" />
                     <span>{copy.stressEyebrow}</span>
                   </div>
-                  <h3 className="mt-1 text-base font-semibold" style={{ color: 'var(--text-primary)' }}>
+                  <h3 className="font-display mt-1 text-xl font-semibold sm:text-2xl" style={{ color: 'var(--text-heading)' }}>
                     {copy.stressTitle}
                   </h3>
                   <p className="mt-0.5 text-xs" style={{ color: 'var(--text-muted)' }}>
@@ -680,11 +729,11 @@ export const MortgageSimulator: React.FC<MortgageSimulatorProps> = ({
                         key={shock}
                         type="button"
                         onClick={() => onChangeRateShock(shock)}
-                        className="font-mono-tabular cursor-pointer rounded-lg border px-2.5 py-1.5 text-[11px] font-semibold transition-all"
+                        className="font-mono-tabular cursor-pointer rounded-sm border px-2.5 py-1.5 text-[11px] font-semibold transition-all"
                         style={{
-                          borderColor: active ? 'var(--accent)' : 'var(--border-subtle)',
-                          backgroundColor: active ? 'var(--accent)' : 'var(--bg-elevated)',
-                          color: active ? 'var(--accent-ink)' : 'var(--text-secondary)',
+                          borderColor: active ? 'var(--cta-bg)' : 'var(--border-subtle)',
+                          backgroundColor: active ? 'var(--cta-bg)' : 'var(--bg-primary)',
+                          color: active ? 'var(--cta-ink)' : 'var(--text-secondary)',
                         }}
                       >
                         {label}
@@ -696,7 +745,7 @@ export const MortgageSimulator: React.FC<MortgageSimulatorProps> = ({
 
               {/* Dual Interactive Controls: Rate Shock Slider + Monthly Investor Income Slider */}
               <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <div className="rounded-xl border p-3.5" style={{ borderColor: 'var(--border-subtle)', backgroundColor: 'var(--bg-elevated)' }}>
+                <div className="border p-3.5" style={{ borderColor: 'var(--border-subtle)', backgroundColor: 'var(--bg-primary)' }}>
                   <div className="mb-2 flex items-baseline justify-between gap-2">
                     <label htmlFor="sim-shock" className="text-xs font-semibold" style={{ color: 'var(--text-secondary)' }}>
                       {copy.rateShockLabel}
@@ -722,12 +771,12 @@ export const MortgageSimulator: React.FC<MortgageSimulatorProps> = ({
                   </div>
                 </div>
 
-                <div className="rounded-xl border p-3.5" style={{ borderColor: 'var(--border-subtle)', backgroundColor: 'var(--bg-elevated)' }}>
+                <div className="border p-3.5" style={{ borderColor: 'var(--border-subtle)', backgroundColor: 'var(--bg-primary)' }}>
                   <div className="mb-2 flex items-baseline justify-between gap-2">
                     <label htmlFor="sim-income" className="text-xs font-semibold" style={{ color: 'var(--text-secondary)' }}>
                       {copy.monthlyIncomeLabel}
                     </label>
-                    <span className="font-mono-tabular text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>
+                    <span className="font-mono-tabular text-sm font-semibold" style={{ color: 'var(--text-heading)' }}>
                       {formatCurrency(monthlyIncomeVnd, currency, lang, { compact: true })}
                     </span>
                   </div>
@@ -751,16 +800,16 @@ export const MortgageSimulator: React.FC<MortgageSimulatorProps> = ({
 
               {/* Active Shock Telemetry & DTI Safety Badge */}
               <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
-                <div className="rounded-xl border p-3" style={{ borderColor: 'var(--border-subtle)', backgroundColor: 'var(--bg-primary)' }}>
-                  <div className="text-[11px]" style={{ color: 'var(--text-muted)' }}>{copy.stressedPmtLabel}</div>
-                  <div className="font-mono-tabular mt-1 text-base font-semibold" style={{ color: 'var(--text-primary)' }}>
+                <div className="border p-3" style={{ borderColor: 'var(--border-subtle)', backgroundColor: 'var(--bg-primary)' }}>
+                  <div className="text-[10.5px]" style={{ color: 'var(--text-muted)' }}>{copy.stressedPmtLabel}</div>
+                  <div className="font-mono-tabular mt-1 text-base font-semibold" style={{ color: 'var(--text-heading)' }}>
                     {formatCurrency(stressSummary.activeScenario.monthlyPaymentVnd, currency, lang, { compact: true })}
                   </div>
                 </div>
 
-                <div className="rounded-xl border p-3" style={{ borderColor: 'var(--border-subtle)', backgroundColor: 'var(--bg-primary)' }}>
-                  <div className="text-[11px]" style={{ color: 'var(--text-muted)' }}>{copy.shockDeltaLabel}</div>
-                  <div className="font-mono-tabular mt-1 text-base font-semibold text-amber-500">
+                <div className="border p-3" style={{ borderColor: 'var(--border-subtle)', backgroundColor: 'var(--bg-primary)' }}>
+                  <div className="text-[10.5px]" style={{ color: 'var(--text-muted)' }}>{copy.shockDeltaLabel}</div>
+                  <div className="font-mono-tabular mt-1 text-base font-semibold" style={{ color: 'var(--status-reserved)' }}>
                     {stressSummary.activeScenario.deltaMonthlyPaymentVnd > 0
                       ? `+${formatCurrency(stressSummary.activeScenario.deltaMonthlyPaymentVnd, currency, lang, { compact: true })}`
                       : formatCurrency(0, currency, lang, { compact: true })}
@@ -768,13 +817,13 @@ export const MortgageSimulator: React.FC<MortgageSimulatorProps> = ({
                 </div>
 
                 <div
-                  className="rounded-xl border p-3"
+                  className="border p-3"
                   style={{
                     borderColor: activeDtiPalette.border,
                     backgroundColor: activeDtiPalette.bg,
                   }}
                 >
-                  <div className="flex items-center justify-between text-[11px]" style={{ color: activeDtiPalette.text }}>
+                  <div className="flex items-center justify-between text-[10.5px]" style={{ color: activeDtiPalette.text }}>
                     <span>{copy.dtiRatioLabel}</span>
                     {stressSummary.activeScenario.dtiSafetyTier === 'SAFE' ? (
                       <ShieldCheckIcon className="h-4 w-4" />
@@ -814,36 +863,41 @@ export const MortgageSimulator: React.FC<MortgageSimulatorProps> = ({
                         <tr
                           key={sc.shockPct}
                           onClick={() => onChangeRateShock(sc.shockPct)}
-                          className="cursor-pointer transition-colors"
+                          className="editorial-table-row cursor-pointer transition-colors"
                           style={{
                             backgroundColor: isCurrent ? 'var(--accent-soft)' : 'transparent',
                           }}
                         >
-                          <td className="py-2.5 pr-2 font-semibold" style={{ color: isCurrent ? 'var(--accent)' : 'var(--text-primary)' }}>
+                          <td className="py-2.5 pr-2 font-semibold" style={{ color: isCurrent ? 'var(--accent)' : 'var(--text-heading)' }}>
                             {scenarioName}
                           </td>
                           <td className="px-2 py-2.5 text-right" style={{ color: 'var(--text-secondary)' }}>
                             {sc.effectiveRatePct.toFixed(1)}%
                           </td>
-                          <td className="px-2 py-2.5 text-right font-semibold" style={{ color: 'var(--text-primary)' }}>
+                          <td className="px-2 py-2.5 text-right font-semibold" style={{ color: 'var(--text-heading)' }}>
                             {formatCurrency(sc.monthlyPaymentVnd, currency, lang, { compact: true })}
                           </td>
-                          <td className="px-2 py-2.5 text-right text-amber-500">
+                          <td className="px-2 py-2.5 text-right" style={{ color: 'var(--status-reserved)' }}>
                             {sc.deltaMonthlyPaymentVnd > 0
                               ? `+${formatCurrency(sc.deltaMonthlyPaymentVnd, currency, lang, { compact: true })}`
                               : '—'}
                           </td>
                           <td
-                            className={`px-2 py-2.5 text-right ${
-                              sc.monthlyNetCashFlowVnd >= 0 ? 'text-emerald-500' : 'text-amber-500'
-                            }`}
+                            className="px-2 py-2.5 text-right"
+                            style={{
+                              color: sc.monthlyNetCashFlowVnd >= 0 ? 'var(--status-available)' : 'var(--status-reserved)',
+                            }}
                           >
                             {formatCurrency(sc.monthlyNetCashFlowVnd, currency, lang, { compact: true, signed: true })}
                           </td>
                           <td className="py-2.5 pl-2 text-right">
                             <span
-                              className="inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold"
-                              style={{ backgroundColor: tierStyle.bg, color: tierStyle.text }}
+                              className="inline-flex items-center rounded-sm border px-2 py-0.5 text-[10px] font-semibold"
+                              style={{
+                                backgroundColor: tierStyle.bg,
+                                borderColor: tierStyle.border,
+                                color: tierStyle.text,
+                              }}
                             >
                               {sc.dtiRatioPct.toFixed(1)}% · {sc.dtiSafetyTier}
                             </span>
@@ -858,7 +912,7 @@ export const MortgageSimulator: React.FC<MortgageSimulatorProps> = ({
 
             {/* 10-Year Equity Projection Interactive SVG Chart */}
             <div
-              className="rounded-2xl border p-5 sm:p-6"
+              className="border p-5 sm:p-6"
               style={{
                 backgroundColor: 'var(--bg-secondary)',
                 borderColor: 'var(--border-subtle)',
@@ -867,7 +921,7 @@ export const MortgageSimulator: React.FC<MortgageSimulatorProps> = ({
             >
               <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-start">
                 <div>
-                  <h3 className="text-base font-semibold" style={{ color: 'var(--text-primary)' }}>
+                  <h3 className="font-display text-xl font-semibold sm:text-2xl" style={{ color: 'var(--text-heading)' }}>
                     {copy.chartTitle}
                   </h3>
                   <p className="mt-0.5 text-xs" style={{ color: 'var(--text-muted)' }}>
@@ -878,19 +932,19 @@ export const MortgageSimulator: React.FC<MortgageSimulatorProps> = ({
                 {/* Legend */}
                 <div className="flex flex-wrap gap-3 text-[11px]" style={{ color: 'var(--text-secondary)' }}>
                   <span className="inline-flex items-center gap-1.5">
-                    <span className="h-2 w-2 rounded-full bg-[#D4A373]" />
+                    <span className="h-2 w-2 rounded-full" style={{ backgroundColor: 'var(--chart-property)' }} />
                     {copy.chartPropertyValue}
                   </span>
                   <span className="inline-flex items-center gap-1.5">
-                    <span className="h-2 w-2 rounded-full bg-emerald-500" />
+                    <span className="h-2 w-2 rounded-full" style={{ backgroundColor: 'var(--chart-equity)' }} />
                     {copy.chartNetEquity}
                   </span>
                   <span className="inline-flex items-center gap-1.5">
-                    <span className="h-2 w-2 rounded-full bg-amber-500" />
+                    <span className="h-2 w-2 rounded-full" style={{ backgroundColor: 'var(--chart-debt)' }} />
                     {copy.chartRemainingDebt}
                   </span>
                   <span className="inline-flex items-center gap-1.5">
-                    <span className="h-2 w-2 rounded-full bg-sky-400" />
+                    <span className="h-2 w-2 rounded-full" style={{ backgroundColor: 'var(--chart-rent)' }} />
                     {copy.chartCumRent}
                   </span>
                 </div>
@@ -899,8 +953,8 @@ export const MortgageSimulator: React.FC<MortgageSimulatorProps> = ({
               {/* Active Year Telemetry Bar */}
               {activePoint && (
                 <div
-                  className="mt-4 grid grid-cols-2 gap-2 rounded-xl border p-3 sm:grid-cols-5"
-                  style={{ borderColor: 'var(--border-subtle)', backgroundColor: 'var(--bg-elevated)' }}
+                  className="mt-4 grid grid-cols-2 gap-2 border p-3 sm:grid-cols-5"
+                  style={{ borderColor: 'var(--border-subtle)', backgroundColor: 'var(--bg-primary)' }}
                 >
                   <div>
                     <div className="text-[10px] uppercase" style={{ color: 'var(--text-muted)' }}>
@@ -912,25 +966,25 @@ export const MortgageSimulator: React.FC<MortgageSimulatorProps> = ({
                   </div>
                   <div>
                     <div className="text-[10px]" style={{ color: 'var(--text-muted)' }}>{copy.chartPropertyValue}</div>
-                    <div className="font-mono-tabular text-xs font-semibold" style={{ color: 'var(--text-primary)' }}>
+                    <div className="font-mono-tabular text-xs font-semibold" style={{ color: 'var(--text-heading)' }}>
                       {formatCurrency(activePoint.propertyValueVnd, currency, lang, { compact: true })}
                     </div>
                   </div>
                   <div>
                     <div className="text-[10px]" style={{ color: 'var(--text-muted)' }}>{copy.chartNetEquity}</div>
-                    <div className="font-mono-tabular text-xs font-semibold text-emerald-500">
+                    <div className="font-mono-tabular text-xs font-semibold" style={{ color: 'var(--chart-equity)' }}>
                       {formatCurrency(activePoint.netEquityVnd, currency, lang, { compact: true })}
                     </div>
                   </div>
                   <div>
                     <div className="text-[10px]" style={{ color: 'var(--text-muted)' }}>{copy.chartRemainingDebt}</div>
-                    <div className="font-mono-tabular text-xs font-semibold text-amber-500">
+                    <div className="font-mono-tabular text-xs font-semibold" style={{ color: 'var(--chart-debt)' }}>
                       {formatCurrency(activePoint.remainingDebtVnd, currency, lang, { compact: true })}
                     </div>
                   </div>
                   <div>
                     <div className="text-[10px]" style={{ color: 'var(--text-muted)' }}>{copy.chartCumRent}</div>
-                    <div className="font-mono-tabular text-xs font-semibold text-sky-400">
+                    <div className="font-mono-tabular text-xs font-semibold" style={{ color: 'var(--chart-rent)' }}>
                       {formatCurrency(activePoint.cumulativeNetRentVnd, currency, lang, { compact: true })}
                     </div>
                   </div>
@@ -942,8 +996,8 @@ export const MortgageSimulator: React.FC<MortgageSimulatorProps> = ({
                 <svg viewBox={`0 0 ${chartW} ${chartH}`} className="h-auto w-full select-none" role="img" aria-label={copy.chartTitle}>
                   <defs>
                     <linearGradient id="equityGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#10B981" stopOpacity="0.28" />
-                      <stop offset="100%" stopColor="#10B981" stopOpacity="0.02" />
+                      <stop offset="0%" stopColor="#157356" stopOpacity="0.22" />
+                      <stop offset="100%" stopColor="#157356" stopOpacity="0.02" />
                     </linearGradient>
                   </defs>
 
@@ -967,10 +1021,10 @@ export const MortgageSimulator: React.FC<MortgageSimulatorProps> = ({
                   <path d={equityAreaPath} fill="url(#equityGrad)" />
 
                   {/* Series Curves */}
-                  <path d={propertyPath} fill="none" stroke="#D4A373" strokeWidth="2.4" strokeLinecap="round" />
-                  <path d={equityPath} fill="none" stroke="#10B981" strokeWidth="2.2" strokeLinecap="round" />
-                  <path d={debtPath} fill="none" stroke="#F59E0B" strokeWidth="1.8" strokeDasharray="5 3" />
-                  <path d={rentPath} fill="none" stroke="#38BDF8" strokeWidth="1.8" />
+                  <path d={propertyPath} fill="none" stroke="var(--chart-property)" strokeWidth="2.4" strokeLinecap="round" />
+                  <path d={equityPath} fill="none" stroke="var(--chart-equity)" strokeWidth="2.2" strokeLinecap="round" />
+                  <path d={debtPath} fill="none" stroke="var(--chart-debt)" strokeWidth="1.9" strokeDasharray="5 3" />
+                  <path d={rentPath} fill="none" stroke="var(--chart-rent)" strokeWidth="1.8" />
 
                   {/* Active Vertical Guide Line & Dots */}
                   {activePoint && (
@@ -981,13 +1035,13 @@ export const MortgageSimulator: React.FC<MortgageSimulatorProps> = ({
                         x2={xForYear(activePoint.year)}
                         y2={padT + innerH}
                         stroke="var(--accent)"
-                        strokeOpacity="0.5"
+                        strokeOpacity="0.55"
                         strokeDasharray="2 2"
                       />
-                      <circle cx={xForYear(activePoint.year)} cy={yForVal(activePoint.propertyValueVnd)} r="4.5" fill="#D4A373" stroke="var(--bg-secondary)" strokeWidth="2" />
-                      <circle cx={xForYear(activePoint.year)} cy={yForVal(activePoint.netEquityVnd)} r="4.5" fill="#10B981" stroke="var(--bg-secondary)" strokeWidth="2" />
-                      <circle cx={xForYear(activePoint.year)} cy={yForVal(activePoint.remainingDebtVnd)} r="3.5" fill="#F59E0B" />
-                      <circle cx={xForYear(activePoint.year)} cy={yForVal(activePoint.cumulativeNetRentVnd)} r="3.5" fill="#38BDF8" />
+                      <circle cx={xForYear(activePoint.year)} cy={yForVal(activePoint.propertyValueVnd)} r="4.5" fill="var(--chart-property)" stroke="var(--bg-secondary)" strokeWidth="2" />
+                      <circle cx={xForYear(activePoint.year)} cy={yForVal(activePoint.netEquityVnd)} r="4.5" fill="var(--chart-equity)" stroke="var(--bg-secondary)" strokeWidth="2" />
+                      <circle cx={xForYear(activePoint.year)} cy={yForVal(activePoint.remainingDebtVnd)} r="3.5" fill="var(--chart-debt)" />
+                      <circle cx={xForYear(activePoint.year)} cy={yForVal(activePoint.cumulativeNetRentVnd)} r="3.5" fill="var(--chart-rent)" />
                     </g>
                   )}
 
@@ -1028,9 +1082,9 @@ export const MortgageSimulator: React.FC<MortgageSimulatorProps> = ({
               </div>
             </div>
 
-            {/* Year-by-Year 10-Year / Full-Term Amortization Schedule Table */}
+            {/* Year-by-Year 10-Year / Full-Term Amortization Schedule Ledger */}
             <div
-              className="rounded-2xl border p-5 sm:p-6"
+              className="border p-5 sm:p-6"
               style={{
                 backgroundColor: 'var(--bg-secondary)',
                 borderColor: 'var(--border-subtle)',
@@ -1039,7 +1093,7 @@ export const MortgageSimulator: React.FC<MortgageSimulatorProps> = ({
             >
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div>
-                  <h3 className="text-base font-semibold" style={{ color: 'var(--text-primary)' }}>
+                  <h3 className="font-display text-xl font-semibold sm:text-2xl" style={{ color: 'var(--text-heading)' }}>
                     {copy.amortizationTitle}
                   </h3>
                   <p className="mt-0.5 text-xs" style={{ color: 'var(--text-muted)' }}>
@@ -1049,16 +1103,16 @@ export const MortgageSimulator: React.FC<MortgageSimulatorProps> = ({
 
                 <div className="flex flex-wrap items-center gap-2">
                   <div
-                    className="inline-flex rounded-lg border p-0.5"
-                    style={{ borderColor: 'var(--border-subtle)', backgroundColor: 'var(--bg-elevated)' }}
+                    className="inline-flex rounded-sm border p-0.5"
+                    style={{ borderColor: 'var(--border-subtle)', backgroundColor: 'var(--bg-primary)' }}
                   >
                     <button
                       type="button"
                       onClick={() => setScheduleScope('10y')}
-                      className="cursor-pointer rounded-md px-2.5 py-1 text-[11px] font-semibold transition-colors"
+                      className="cursor-pointer rounded-sm px-2.5 py-1 text-[11px] font-semibold transition-colors"
                       style={{
-                        backgroundColor: scheduleScope === '10y' ? 'var(--accent)' : 'transparent',
-                        color: scheduleScope === '10y' ? 'var(--accent-ink)' : 'var(--text-secondary)',
+                        backgroundColor: scheduleScope === '10y' ? 'var(--cta-bg)' : 'transparent',
+                        color: scheduleScope === '10y' ? 'var(--cta-ink)' : 'var(--text-secondary)',
                       }}
                     >
                       {copy.scheduleTab10Y}
@@ -1066,10 +1120,10 @@ export const MortgageSimulator: React.FC<MortgageSimulatorProps> = ({
                     <button
                       type="button"
                       onClick={() => setScheduleScope('full')}
-                      className="cursor-pointer rounded-md px-2.5 py-1 text-[11px] font-semibold transition-colors"
+                      className="cursor-pointer rounded-sm px-2.5 py-1 text-[11px] font-semibold transition-colors"
                       style={{
-                        backgroundColor: scheduleScope === 'full' ? 'var(--accent)' : 'transparent',
-                        color: scheduleScope === 'full' ? 'var(--accent-ink)' : 'var(--text-secondary)',
+                        backgroundColor: scheduleScope === 'full' ? 'var(--cta-bg)' : 'transparent',
+                        color: scheduleScope === 'full' ? 'var(--cta-ink)' : 'var(--text-secondary)',
                       }}
                     >
                       {copy.scheduleTabFull} ({analysis.amortizationSchedule.length})
@@ -1079,14 +1133,14 @@ export const MortgageSimulator: React.FC<MortgageSimulatorProps> = ({
                   <button
                     type="button"
                     onClick={handleExportCsv}
-                    className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-[11px] font-semibold transition-colors"
+                    className="inline-flex cursor-pointer items-center gap-1.5 rounded-sm border px-2.5 py-1.5 text-[11px] font-semibold transition-colors"
                     style={{
                       borderColor: 'var(--border-strong)',
                       backgroundColor: 'var(--accent-soft)',
-                      color: 'var(--accent)',
+                      color: 'var(--text-heading)',
                     }}
                   >
-                    <FileSpreadsheetIcon className="h-3.5 w-3.5" />
+                    <FileSpreadsheetIcon className="h-3.5 w-3.5" style={{ color: 'var(--accent)' }} />
                     <span>{exportStatus === 'csv' ? copy.copiedLabel : 'CSV'}</span>
                   </button>
                 </div>
@@ -1111,29 +1165,32 @@ export const MortgageSimulator: React.FC<MortgageSimulatorProps> = ({
                           ? Math.min(100, Math.round((row.principalPaidVnd / row.annualPaymentVnd) * 100))
                           : 0;
                       return (
-                        <tr key={row.year} className="hover:bg-white/[0.02]">
+                        <tr key={row.year} className="editorial-table-row transition-colors">
                           <td className="py-2.5 pr-3 font-semibold" style={{ color: 'var(--accent)' }}>
                             Y{row.year}
                           </td>
                           <td className="px-3 py-2.5 text-right" style={{ color: 'var(--text-secondary)' }}>
                             {formatCurrency(row.openingBalanceVnd, currency, lang, { compact: true })}
                           </td>
-                          <td className="px-3 py-2.5 text-right" style={{ color: 'var(--text-primary)' }}>
+                          <td className="px-3 py-2.5 text-right" style={{ color: 'var(--text-heading)' }}>
                             {formatCurrency(row.annualPaymentVnd, currency, lang, { compact: true })}
                           </td>
-                          <td className="px-3 py-2.5 text-right text-emerald-500">
+                          <td className="px-3 py-2.5 text-right" style={{ color: 'var(--status-available)' }}>
                             <div>{formatCurrency(row.principalPaidVnd, currency, lang, { compact: true })}</div>
-                            <div className="mt-1 ml-auto h-1 w-14 overflow-hidden rounded-full bg-black/25">
+                            <div className="mt-1 ml-auto h-1 w-14 overflow-hidden rounded-full" style={{ backgroundColor: 'var(--track-bg)' }}>
                               <div
-                                className="h-full rounded-full bg-emerald-500"
-                                style={{ width: `${principalSharePct}%` }}
+                                className="h-full rounded-full"
+                                style={{
+                                  width: `${principalSharePct}%`,
+                                  backgroundColor: 'var(--status-available)',
+                                }}
                               />
                             </div>
                           </td>
-                          <td className="px-3 py-2.5 text-right text-amber-500">
+                          <td className="px-3 py-2.5 text-right" style={{ color: 'var(--status-reserved)' }}>
                             {formatCurrency(row.interestPaidVnd, currency, lang, { compact: true })}
                           </td>
-                          <td className="py-2.5 pl-3 text-right font-semibold" style={{ color: 'var(--text-primary)' }}>
+                          <td className="py-2.5 pl-3 text-right font-semibold" style={{ color: 'var(--text-heading)' }}>
                             {formatCurrency(row.endingBalanceVnd, currency, lang, { compact: true })}
                           </td>
                         </tr>
@@ -1145,16 +1202,16 @@ export const MortgageSimulator: React.FC<MortgageSimulatorProps> = ({
                       <td className="py-2.5 pr-3 text-[11px]" colSpan={2} style={{ color: 'var(--accent)' }}>
                         {copy.totalRowLabel} ({displayedAmortization.length} {copy.yearsUnit})
                       </td>
-                      <td className="px-3 py-2.5 text-right" style={{ color: 'var(--text-primary)' }}>
+                      <td className="px-3 py-2.5 text-right" style={{ color: 'var(--text-heading)' }}>
                         {formatCurrency(displayedTotals.annualPaymentVnd, currency, lang, { compact: true })}
                       </td>
-                      <td className="px-3 py-2.5 text-right text-emerald-500">
+                      <td className="px-3 py-2.5 text-right" style={{ color: 'var(--status-available)' }}>
                         {formatCurrency(displayedTotals.principalPaidVnd, currency, lang, { compact: true })}
                       </td>
-                      <td className="px-3 py-2.5 text-right text-amber-500">
+                      <td className="px-3 py-2.5 text-right" style={{ color: 'var(--status-reserved)' }}>
                         {formatCurrency(displayedTotals.interestPaidVnd, currency, lang, { compact: true })}
                       </td>
-                      <td className="py-2.5 pl-3 text-right" style={{ color: 'var(--text-primary)' }}>
+                      <td className="py-2.5 pl-3 text-right" style={{ color: 'var(--text-heading)' }}>
                         {formatCurrency(
                           displayedAmortization[displayedAmortization.length - 1]?.endingBalanceVnd ?? 0,
                           currency,

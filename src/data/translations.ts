@@ -282,8 +282,8 @@ export const TRANSLATIONS: Record<Language, CopyBundle> = {
       compare: 'So Sánh',
       vault: 'VIP Vault',
       schedule: 'Đặt Lịch VIP',
-      themeDark: 'Obsidian',
-      themeLight: 'Limestone',
+      themeDark: 'Midnight Navy',
+      themeLight: 'Daylight Ivory',
     },
     hero: {
       eyebrow: 'THE KINETIX RESIDENCES · THỦ THIÊM RIVERFRONT',
@@ -583,8 +583,8 @@ export const TRANSLATIONS: Record<Language, CopyBundle> = {
       compare: 'Compare',
       vault: 'VIP Vault',
       schedule: 'VIP Viewing',
-      themeDark: 'Obsidian',
-      themeLight: 'Limestone',
+      themeDark: 'Midnight Navy',
+      themeLight: 'Daylight Ivory',
     },
     hero: {
       eyebrow: 'THE KINETIX RESIDENCES · THU THIEM RIVERFRONT',

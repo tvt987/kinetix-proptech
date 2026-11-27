@@ -94,17 +94,21 @@ export const ReservationDepositModal: React.FC<ReservationDepositModalProps> = (
 
   return (
     <div
-      className="no-print fixed inset-0 z-50 flex items-center justify-center bg-black/75 p-3 backdrop-blur-sm sm:p-6"
+      className="no-print fixed inset-0 z-50 flex items-center justify-center p-3 backdrop-blur-sm sm:p-6"
+      style={{ backgroundColor: 'var(--backdrop-veil)' }}
       role="dialog"
       aria-modal="true"
       aria-label={copy.title}
       onClick={onClose}
     >
       <div
-        className="flex max-h-[92vh] w-full max-w-3xl flex-col overflow-hidden rounded-2xl border shadow-2xl"
+        className="flex max-h-[92vh] w-full max-w-3xl flex-col overflow-hidden border-t-2 border-r border-b border-l shadow-2xl"
         style={{
           backgroundColor: 'var(--bg-secondary)',
-          borderColor: 'var(--border-strong)',
+          borderTopColor: 'var(--cta-bg)',
+          borderRightColor: 'var(--border-subtle)',
+          borderBottomColor: 'var(--border-subtle)',
+          borderLeftColor: 'var(--border-subtle)',
         }}
         onClick={(e) => e.stopPropagation()}
       >
@@ -114,10 +118,10 @@ export const ReservationDepositModal: React.FC<ReservationDepositModalProps> = (
           style={{ borderColor: 'var(--border-subtle)' }}
         >
           <div>
-            <div className="font-mono-tabular text-[11px] font-semibold tracking-[0.2em] uppercase" style={{ color: 'var(--accent)' }}>
+            <div className="font-mono-tabular text-[10.5px] font-semibold tracking-[0.2em] uppercase" style={{ color: 'var(--accent)' }}>
               {copy.eyebrow}
             </div>
-            <h3 className="font-display mt-1 text-2xl font-semibold sm:text-3xl" style={{ color: 'var(--text-primary)' }}>
+            <h3 className="font-display mt-1 text-2xl font-semibold sm:text-3xl" style={{ color: 'var(--text-heading)' }}>
               {copy.title}
             </h3>
             <p className="mt-1 text-xs" style={{ color: 'var(--text-secondary)' }}>
@@ -132,7 +136,7 @@ export const ReservationDepositModal: React.FC<ReservationDepositModalProps> = (
             type="button"
             onClick={onClose}
             aria-label={copy.closeBtn}
-            className="flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-lg border"
+            className="flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-sm border"
             style={{ borderColor: 'var(--border-subtle)', color: 'var(--text-primary)' }}
           >
             <CloseIcon className="h-4 w-4" />
@@ -147,7 +151,7 @@ export const ReservationDepositModal: React.FC<ReservationDepositModalProps> = (
 
           {/* Tier Selection */}
           <div className="mt-4">
-            <div className="mb-2 text-[11px] font-semibold tracking-wider uppercase" style={{ color: 'var(--text-muted)' }}>
+            <div className="mb-2 text-[10.5px] font-semibold tracking-[0.16em] uppercase" style={{ color: 'var(--text-muted)' }}>
               {copy.selectTierLabel}
             </div>
             <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-3">
@@ -162,16 +166,16 @@ export const ReservationDepositModal: React.FC<ReservationDepositModalProps> = (
                       setQrImgFailed(false);
                       setSavedNotice(false);
                     }}
-                    className="cursor-pointer rounded-xl border p-3 text-left transition-all"
+                    className="cursor-pointer rounded-sm border p-3.5 text-left transition-all"
                     style={{
                       borderColor: active ? 'var(--accent)' : 'var(--border-subtle)',
-                      backgroundColor: active ? 'var(--accent-soft)' : 'var(--bg-elevated)',
+                      backgroundColor: active ? 'var(--accent-soft)' : 'var(--bg-primary)',
                     }}
                   >
-                    <div className="font-mono-tabular text-sm font-semibold" style={{ color: active ? 'var(--accent)' : 'var(--text-primary)' }}>
+                    <div className="font-mono-tabular text-sm font-semibold" style={{ color: active ? 'var(--accent)' : 'var(--text-heading)' }}>
                       {formatCurrency(tier.amountVnd, currency, lang, { compact: true })}
                     </div>
-                    <div className="mt-0.5 text-xs font-semibold" style={{ color: 'var(--text-primary)' }}>
+                    <div className="mt-0.5 text-xs font-semibold" style={{ color: 'var(--text-heading)' }}>
                       {lang === 'vi' ? tier.labelVi : tier.labelEn}
                     </div>
                     <div className="mt-1 text-[10px] leading-snug" style={{ color: 'var(--text-muted)' }}>
@@ -187,23 +191,30 @@ export const ReservationDepositModal: React.FC<ReservationDepositModalProps> = (
           <div className="mt-5 grid grid-cols-1 gap-5 md:grid-cols-12 md:items-start">
             {/* Live Techcombank VietQR Card */}
             <div
-              className="architectural-grid flex flex-col items-center rounded-2xl border p-4 md:col-span-5"
+              className="architectural-grid flex flex-col items-center border p-4 md:col-span-5"
               style={{
                 borderColor: 'var(--border-strong)',
                 backgroundColor: 'var(--blueprint-bg)',
               }}
             >
               <div className="mb-3 flex w-full items-center justify-between gap-2">
-                <span className="inline-flex min-w-0 items-center gap-1.5 text-[11px] font-semibold" style={{ color: 'var(--text-primary)' }}>
+                <span className="inline-flex min-w-0 items-center gap-1.5 text-[11px] font-semibold" style={{ color: 'var(--text-heading)' }}>
                   <QrCodeIcon className="h-3.5 w-3.5 shrink-0" style={{ color: 'var(--accent)' }} />
                   <span className="truncate">{copy.qrTitle}</span>
                 </span>
-                <span className="font-mono-tabular shrink-0 whitespace-nowrap rounded bg-emerald-500/15 px-2 py-0.5 text-[9px] font-semibold text-emerald-500">
+                <span
+                  className="font-mono-tabular shrink-0 whitespace-nowrap rounded-sm border px-2 py-0.5 text-[9px] font-semibold"
+                  style={{
+                    borderColor: 'var(--status-available-border)',
+                    backgroundColor: 'var(--status-available-bg)',
+                    color: 'var(--status-available)',
+                  }}
+                >
                   {qrImgFailed ? copy.qrFallbackBadge : copy.qrLiveBadge}
                 </span>
               </div>
 
-              <div className="flex w-full max-w-[240px] items-center justify-center overflow-hidden rounded-xl bg-white p-2.5 shadow-lg">
+              <div className="flex w-full max-w-[240px] items-center justify-center overflow-hidden border bg-white p-2.5 shadow-sm" style={{ borderColor: 'var(--border-subtle)' }}>
                 {!qrImgFailed ? (
                   <img
                     src={vietQrUrl}
@@ -224,12 +235,12 @@ export const ReservationDepositModal: React.FC<ReservationDepositModalProps> = (
                       {fallbackQrMatrix.map((row, rIdx) =>
                         row.map((cell, cIdx) =>
                           cell ? (
-                            <rect key={`${rIdx}-${cIdx}`} x={cIdx} y={rIdx} width={1} height={1} fill="#0A0B0E" />
+                            <rect key={`${rIdx}-${cIdx}`} x={cIdx} y={rIdx} width={1} height={1} fill="#0F1D36" />
                           ) : null
                         )
                       )}
                     </svg>
-                    <span className="font-mono-tabular mt-1.5 text-[10px] font-semibold text-[#0A0B0E]">
+                    <span className="font-mono-tabular mt-1.5 text-[10px] font-semibold text-[#0F1D36]">
                       TCB · {TECHCOMBANK_VIETQR_CONFIG.accountNumber}
                     </span>
                   </div>
@@ -244,12 +255,12 @@ export const ReservationDepositModal: React.FC<ReservationDepositModalProps> = (
             {/* Structured Bank Transfer & Guarantee Details */}
             <div className="flex flex-col gap-3 md:col-span-7">
               <div
-                className="space-y-3 rounded-2xl border p-4"
-                style={{ borderColor: 'var(--border-subtle)', backgroundColor: 'var(--bg-elevated)' }}
+                className="space-y-3 border p-4"
+                style={{ borderColor: 'var(--border-subtle)', backgroundColor: 'var(--bg-primary)' }}
               >
                 <div className="flex items-center justify-between gap-2 border-b pb-2.5" style={{ borderColor: 'var(--border-subtle)' }}>
                   <span className="text-xs" style={{ color: 'var(--text-muted)' }}>{copy.bankLabel}</span>
-                  <span className="font-mono-tabular text-xs font-semibold" style={{ color: 'var(--text-primary)' }}>
+                  <span className="font-mono-tabular text-xs font-semibold" style={{ color: 'var(--text-heading)' }}>
                     {TECHCOMBANK_VIETQR_CONFIG.bankName} (BIN {TECHCOMBANK_VIETQR_CONFIG.bankBin})
                   </span>
                 </div>
@@ -257,35 +268,35 @@ export const ReservationDepositModal: React.FC<ReservationDepositModalProps> = (
                 <div className="flex items-center justify-between gap-2 border-b pb-2.5" style={{ borderColor: 'var(--border-subtle)' }}>
                   <div>
                     <div className="text-[11px]" style={{ color: 'var(--text-muted)' }}>{copy.accountNoLabel}</div>
-                    <div className="font-mono-tabular text-base font-bold tracking-wider" style={{ color: 'var(--accent)' }}>
+                    <div className="font-mono-tabular text-base font-bold tracking-wider" style={{ color: 'var(--text-heading)' }}>
                       {TECHCOMBANK_VIETQR_CONFIG.accountNumber}
                     </div>
                   </div>
                   <button
                     type="button"
                     onClick={() => handleCopy(TECHCOMBANK_VIETQR_CONFIG.accountNumber, 'account')}
-                    className="inline-flex cursor-pointer items-center gap-1 rounded-lg border px-2.5 py-1.5 text-[11px] font-semibold transition-colors"
+                    className="inline-flex cursor-pointer items-center gap-1 rounded-sm border px-2.5 py-1.5 text-[11px] font-semibold transition-colors"
                     style={{
                       borderColor: 'var(--border-strong)',
                       backgroundColor: 'var(--accent-soft)',
-                      color: 'var(--accent)',
+                      color: 'var(--text-heading)',
                     }}
                   >
-                    {copiedField === 'account' ? <CheckIcon className="h-3.5 w-3.5" /> : <CopyIcon className="h-3.5 w-3.5" />}
+                    {copiedField === 'account' ? <CheckIcon className="h-3.5 w-3.5" style={{ color: 'var(--accent)' }} /> : <CopyIcon className="h-3.5 w-3.5" style={{ color: 'var(--accent)' }} />}
                     <span>{copiedField === 'account' ? copy.copiedBtn : copy.copyBtn}</span>
                   </button>
                 </div>
 
                 <div className="flex items-center justify-between gap-2 border-b pb-2.5" style={{ borderColor: 'var(--border-subtle)' }}>
                   <span className="text-xs" style={{ color: 'var(--text-muted)' }}>{copy.accountHolderLabel}</span>
-                  <span className="font-mono-tabular text-xs font-semibold" style={{ color: 'var(--text-primary)' }}>
+                  <span className="font-mono-tabular text-xs font-semibold" style={{ color: 'var(--text-heading)' }}>
                     {TECHCOMBANK_VIETQR_CONFIG.accountName}
                   </span>
                 </div>
 
                 <div className="flex items-center justify-between gap-2 border-b pb-2.5" style={{ borderColor: 'var(--border-subtle)' }}>
                   <span className="text-xs" style={{ color: 'var(--text-muted)' }}>{copy.amountLabel}</span>
-                  <span className="font-mono-tabular text-sm font-semibold text-emerald-500">
+                  <span className="font-mono-tabular text-sm font-semibold" style={{ color: 'var(--status-available)' }}>
                     {formatCurrency(activeTier.amountVnd, currency, lang)}
                   </span>
                 </div>
@@ -293,29 +304,35 @@ export const ReservationDepositModal: React.FC<ReservationDepositModalProps> = (
                 <div className="flex items-center justify-between gap-2">
                   <div className="min-w-0">
                     <div className="text-[11px]" style={{ color: 'var(--text-muted)' }}>{copy.memoLabel}</div>
-                    <div className="font-mono-tabular truncate text-xs font-semibold" style={{ color: 'var(--text-primary)' }}>
+                    <div className="font-mono-tabular truncate text-xs font-semibold" style={{ color: 'var(--text-heading)' }}>
                       {transferMemo}
                     </div>
                   </div>
                   <button
                     type="button"
                     onClick={() => handleCopy(transferMemo, 'memo')}
-                    className="inline-flex shrink-0 cursor-pointer items-center gap-1 rounded-lg border px-2.5 py-1.5 text-[11px] font-semibold transition-colors"
+                    className="inline-flex shrink-0 cursor-pointer items-center gap-1 rounded-sm border px-2.5 py-1.5 text-[11px] font-semibold transition-colors"
                     style={{
                       borderColor: 'var(--border-subtle)',
                       backgroundColor: 'var(--bg-secondary)',
-                      color: 'var(--text-primary)',
+                      color: 'var(--text-heading)',
                     }}
                   >
-                    {copiedField === 'memo' ? <CheckIcon className="h-3.5 w-3.5" /> : <CopyIcon className="h-3.5 w-3.5" />}
+                    {copiedField === 'memo' ? <CheckIcon className="h-3.5 w-3.5" style={{ color: 'var(--accent)' }} /> : <CopyIcon className="h-3.5 w-3.5" style={{ color: 'var(--accent)' }} />}
                     <span>{copiedField === 'memo' ? copy.copiedBtn : copy.copyBtn}</span>
                   </button>
                 </div>
               </div>
 
               {/* Refundable Escrow Notice */}
-              <div className="rounded-xl border border-emerald-500/25 bg-emerald-500/10 p-3.5">
-                <div className="flex items-center gap-2 text-xs font-semibold text-emerald-500">
+              <div
+                className="border p-3.5"
+                style={{
+                  borderColor: 'var(--status-available-border)',
+                  backgroundColor: 'var(--status-available-bg)',
+                }}
+              >
+                <div className="flex items-center gap-2 text-xs font-semibold" style={{ color: 'var(--status-available)' }}>
                   <ShieldCheckIcon className="h-4 w-4 shrink-0" />
                   <span>{copy.guaranteeTitle}</span>
                 </div>
@@ -329,10 +346,10 @@ export const ReservationDepositModal: React.FC<ReservationDepositModalProps> = (
                 <button
                   type="button"
                   onClick={handleSaveHold}
-                  className="inline-flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-xl px-4 py-3 text-xs font-semibold transition-all hover:brightness-110 sm:text-sm"
-                  style={{ backgroundColor: 'var(--accent)', color: 'var(--accent-ink)' }}
+                  className="inline-flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-sm px-4 py-3 text-xs font-semibold tracking-wider uppercase transition-all hover:opacity-92"
+                  style={{ backgroundColor: 'var(--cta-bg)', color: 'var(--cta-ink)' }}
                 >
-                  {savedNotice ? <CheckIcon className="h-4 w-4" /> : <QrCodeIcon className="h-4 w-4" />}
+                  {savedNotice ? <CheckIcon className="h-4 w-4" style={{ color: 'var(--accent)' }} /> : <QrCodeIcon className="h-4 w-4" style={{ color: 'var(--accent)' }} />}
                   <span>{savedNotice ? copy.holdSavedLabel : copy.saveHoldBtn}</span>
                 </button>
               </div>

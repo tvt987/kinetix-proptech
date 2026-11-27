@@ -19,9 +19,9 @@ interface TowerElevationSvgProps {
 }
 
 const STATUS_DOT_COLOR: Record<UnitStatus, string> = {
-  AVAILABLE: '#10B981',
-  RESERVED: '#F59E0B',
-  SOLD: '#EF4444',
+  AVAILABLE: 'var(--status-available)',
+  RESERVED: 'var(--status-reserved)',
+  SOLD: 'var(--status-sold)',
 };
 
 export const TowerElevationSvg: React.FC<TowerElevationSvgProps> = ({
@@ -45,16 +45,22 @@ export const TowerElevationSvg: React.FC<TowerElevationSvgProps> = ({
 
   return (
     <div
-      className="flex flex-col rounded-2xl border p-4 sm:p-5"
+      className="flex flex-col border-t-2 border-r border-b border-l p-4 sm:p-5"
       style={{
         backgroundColor: 'var(--bg-secondary)',
-        borderColor: 'var(--border-subtle)',
+        borderTopColor: 'var(--cta-bg)',
+        borderRightColor: 'var(--border-subtle)',
+        borderBottomColor: 'var(--border-subtle)',
+        borderLeftColor: 'var(--border-subtle)',
         boxShadow: 'var(--shadow-card)',
       }}
     >
-      <div className="flex items-start justify-between gap-2 pb-3">
+      <div className="flex items-start justify-between gap-2 border-b pb-3.5" style={{ borderColor: 'var(--border-subtle)' }}>
         <div>
-          <h3 className="text-sm font-semibold tracking-wide" style={{ color: 'var(--text-primary)' }}>
+          <div className="font-mono-tabular text-[10px] font-semibold tracking-[0.2em] uppercase" style={{ color: 'var(--accent)' }}>
+            PLATE A · ELEVATION STACK
+          </div>
+          <h3 className="font-display mt-1 text-xl font-semibold" style={{ color: 'var(--text-heading)' }}>
             {title}
           </h3>
           <p className="mt-0.5 text-xs" style={{ color: 'var(--text-muted)' }}>
@@ -65,7 +71,7 @@ export const TowerElevationSvg: React.FC<TowerElevationSvgProps> = ({
           <button
             type="button"
             onClick={onClearFloor}
-            className="font-mono-tabular shrink-0 cursor-pointer rounded-md border px-2 py-1 text-[11px] font-semibold transition-colors"
+            className="font-mono-tabular shrink-0 cursor-pointer rounded-sm border px-2.5 py-1 text-[10.5px] font-semibold uppercase transition-colors"
             style={{
               borderColor: 'var(--border-strong)',
               backgroundColor: 'var(--accent-soft)',
@@ -77,33 +83,34 @@ export const TowerElevationSvg: React.FC<TowerElevationSvgProps> = ({
         )}
       </div>
 
-      {/* Interactive Architectural Tower Elevation SVG */}
+      {/* Interactive Architectural Tower Elevation Drafting Plate */}
       <div
-        className="architectural-grid relative overflow-hidden rounded-xl border px-3 py-4"
+        className="architectural-grid relative mt-4 overflow-hidden border px-3 py-4"
         style={{
           backgroundColor: 'var(--blueprint-bg)',
           borderColor: 'var(--border-subtle)',
         }}
       >
         {/* Architectural Crown Roofline SVG */}
-        <svg viewBox="0 0 280 42" className="mx-auto mb-1 w-full max-w-[280px]" aria-hidden="true">
+        <svg viewBox="0 0 280 42" className="mx-auto mb-1.5 w-full max-w-[280px]" aria-hidden="true">
           <path
             d="M44 40 L62 14 L218 14 L236 40"
             fill="none"
-            stroke="var(--accent)"
-            strokeWidth="1.4"
+            stroke="var(--blueprint-wall)"
+            strokeWidth="1.35"
             strokeOpacity="0.65"
           />
-          <line x1="140" y1="2" x2="140" y2="14" stroke="var(--accent)" strokeWidth="1.4" strokeOpacity="0.8" />
-          <circle cx="140" cy="2.5" r="2" fill="var(--accent)" />
+          <line x1="140" y1="2" x2="140" y2="14" stroke="var(--accent)" strokeWidth="1.5" />
+          <circle cx="140" cy="2.5" r="2.2" fill="var(--accent)" />
           <text
             x="140"
             y="32"
             textAnchor="middle"
-            fill="var(--accent)"
+            fill="var(--text-heading)"
             fontSize="8.5"
+            fontWeight="600"
             fontFamily="JetBrains Mono, monospace"
-            letterSpacing="2.4"
+            letterSpacing="2.2"
           >
             CROWN · 178M ELEVATION
           </text>
@@ -126,28 +133,35 @@ export const TowerElevationSvg: React.FC<TowerElevationSvgProps> = ({
                 <button
                   type="button"
                   onClick={() => onSelectFloor(floor, unit)}
-                  className="group relative flex w-full cursor-pointer items-center justify-between gap-2 rounded-lg border px-2.5 py-2 text-left transition-all"
+                  className="group relative flex w-full cursor-pointer items-center justify-between gap-2 rounded-sm border px-2.5 py-2 text-left transition-all"
                   style={{
                     borderColor:
                       isSelected || isFloorLocked
                         ? 'var(--accent)'
                         : isCrown
-                          ? 'rgba(212, 163, 115, 0.34)'
+                          ? 'var(--border-strong)'
+                          : 'var(--border-subtle)',
+                    borderLeftWidth: isSelected || isFloorLocked ? '3px' : '1px',
+                    borderLeftColor:
+                      isSelected || isFloorLocked
+                        ? 'var(--accent)'
+                        : isCrown
+                          ? 'var(--accent)'
                           : 'var(--border-subtle)',
                     backgroundColor:
                       isSelected || isFloorLocked
                         ? 'var(--accent-soft)'
                         : 'var(--bg-secondary)',
                     opacity: isMatched || isSelected ? 1 : 0.42,
-                    transform: isSelected ? 'translateX(3px)' : 'none',
+                    transform: isSelected ? 'translateX(2px)' : 'none',
                   }}
                 >
                   <div className="flex items-center gap-2.5">
                     <span
-                      className="font-mono-tabular flex h-7 w-9 items-center justify-center rounded text-[11px] font-semibold"
+                      className="font-mono-tabular flex h-7 w-9 items-center justify-center rounded-sm text-[11px] font-semibold"
                       style={{
-                        backgroundColor: isSelected ? 'var(--accent)' : 'var(--bg-elevated)',
-                        color: isSelected ? 'var(--accent-ink)' : 'var(--text-primary)',
+                        backgroundColor: isSelected ? 'var(--cta-bg)' : 'var(--bg-elevated)',
+                        color: isSelected ? 'var(--cta-ink)' : 'var(--text-heading)',
                       }}
                     >
                       F{floor}
@@ -157,14 +171,15 @@ export const TowerElevationSvg: React.FC<TowerElevationSvgProps> = ({
                       <div className="flex items-center gap-1.5">
                         <span
                           className="font-mono-tabular text-xs font-semibold"
-                          style={{ color: 'var(--text-primary)' }}
+                          style={{ color: 'var(--text-heading)' }}
                         >
                           {unit.code}
                         </span>
                         <span
-                          className="rounded px-1.5 py-0.5 text-[10px] font-medium"
+                          className="rounded-sm border px-1.5 py-0.5 text-[9.5px] font-semibold tracking-wider uppercase"
                           style={{
-                            backgroundColor: 'var(--bg-elevated)',
+                            borderColor: isCrown ? 'var(--border-strong)' : 'var(--border-subtle)',
+                            backgroundColor: isCrown ? 'var(--accent-soft)' : 'var(--bg-elevated)',
                             color: isCrown ? 'var(--accent)' : 'var(--text-secondary)',
                           }}
                         >
@@ -177,23 +192,29 @@ export const TowerElevationSvg: React.FC<TowerElevationSvgProps> = ({
                     </div>
                   </div>
 
-                  {/* Status Dot + Elevation Bar */}
+                  {/* Status Dot */}
                   <div className="flex shrink-0 items-center gap-2">
                     <span
-                      className="h-2.5 w-2.5 rounded-full ring-2 ring-black/20"
-                      style={{ backgroundColor: STATUS_DOT_COLOR[unit.status] }}
+                      className="h-2.5 w-2.5 rounded-full"
+                      style={{
+                        backgroundColor: STATUS_DOT_COLOR[unit.status],
+                        boxShadow: '0 0 0 2px var(--bg-secondary)',
+                      }}
                       title={statusLabels[unit.status]}
                     />
                   </div>
                 </button>
 
                 {isSkyGardenBelow && (
-                  <div className="flex items-center gap-2 py-0.5">
-                    <span className="h-px flex-1 bg-emerald-500/35" />
-                    <span className="font-mono-tabular text-[9px] tracking-[0.2em] text-emerald-500 uppercase">
+                  <div className="flex items-center gap-2 py-1">
+                    <span className="h-px flex-1" style={{ backgroundColor: 'var(--status-available-border)' }} />
+                    <span
+                      className="font-mono-tabular text-[9px] font-semibold tracking-[0.18em] uppercase"
+                      style={{ color: 'var(--status-available)' }}
+                    >
                       F29 SKY BOTANICAL DECK
                     </span>
-                    <span className="h-px flex-1 bg-emerald-500/35" />
+                    <span className="h-px flex-1" style={{ backgroundColor: 'var(--status-available-border)' }} />
                   </div>
                 )}
               </React.Fragment>
@@ -207,9 +228,9 @@ export const TowerElevationSvg: React.FC<TowerElevationSvgProps> = ({
           <path
             d="M16 17 Q 76 11, 140 17 T 264 17"
             fill="none"
-            stroke="#38BDF8"
-            strokeWidth="1.2"
-            strokeOpacity="0.55"
+            stroke="var(--chart-rent)"
+            strokeWidth="1.25"
+            strokeOpacity="0.7"
           />
           <text
             x="140"
@@ -226,7 +247,10 @@ export const TowerElevationSvg: React.FC<TowerElevationSvgProps> = ({
       </div>
 
       {/* Status Legend */}
-      <div className="mt-3 flex flex-wrap items-center justify-between gap-2 text-[11px]" style={{ color: 'var(--text-muted)' }}>
+      <div
+        className="mt-3.5 flex flex-wrap items-center justify-between gap-2 border-t pt-3 text-[11px]"
+        style={{ borderColor: 'var(--border-subtle)', color: 'var(--text-secondary)' }}
+      >
         {(['AVAILABLE', 'RESERVED', 'SOLD'] as UnitStatus[]).map((st) => (
           <span key={st} className="inline-flex items-center gap-1.5">
             <span className="h-2 w-2 rounded-full" style={{ backgroundColor: STATUS_DOT_COLOR[st] }} />

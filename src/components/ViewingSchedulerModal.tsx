@@ -150,17 +150,21 @@ export const ViewingSchedulerModal: React.FC<ViewingSchedulerModalProps> = ({
 
   return (
     <div
-      className="no-print fixed inset-0 z-50 flex items-center justify-center bg-black/75 p-3 backdrop-blur-sm sm:p-6"
+      className="no-print fixed inset-0 z-50 flex items-center justify-center p-3 backdrop-blur-sm sm:p-6"
+      style={{ backgroundColor: 'var(--backdrop-veil)' }}
       role="dialog"
       aria-modal="true"
       aria-label={copy.title}
       onClick={onClose}
     >
       <div
-        className="flex max-h-[92vh] w-full max-w-2xl flex-col overflow-hidden rounded-2xl border shadow-2xl"
+        className="flex max-h-[92vh] w-full max-w-2xl flex-col overflow-hidden border-t-2 border-r border-b border-l shadow-2xl"
         style={{
           backgroundColor: 'var(--bg-secondary)',
-          borderColor: 'var(--border-strong)',
+          borderTopColor: 'var(--cta-bg)',
+          borderRightColor: 'var(--border-subtle)',
+          borderBottomColor: 'var(--border-subtle)',
+          borderLeftColor: 'var(--border-subtle)',
         }}
         onClick={(e) => e.stopPropagation()}
       >
@@ -170,10 +174,10 @@ export const ViewingSchedulerModal: React.FC<ViewingSchedulerModalProps> = ({
           style={{ borderColor: 'var(--border-subtle)' }}
         >
           <div>
-            <div className="font-mono-tabular text-[11px] font-semibold tracking-[0.2em] uppercase" style={{ color: 'var(--accent)' }}>
+            <div className="font-mono-tabular text-[10.5px] font-semibold tracking-[0.2em] uppercase" style={{ color: 'var(--accent)' }}>
               {issuedPass ? copy.passEyebrow : copy.eyebrow}
             </div>
-            <h3 className="font-display mt-1 text-2xl font-semibold sm:text-3xl" style={{ color: 'var(--text-primary)' }}>
+            <h3 className="font-display mt-1 text-2xl font-semibold sm:text-3xl" style={{ color: 'var(--text-heading)' }}>
               {issuedPass ? copy.passTitle : copy.title}
             </h3>
           </div>
@@ -181,7 +185,7 @@ export const ViewingSchedulerModal: React.FC<ViewingSchedulerModalProps> = ({
             type="button"
             onClick={onClose}
             aria-label="Close modal"
-            className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border"
+            className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-sm border"
             style={{ borderColor: 'var(--border-subtle)', color: 'var(--text-primary)' }}
           >
             <CloseIcon className="h-4 w-4" />
@@ -209,10 +213,10 @@ export const ViewingSchedulerModal: React.FC<ViewingSchedulerModalProps> = ({
                   id="booking-residence"
                   value={residenceId}
                   onChange={(e) => setResidenceId(e.target.value)}
-                  className="w-full cursor-pointer rounded-xl border px-3.5 py-2.5 text-sm font-medium outline-none"
+                  className="w-full cursor-pointer rounded-sm border px-3.5 py-2.5 text-sm font-medium outline-none"
                   style={{
                     borderColor: 'var(--border-subtle)',
-                    backgroundColor: 'var(--bg-elevated)',
+                    backgroundColor: 'var(--bg-primary)',
                     color: 'var(--text-primary)',
                   }}
                 >
@@ -250,13 +254,13 @@ export const ViewingSchedulerModal: React.FC<ViewingSchedulerModalProps> = ({
                         key={opt.value}
                         type="button"
                         onClick={() => setFormat(opt.value)}
-                        className="cursor-pointer rounded-xl border p-3.5 text-left transition-all"
+                        className="cursor-pointer rounded-sm border p-3.5 text-left transition-all"
                         style={{
                           borderColor: active ? 'var(--accent)' : 'var(--border-subtle)',
-                          backgroundColor: active ? 'var(--accent-soft)' : 'var(--bg-elevated)',
+                          backgroundColor: active ? 'var(--accent-soft)' : 'var(--bg-primary)',
                         }}
                       >
-                        <div className="text-xs font-semibold" style={{ color: active ? 'var(--accent)' : 'var(--text-primary)' }}>
+                        <div className="text-xs font-semibold" style={{ color: active ? 'var(--text-heading)' : 'var(--text-primary)' }}>
                           {opt.title}
                         </div>
                         <div className="mt-1 text-[11px] leading-snug" style={{ color: 'var(--text-muted)' }}>
@@ -281,11 +285,11 @@ export const ViewingSchedulerModal: React.FC<ViewingSchedulerModalProps> = ({
                         key={d.iso}
                         type="button"
                         onClick={() => setDateIso(d.iso)}
-                        className="cursor-pointer rounded-lg border py-2 text-center transition-all"
+                        className="cursor-pointer rounded-sm border py-2 text-center transition-all"
                         style={{
-                          borderColor: active ? 'var(--accent)' : 'var(--border-subtle)',
-                          backgroundColor: active ? 'var(--accent)' : 'var(--bg-elevated)',
-                          color: active ? 'var(--accent-ink)' : 'var(--text-primary)',
+                          borderColor: active ? 'var(--cta-bg)' : 'var(--border-subtle)',
+                          backgroundColor: active ? 'var(--cta-bg)' : 'var(--bg-primary)',
+                          color: active ? 'var(--cta-ink)' : 'var(--text-primary)',
                         }}
                       >
                         <div className="text-[10px] opacity-80">{d.dayLabel}</div>
@@ -309,11 +313,11 @@ export const ViewingSchedulerModal: React.FC<ViewingSchedulerModalProps> = ({
                         key={slot}
                         type="button"
                         onClick={() => setTimeSlot(slot)}
-                        className="font-mono-tabular cursor-pointer rounded-lg border px-3 py-1.5 text-xs font-semibold transition-all"
+                        className="font-mono-tabular cursor-pointer rounded-sm border px-3 py-1.5 text-xs font-semibold transition-all"
                         style={{
                           borderColor: active ? 'var(--accent)' : 'var(--border-subtle)',
-                          backgroundColor: active ? 'var(--accent-soft)' : 'var(--bg-elevated)',
-                          color: active ? 'var(--accent)' : 'var(--text-secondary)',
+                          backgroundColor: active ? 'var(--accent-soft)' : 'var(--bg-primary)',
+                          color: active ? 'var(--text-heading)' : 'var(--text-secondary)',
                         }}
                       >
                         {slot}
@@ -336,10 +340,10 @@ export const ViewingSchedulerModal: React.FC<ViewingSchedulerModalProps> = ({
                     value={clientName}
                     onChange={(e) => setClientName(e.target.value)}
                     placeholder={copy.namePlaceholder}
-                    className="w-full rounded-xl border px-3.5 py-2.5 text-sm outline-none focus:border-[#D4A373]"
+                    className="w-full rounded-sm border px-3.5 py-2.5 text-sm outline-none focus:border-[#B48A3E]"
                     style={{
                       borderColor: 'var(--border-subtle)',
-                      backgroundColor: 'var(--bg-elevated)',
+                      backgroundColor: 'var(--bg-primary)',
                       color: 'var(--text-primary)',
                     }}
                   />
@@ -356,10 +360,10 @@ export const ViewingSchedulerModal: React.FC<ViewingSchedulerModalProps> = ({
                     value={clientPhone}
                     onChange={(e) => setClientPhone(e.target.value)}
                     placeholder={copy.phonePlaceholder}
-                    className="w-full rounded-xl border px-3.5 py-2.5 text-sm outline-none focus:border-[#D4A373]"
+                    className="w-full rounded-sm border px-3.5 py-2.5 text-sm outline-none focus:border-[#B48A3E]"
                     style={{
                       borderColor: 'var(--border-subtle)',
-                      backgroundColor: 'var(--bg-elevated)',
+                      backgroundColor: 'var(--bg-primary)',
                       color: 'var(--text-primary)',
                     }}
                   />
@@ -376,10 +380,10 @@ export const ViewingSchedulerModal: React.FC<ViewingSchedulerModalProps> = ({
                     value={clientEmail}
                     onChange={(e) => setClientEmail(e.target.value)}
                     placeholder={copy.emailPlaceholder}
-                    className="w-full rounded-xl border px-3.5 py-2.5 text-sm outline-none focus:border-[#D4A373]"
+                    className="w-full rounded-sm border px-3.5 py-2.5 text-sm outline-none focus:border-[#B48A3E]"
                     style={{
                       borderColor: 'var(--border-subtle)',
-                      backgroundColor: 'var(--bg-elevated)',
+                      backgroundColor: 'var(--bg-primary)',
                       color: 'var(--text-primary)',
                     }}
                   />
@@ -395,10 +399,10 @@ export const ViewingSchedulerModal: React.FC<ViewingSchedulerModalProps> = ({
                     value={notes}
                     onChange={(e) => setNotes(e.target.value)}
                     placeholder={copy.notesPlaceholder}
-                    className="w-full rounded-xl border px-3.5 py-2.5 text-sm outline-none focus:border-[#D4A373]"
+                    className="w-full rounded-sm border px-3.5 py-2.5 text-sm outline-none focus:border-[#B48A3E]"
                     style={{
                       borderColor: 'var(--border-subtle)',
-                      backgroundColor: 'var(--bg-elevated)',
+                      backgroundColor: 'var(--bg-primary)',
                       color: 'var(--text-primary)',
                     }}
                   />
@@ -406,7 +410,14 @@ export const ViewingSchedulerModal: React.FC<ViewingSchedulerModalProps> = ({
               </div>
 
               {errorMsg && (
-                <div className="rounded-lg border border-red-500/40 bg-red-500/10 px-3.5 py-2 text-xs text-red-400">
+                <div
+                  className="rounded-sm border px-3.5 py-2 text-xs"
+                  style={{
+                    borderColor: 'var(--status-sold-border)',
+                    backgroundColor: 'var(--status-sold-bg)',
+                    color: 'var(--status-sold)',
+                  }}
+                >
                   {errorMsg}
                 </div>
               )}
@@ -417,10 +428,10 @@ export const ViewingSchedulerModal: React.FC<ViewingSchedulerModalProps> = ({
                 </span>
                 <button
                   type="submit"
-                  className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl px-5 py-3 text-sm font-semibold transition-all hover:brightness-110"
-                  style={{ backgroundColor: 'var(--accent)', color: 'var(--accent-ink)' }}
+                  className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-sm px-5 py-3 text-xs font-semibold tracking-wider uppercase transition-all hover:opacity-92"
+                  style={{ backgroundColor: 'var(--cta-bg)', color: 'var(--cta-ink)' }}
                 >
-                  <CalendarIcon className="h-4 w-4" />
+                  <CalendarIcon className="h-4 w-4" style={{ color: 'var(--accent)' }} />
                   <span>{copy.submitBtn}</span>
                 </button>
               </div>
@@ -429,7 +440,7 @@ export const ViewingSchedulerModal: React.FC<ViewingSchedulerModalProps> = ({
             /* Deterministic VIP Pass Credential View */
             <div className="space-y-5">
               <div
-                className="architectural-grid relative overflow-hidden rounded-2xl border p-5 sm:p-6"
+                className="architectural-grid relative overflow-hidden border p-5 sm:p-6"
                 style={{
                   borderColor: 'var(--border-strong)',
                   backgroundColor: 'var(--blueprint-bg)',
@@ -438,12 +449,19 @@ export const ViewingSchedulerModal: React.FC<ViewingSchedulerModalProps> = ({
                 <div className="flex flex-col justify-between gap-6 sm:flex-row sm:items-center">
                   <div className="space-y-3">
                     <div className="flex flex-wrap items-center gap-2">
-                      <div className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/15 px-3 py-1 text-xs font-semibold text-emerald-500">
+                      <div
+                        className="inline-flex items-center gap-1.5 rounded-sm border px-2.5 py-1 text-[11px] font-semibold"
+                        style={{
+                          borderColor: 'var(--status-available-border)',
+                          backgroundColor: 'var(--status-available-bg)',
+                          color: 'var(--status-available)',
+                        }}
+                      >
                         <CheckIcon className="h-3.5 w-3.5" />
                         <span>VIP CREDENTIAL ACTIVE</span>
                       </div>
                       <div
-                        className="inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-semibold"
+                        className="inline-flex items-center gap-1.5 rounded-sm border px-2.5 py-1 text-[11px] font-semibold"
                         style={{ borderColor: 'var(--border-strong)', backgroundColor: 'var(--accent-soft)', color: 'var(--accent)' }}
                       >
                         <VaultIcon className="h-3 w-3" />
@@ -455,7 +473,7 @@ export const ViewingSchedulerModal: React.FC<ViewingSchedulerModalProps> = ({
                       <div className="font-mono-tabular text-[10px] tracking-[0.2em] uppercase" style={{ color: 'var(--text-muted)' }}>
                         {copy.passCodeLabel}
                       </div>
-                      <div className="font-mono-tabular mt-0.5 text-2xl font-bold tracking-wider sm:text-3xl" style={{ color: 'var(--accent)' }}>
+                      <div className="font-mono-tabular mt-0.5 text-2xl font-bold tracking-wider sm:text-3xl" style={{ color: 'var(--text-heading)' }}>
                         {issuedPass.passCode}
                       </div>
                     </div>
@@ -463,11 +481,11 @@ export const ViewingSchedulerModal: React.FC<ViewingSchedulerModalProps> = ({
                     <dl className="space-y-1.5 text-xs">
                       <div className="flex gap-2">
                         <dt style={{ color: 'var(--text-muted)' }}>{copy.passHolderLabel}:</dt>
-                        <dd className="font-semibold" style={{ color: 'var(--text-primary)' }}>{issuedPass.clientName}</dd>
+                        <dd className="font-semibold" style={{ color: 'var(--text-heading)' }}>{issuedPass.clientName}</dd>
                       </div>
                       <div className="flex gap-2">
                         <dt style={{ color: 'var(--text-muted)' }}>{copy.passResidenceLabel}:</dt>
-                        <dd className="font-mono-tabular font-semibold" style={{ color: 'var(--text-primary)' }}>
+                        <dd className="font-mono-tabular font-semibold" style={{ color: 'var(--text-heading)' }}>
                           {issuedPass.residenceCode} · Floor {selectedUnit.floor}
                         </dd>
                       </div>
@@ -479,7 +497,7 @@ export const ViewingSchedulerModal: React.FC<ViewingSchedulerModalProps> = ({
                       </div>
                       <div className="flex gap-2">
                         <dt style={{ color: 'var(--text-muted)' }}>{copy.passFormatLabel}:</dt>
-                        <dd className="font-semibold" style={{ color: 'var(--text-primary)' }}>
+                        <dd className="font-semibold" style={{ color: 'var(--text-heading)' }}>
                           {issuedPass.format === 'GALLERY_ONSITE' ? copy.formatOnsite : copy.format3d}
                         </dd>
                       </div>
@@ -487,7 +505,10 @@ export const ViewingSchedulerModal: React.FC<ViewingSchedulerModalProps> = ({
                   </div>
 
                   {/* Deterministic 21x21 SVG QR Code */}
-                  <div className="flex flex-col items-center self-center rounded-xl bg-white p-3 shadow-lg">
+                  <div
+                    className="flex flex-col items-center self-center border bg-white p-3 shadow-sm"
+                    style={{ borderColor: 'var(--border-subtle)' }}
+                  >
                     <svg
                       viewBox="0 0 21 21"
                       className="h-32 w-32"
@@ -499,12 +520,12 @@ export const ViewingSchedulerModal: React.FC<ViewingSchedulerModalProps> = ({
                       {issuedPass.qrMatrix.map((row, rIdx) =>
                         row.map((cell, cIdx) =>
                           cell ? (
-                            <rect key={`${rIdx}-${cIdx}`} x={cIdx} y={rIdx} width={1} height={1} fill="#0A0B0E" />
+                            <rect key={`${rIdx}-${cIdx}`} x={cIdx} y={rIdx} width={1} height={1} fill="#0F1D36" />
                           ) : null
                         )
                       )}
                     </svg>
-                    <span className="font-mono-tabular mt-1.5 text-[10px] font-semibold tracking-wider text-[#0A0B0E]">
+                    <span className="font-mono-tabular mt-1.5 text-[10px] font-semibold tracking-wider text-[#0F1D36]">
                       {issuedPass.passCode}
                     </span>
                   </div>
@@ -515,7 +536,7 @@ export const ViewingSchedulerModal: React.FC<ViewingSchedulerModalProps> = ({
                   <div className="text-[11px]" style={{ color: 'var(--text-muted)' }}>
                     {copy.passAdvisorLabel}
                   </div>
-                  <div className="mt-0.5 text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>
+                  <div className="mt-0.5 text-sm font-semibold" style={{ color: 'var(--text-heading)' }}>
                     {issuedPass.advisorName}{' '}
                     <span className="font-normal" style={{ color: 'var(--text-secondary)' }}>
                       — {lang === 'vi' ? issuedPass.advisorTitleVi : issuedPass.advisorTitleEn}
@@ -532,10 +553,10 @@ export const ViewingSchedulerModal: React.FC<ViewingSchedulerModalProps> = ({
                   <button
                     type="button"
                     onClick={handleDownloadIcs}
-                    className="inline-flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-xs font-semibold transition-all hover:brightness-110"
-                    style={{ backgroundColor: 'var(--accent)', color: 'var(--accent-ink)' }}
+                    className="inline-flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-sm px-4 py-2.5 text-xs font-semibold tracking-wider uppercase transition-all hover:opacity-92"
+                    style={{ backgroundColor: 'var(--cta-bg)', color: 'var(--cta-ink)' }}
                   >
-                    <CalendarPlusIcon className="h-4 w-4" />
+                    <CalendarPlusIcon className="h-4 w-4" style={{ color: 'var(--accent)' }} />
                     <span>{copy.downloadIcsBtn}</span>
                   </button>
                   <button
@@ -544,14 +565,14 @@ export const ViewingSchedulerModal: React.FC<ViewingSchedulerModalProps> = ({
                       onClose();
                       onOpenDeposit(selectedUnit, issuedPass.passCode);
                     }}
-                    className="inline-flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-xl border px-4 py-2.5 text-xs font-semibold"
+                    className="inline-flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-sm border px-4 py-2.5 text-xs font-semibold"
                     style={{
                       borderColor: 'var(--border-strong)',
                       backgroundColor: 'var(--accent-soft)',
-                      color: 'var(--accent)',
+                      color: 'var(--text-heading)',
                     }}
                   >
-                    <QrCodeIcon className="h-4 w-4" />
+                    <QrCodeIcon className="h-4 w-4" style={{ color: 'var(--accent)' }} />
                     <span>{copy.holdDepositCta}</span>
                   </button>
                 </div>
@@ -564,7 +585,7 @@ export const ViewingSchedulerModal: React.FC<ViewingSchedulerModalProps> = ({
                     <button
                       type="button"
                       onClick={handleDownloadPass}
-                      className="inline-flex cursor-pointer items-center gap-1.5 rounded-xl border px-3 py-2 text-xs font-semibold"
+                      className="inline-flex cursor-pointer items-center gap-1.5 rounded-sm border px-3 py-2 text-xs font-semibold"
                       style={{ borderColor: 'var(--border-subtle)', color: 'var(--text-primary)' }}
                     >
                       <DownloadIcon className="h-3.5 w-3.5" />
@@ -576,7 +597,7 @@ export const ViewingSchedulerModal: React.FC<ViewingSchedulerModalProps> = ({
                         onClose();
                         onOpenVault();
                       }}
-                      className="inline-flex cursor-pointer items-center gap-1.5 rounded-xl border px-3 py-2 text-xs font-semibold"
+                      className="inline-flex cursor-pointer items-center gap-1.5 rounded-sm border px-3 py-2 text-xs font-semibold"
                       style={{ borderColor: 'var(--border-subtle)', color: 'var(--accent)' }}
                     >
                       <VaultIcon className="h-3.5 w-3.5" />
@@ -585,7 +606,7 @@ export const ViewingSchedulerModal: React.FC<ViewingSchedulerModalProps> = ({
                     <button
                       type="button"
                       onClick={() => setIssuedPass(null)}
-                      className="cursor-pointer rounded-xl border px-3 py-2 text-xs font-semibold"
+                      className="cursor-pointer rounded-sm border px-3 py-2 text-xs font-semibold"
                       style={{ borderColor: 'var(--border-subtle)', color: 'var(--text-secondary)' }}
                     >
                       {copy.bookAnotherBtn}

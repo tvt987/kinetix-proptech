@@ -47,13 +47,17 @@ export const ComparisonDrawer: React.FC<ComparisonDrawerProps> = ({
 
   return (
     <>
-      {/* Sleek Floating Comparison Tray (Bottom-Right when items exist & modal is closed) */}
+      {/* Editorial Floating Comparison Tray (Bottom-Right when items exist & modal is closed) */}
       {residences.length > 0 && !isOpen && (
         <div
-          className="no-print fixed right-4 bottom-4 z-30 flex max-w-[calc(100vw-2rem)] items-center gap-2.5 rounded-2xl border p-2.5 shadow-2xl backdrop-blur-xl sm:right-6 sm:bottom-6"
+          className="no-print fixed right-4 bottom-4 z-30 flex max-w-[calc(100vw-2rem)] items-center gap-2.5 border-t-2 border-r border-b border-l p-2.5 backdrop-blur-xl sm:right-6 sm:bottom-6"
           style={{
             backgroundColor: 'var(--bg-glass)',
-            borderColor: 'var(--border-strong)',
+            borderTopColor: 'var(--accent)',
+            borderRightColor: 'var(--border-subtle)',
+            borderBottomColor: 'var(--border-subtle)',
+            borderLeftColor: 'var(--border-subtle)',
+            boxShadow: 'var(--shadow-editorial)',
           }}
           role="region"
           aria-label={copy.dockLabel}
@@ -62,11 +66,11 @@ export const ComparisonDrawer: React.FC<ComparisonDrawerProps> = ({
             {residences.map((unit) => (
               <span
                 key={unit.id}
-                className="font-mono-tabular inline-flex items-center gap-1 rounded-lg border px-2 py-1 text-[11px] font-semibold"
+                className="font-mono-tabular inline-flex items-center gap-1 rounded-sm border px-2 py-1 text-[11px] font-semibold"
                 style={{
                   borderColor: 'var(--border-subtle)',
-                  backgroundColor: 'var(--bg-elevated)',
-                  color: 'var(--text-primary)',
+                  backgroundColor: 'var(--bg-primary)',
+                  color: 'var(--text-heading)',
                 }}
               >
                 {unit.code}
@@ -85,10 +89,10 @@ export const ComparisonDrawer: React.FC<ComparisonDrawerProps> = ({
           <button
             type="button"
             onClick={onOpen}
-            className="inline-flex cursor-pointer items-center gap-2 rounded-xl px-3.5 py-2 text-xs font-semibold transition-all hover:brightness-110"
-            style={{ backgroundColor: 'var(--accent)', color: 'var(--accent-ink)' }}
+            className="inline-flex cursor-pointer items-center gap-2 rounded-sm px-3.5 py-2 text-xs font-semibold tracking-wider uppercase transition-all hover:opacity-92"
+            style={{ backgroundColor: 'var(--cta-bg)', color: 'var(--cta-ink)' }}
           >
-            <CompareIcon className="h-4 w-4" />
+            <CompareIcon className="h-4 w-4" style={{ color: 'var(--accent)' }} />
             <span>
               {copy.openMatrix} ({residences.length}/3)
             </span>
@@ -99,17 +103,21 @@ export const ComparisonDrawer: React.FC<ComparisonDrawerProps> = ({
       {/* Side-by-Side Comparison Matrix Modal */}
       {isOpen && (
         <div
-          className="no-print fixed inset-0 z-50 flex items-center justify-center bg-black/75 p-3 backdrop-blur-sm sm:p-6"
+          className="no-print fixed inset-0 z-50 flex items-center justify-center p-3 backdrop-blur-sm sm:p-6"
+          style={{ backgroundColor: 'var(--backdrop-veil)' }}
           role="dialog"
           aria-modal="true"
           aria-label={copy.modalTitle}
           onClick={onClose}
         >
           <div
-            className="flex max-h-[90vh] w-full max-w-5xl flex-col overflow-hidden rounded-2xl border shadow-2xl"
+            className="flex max-h-[90vh] w-full max-w-5xl flex-col overflow-hidden border-t-2 border-r border-b border-l shadow-2xl"
             style={{
               backgroundColor: 'var(--bg-secondary)',
-              borderColor: 'var(--border-strong)',
+              borderTopColor: 'var(--cta-bg)',
+              borderRightColor: 'var(--border-subtle)',
+              borderBottomColor: 'var(--border-subtle)',
+              borderLeftColor: 'var(--border-subtle)',
             }}
             onClick={(e) => e.stopPropagation()}
           >
@@ -119,10 +127,10 @@ export const ComparisonDrawer: React.FC<ComparisonDrawerProps> = ({
               style={{ borderColor: 'var(--border-subtle)' }}
             >
               <div>
-                <div className="font-mono-tabular text-[11px] font-semibold tracking-[0.2em] uppercase" style={{ color: 'var(--accent)' }}>
+                <div className="font-mono-tabular text-[10.5px] font-semibold tracking-[0.2em] uppercase" style={{ color: 'var(--accent)' }}>
                   {copy.modalEyebrow}
                 </div>
-                <h3 className="font-display mt-1 text-2xl font-semibold sm:text-3xl" style={{ color: 'var(--text-primary)' }}>
+                <h3 className="font-display mt-1 text-2xl font-semibold sm:text-3xl" style={{ color: 'var(--text-heading)' }}>
                   {copy.modalTitle}
                 </h3>
                 <p className="font-mono-tabular mt-1 text-[11px]" style={{ color: 'var(--text-muted)' }}>
@@ -136,7 +144,7 @@ export const ComparisonDrawer: React.FC<ComparisonDrawerProps> = ({
                   <button
                     type="button"
                     onClick={onClearAll}
-                    className="cursor-pointer rounded-lg border px-2.5 py-1.5 text-xs font-medium"
+                    className="cursor-pointer rounded-sm border px-2.5 py-1.5 text-xs font-medium"
                     style={{ borderColor: 'var(--border-subtle)', color: 'var(--text-secondary)' }}
                   >
                     {copy.clearAll}
@@ -146,7 +154,7 @@ export const ComparisonDrawer: React.FC<ComparisonDrawerProps> = ({
                   type="button"
                   onClick={onClose}
                   aria-label="Close"
-                  className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border"
+                  className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-sm border"
                   style={{ borderColor: 'var(--border-subtle)', color: 'var(--text-primary)' }}
                 >
                   <CloseIcon className="h-4 w-4" />
@@ -167,14 +175,14 @@ export const ComparisonDrawer: React.FC<ComparisonDrawerProps> = ({
                   <table className="w-full min-w-[620px] border-collapse text-left text-xs">
                     <thead>
                       <tr>
-                        <th className="w-44 pb-4 align-bottom text-[11px] font-semibold uppercase" style={{ color: 'var(--text-muted)' }}>
+                        <th className="w-44 pb-4 align-bottom text-[10.5px] font-semibold tracking-wider uppercase" style={{ color: 'var(--text-muted)' }}>
                           {lang === 'vi' ? 'Thông Số Đối Chiếu' : 'Specification'}
                         </th>
                         {rows.map((row) => (
                           <th key={row.residence.id} className="w-56 px-3 pb-4 align-top">
                             <div
-                              className="overflow-hidden rounded-xl border"
-                              style={{ borderColor: 'var(--border-subtle)', backgroundColor: 'var(--bg-elevated)' }}
+                              className="overflow-hidden border"
+                              style={{ borderColor: 'var(--border-subtle)', backgroundColor: 'var(--bg-primary)' }}
                             >
                               <div className="relative h-28 w-full overflow-hidden">
                                 <img
@@ -186,26 +194,44 @@ export const ComparisonDrawer: React.FC<ComparisonDrawerProps> = ({
                                   type="button"
                                   onClick={() => onRemove(row.residence.id)}
                                   aria-label={`${copy.removeBtn} ${row.residence.code}`}
-                                  className="absolute top-2 right-2 flex h-6 w-6 cursor-pointer items-center justify-center rounded-full bg-black/70 text-white hover:bg-black"
+                                  className="absolute top-2 right-2 flex h-6 w-6 cursor-pointer items-center justify-center rounded-sm"
+                                  style={{ backgroundColor: 'rgba(15, 29, 54, 0.85)', color: '#FAF8F4' }}
                                 >
                                   <CloseIcon className="h-3.5 w-3.5" />
                                 </button>
-                                <span className="font-mono-tabular absolute bottom-2 left-2 rounded bg-black/75 px-2 py-0.5 text-[11px] font-semibold text-[#E8C8A0]">
+                                <span
+                                  className="font-mono-tabular absolute bottom-2 left-2 rounded-sm px-2 py-0.5 text-[10.5px] font-semibold"
+                                  style={{ backgroundColor: 'rgba(15, 29, 54, 0.88)', color: '#FAF8F4' }}
+                                >
                                   {row.residence.code}
                                 </span>
                               </div>
                               <div className="p-3">
-                                <div className="font-display text-base font-semibold" style={{ color: 'var(--text-primary)' }}>
+                                <div className="font-display text-base font-semibold" style={{ color: 'var(--text-heading)' }}>
                                   {lang === 'vi' ? row.residence.nameVi : row.residence.nameEn}
                                 </div>
                                 <div className="mt-1.5 flex flex-wrap gap-1">
                                   {row.isBestPricePerSqm && (
-                                    <span className="rounded bg-[#D4A373]/20 px-1.5 py-0.5 text-[10px] font-semibold text-[#D4A373]">
+                                    <span
+                                      className="rounded-sm border px-1.5 py-0.5 text-[10px] font-semibold"
+                                      style={{
+                                        borderColor: 'var(--border-strong)',
+                                        backgroundColor: 'var(--accent-soft)',
+                                        color: 'var(--accent)',
+                                      }}
+                                    >
                                       {copy.bestValueTag}
                                     </span>
                                   )}
                                   {row.isHighestNetYield && (
-                                    <span className="rounded bg-emerald-500/20 px-1.5 py-0.5 text-[10px] font-semibold text-emerald-500">
+                                    <span
+                                      className="rounded-sm border px-1.5 py-0.5 text-[10px] font-semibold"
+                                      style={{
+                                        borderColor: 'var(--status-available-border)',
+                                        backgroundColor: 'var(--status-available-bg)',
+                                        color: 'var(--status-available)',
+                                      }}
+                                    >
                                       {copy.highestYieldTag}
                                     </span>
                                   )}
@@ -221,7 +247,7 @@ export const ComparisonDrawer: React.FC<ComparisonDrawerProps> = ({
                       <tr>
                         <td className="py-3 font-medium" style={{ color: 'var(--text-muted)' }}>{copy.rowFloor}</td>
                         {rows.map((r) => (
-                          <td key={r.residence.id} className="font-mono-tabular px-3 py-3 font-semibold" style={{ color: 'var(--text-primary)' }}>
+                          <td key={r.residence.id} className="font-mono-tabular px-3 py-3 font-semibold" style={{ color: 'var(--text-heading)' }}>
                             {explorerCopy.floorPrefix} {r.residence.floor} ({r.residence.wing})
                           </td>
                         ))}
@@ -245,7 +271,7 @@ export const ComparisonDrawer: React.FC<ComparisonDrawerProps> = ({
                       <tr>
                         <td className="py-3 font-medium" style={{ color: 'var(--text-muted)' }}>{copy.rowRiverScore}</td>
                         {rows.map((r) => (
-                          <td key={r.residence.id} className="font-mono-tabular px-3 py-3 font-semibold text-emerald-500">
+                          <td key={r.residence.id} className="font-mono-tabular px-3 py-3 font-semibold" style={{ color: 'var(--status-available)' }}>
                             {r.residence.riverViewScore} / 100
                           </td>
                         ))}
@@ -253,7 +279,7 @@ export const ComparisonDrawer: React.FC<ComparisonDrawerProps> = ({
                       <tr>
                         <td className="py-3 font-medium" style={{ color: 'var(--text-muted)' }}>{copy.rowArea}</td>
                         {rows.map((r) => (
-                          <td key={r.residence.id} className="font-mono-tabular px-3 py-3 font-semibold" style={{ color: 'var(--text-primary)' }}>
+                          <td key={r.residence.id} className="font-mono-tabular px-3 py-3 font-semibold" style={{ color: 'var(--text-heading)' }}>
                             {r.residence.areaSqm} m²
                           </td>
                         ))}
@@ -261,7 +287,7 @@ export const ComparisonDrawer: React.FC<ComparisonDrawerProps> = ({
                       <tr>
                         <td className="py-3 font-medium" style={{ color: 'var(--text-muted)' }}>{copy.rowTotalPrice}</td>
                         {rows.map((r) => (
-                          <td key={r.residence.id} className="font-mono-tabular px-3 py-3 text-sm font-semibold" style={{ color: 'var(--accent)' }}>
+                          <td key={r.residence.id} className="font-mono-tabular px-3 py-3 text-sm font-semibold" style={{ color: 'var(--text-heading)' }}>
                             {formatCurrency(r.residence.priceVnd, currency, lang)}
                           </td>
                         ))}
@@ -269,7 +295,7 @@ export const ComparisonDrawer: React.FC<ComparisonDrawerProps> = ({
                       <tr>
                         <td className="py-3 font-medium" style={{ color: 'var(--text-muted)' }}>{copy.rowPriceSqm}</td>
                         {rows.map((r) => (
-                          <td key={r.residence.id} className="font-mono-tabular px-3 py-3" style={{ color: 'var(--text-primary)' }}>
+                          <td key={r.residence.id} className="font-mono-tabular px-3 py-3" style={{ color: 'var(--accent)' }}>
                             {formatPricePerSqm(r.residence.priceVnd, r.residence.areaSqm, currency, lang)}
                           </td>
                         ))}
@@ -277,7 +303,7 @@ export const ComparisonDrawer: React.FC<ComparisonDrawerProps> = ({
                       <tr>
                         <td className="py-3 font-medium" style={{ color: 'var(--text-muted)' }}>{copy.rowEstMortgage}</td>
                         {rows.map((r) => (
-                          <td key={r.residence.id} className="font-mono-tabular px-3 py-3 font-semibold" style={{ color: 'var(--text-primary)' }}>
+                          <td key={r.residence.id} className="font-mono-tabular px-3 py-3 font-semibold" style={{ color: 'var(--text-heading)' }}>
                             {formatCurrency(r.monthlyMortgageVnd, currency, lang, { compact: true })}
                           </td>
                         ))}
@@ -293,7 +319,7 @@ export const ComparisonDrawer: React.FC<ComparisonDrawerProps> = ({
                       <tr>
                         <td className="py-3 font-medium" style={{ color: 'var(--text-muted)' }}>{copy.rowNetYield}</td>
                         {rows.map((r) => (
-                          <td key={r.residence.id} className="font-mono-tabular px-3 py-3 text-sm font-semibold text-emerald-500">
+                          <td key={r.residence.id} className="font-mono-tabular px-3 py-3 text-sm font-semibold" style={{ color: 'var(--status-available)' }}>
                             {r.netYieldPct.toFixed(2)}%
                           </td>
                         ))}
@@ -317,11 +343,11 @@ export const ComparisonDrawer: React.FC<ComparisonDrawerProps> = ({
                                   onInspect(r.residence);
                                   onClose();
                                 }}
-                                className="flex-1 cursor-pointer rounded-lg border px-2.5 py-2 text-[11px] font-semibold"
+                                className="flex-1 cursor-pointer rounded-sm border px-2.5 py-2 text-[11px] font-semibold"
                                 style={{
                                   borderColor: 'var(--border-subtle)',
-                                  backgroundColor: 'var(--bg-elevated)',
-                                  color: 'var(--text-primary)',
+                                  backgroundColor: 'var(--bg-primary)',
+                                  color: 'var(--text-heading)',
                                 }}
                               >
                                 {copy.inspectBtn}
@@ -332,10 +358,10 @@ export const ComparisonDrawer: React.FC<ComparisonDrawerProps> = ({
                                   onClose();
                                   onBook(r.residence);
                                 }}
-                                className="inline-flex flex-1 cursor-pointer items-center justify-center gap-1 rounded-lg px-2.5 py-2 text-[11px] font-semibold"
-                                style={{ backgroundColor: 'var(--accent)', color: 'var(--accent-ink)' }}
+                                className="inline-flex flex-1 cursor-pointer items-center justify-center gap-1 rounded-sm px-2.5 py-2 text-[11px] font-semibold"
+                                style={{ backgroundColor: 'var(--cta-bg)', color: 'var(--cta-ink)' }}
                               >
-                                <CalendarIcon className="h-3.5 w-3.5" />
+                                <CalendarIcon className="h-3.5 w-3.5" style={{ color: 'var(--accent)' }} />
                                 <span>{copy.bookBtn}</span>
                               </button>
                             </div>
