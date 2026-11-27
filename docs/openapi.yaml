@@ -1,0 +1,532 @@
+openapi: 3.1.0
+info:
+  title: Kinetix PropTech Escrow, Underwriting & Solar Geometry API
+  version: 3.0.0
+  summary: Institutional .NET 10 Minimal API for The Kinetix Residences (Thu Thiem Riverfront)
+  description: |
+    Production Clean Architecture backend powering luxury residence inventory queries,
+    idempotent unit escrow locking with strict concurrency guards, fixed-annuity & reducing-balance
+    mortgage underwriting with +0%/+2%/+4% floating-rate DTI stress tests, 10-year Cash vs 70% Leverage
+    IRR modeling, and Ho Chi Minh City (10.7725° N, 106.7219° E) solar exposure physics.
+  contact:
+    name: Truong Van Tinh (TVT Studio)
+    email: tinhkun102@gmail.com
+    url: https://github.com/tvt987/kinetix-proptech
+servers:
+  - url: http://localhost:5080
+    description: Local .NET 10 Kestrel / Docker Compose API
+  - url: http://localhost:8080
+    description: Nginx Reverse Proxy (Docker Compose Web Gateway)
+tags:
+  - name: Health
+    description: Service liveness and runtime telemetry
+  - name: Residences
+    description: Tower inventory catalog overlaid with active escrow locks
+  - name: Underwriting
+    description: Fixed-annuity, reducing-balance, DTI stress test, and 10Y leverage IRR analytics
+  - name: Escrow
+    description: Idempotent unit hold locking with atomic single-winner concurrency protection
+  - name: Architecture
+    description: Ho Chi Minh City astronomical solar path and Low-E thermal load modeling
+
+paths:
+  /health:
+    get:
+      tags: [Health]
+      operationId: getHealth
+      summary: Runtime health probe
+      responses:
+        '200':
+          description: Healthy .NET 10 service telemetry
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [status, service, version, runtime, residencesLoaded, activeEscrowHolds, timestampUtc]
+                properties:
+                  status:
+                    type: string
+                    example: healthy
+                  service:
+                    type: string
+                    example: Kinetix.Api
+                  version:
+                    type: string
+                    example: 3.0.0
+                  runtime:
+                    type: string
+                    example: .NET 10
+                  residencesLoaded:
+                    type: integer
+                    example: 12
+                  activeEscrowHolds:
+                    type: integer
+                    example: 0
+                  timestampUtc:
+                    type: string
+                    format: date-time
+
+  /api/v1/residences:
+    get:
+      tags: [Residences]
+      operationId: listResidences
+      summary: List Kinetix sky residences with live escrow lock overlay
+      parameters:
+        - name: tier
+          in: query
+          schema:
+            type: string
+            enum: [1BR, 2BR, 3BR, PENTHOUSE]
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [available, reserved, sold]
+        - name: orientation
+          in: query
+          schema:
+            type: string
+            enum: [riverPanoramic, sunsetCbd, botanical]
+        - name: minFloor
+          in: query
+          schema:
+            type: integer
+            minimum: 18
+            maximum: 42
+        - name: maxPriceVnd
+          in: query
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Filtered residences inventory
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [count, activeEscrowHolds, items]
+                properties:
+                  count:
+                    type: integer
+                  activeEscrowHolds:
+                    type: integer
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ResidenceUnit'
+        '400':
+          description: Invalid query filter
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+
+  /api/v1/residences/{id}:
+    get:
+      tags: [Residences]
+      operationId: getResidenceById
+      summary: Retrieve single residence dossier by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            example: knx-40p
+      responses:
+        '200':
+          description: Residence unit specification
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResidenceUnit'
+        '404':
+          description: Residence not found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+
+  /api/v1/underwriting/stress-test:
+    post:
+      tags: [Underwriting]
+      operationId: evaluateUnderwritingStressTest
+      summary: Evaluate fixed annuity, reducing balance, +0%/+2%/+4% rate stress-test, DTI safety & 10Y Cash vs Leverage IRR
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UnderwritingStressTestRequest'
+      responses:
+        '200':
+          description: Complete institutional underwriting telemetry
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnderwritingStressTestResponse'
+        '400':
+          description: Validation error on financial assumptions
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+
+  /api/v1/escrow/hold:
+    post:
+      tags: [Escrow]
+      operationId: acquireUnitEscrowHold
+      summary: Acquire atomic idempotent escrow hold on an available residence
+      description: |
+        Requires a unique `Idempotency-Key` header. Under concurrent buyer contention on the
+        same unit, strictly one caller receives `201 Created` while competing callers receive
+        `409 Conflict`. Replaying an identical request with the original `Idempotency-Key`
+        returns `200 OK` with `X-Idempotency-Status: REPLAYED`.
+      parameters:
+        - name: Idempotency-Key
+          in: header
+          required: true
+          description: Unique client-generated key ensuring exactly-once escrow lock semantics
+          schema:
+            type: string
+            minLength: 8
+            example: idem-knx-40p-20261127-001
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EscrowHoldRequest'
+      responses:
+        '201':
+          description: Escrow hold lock created
+          headers:
+            Location:
+              schema:
+                type: string
+            X-Idempotency-Status:
+              schema:
+                type: string
+                enum: [CREATED]
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EscrowHoldReceipt'
+        '200':
+          description: Idempotent replay of existing hold receipt
+          headers:
+            X-Idempotency-Status:
+              schema:
+                type: string
+                enum: [REPLAYED]
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EscrowHoldReceipt'
+        '400':
+          description: Missing Idempotency-Key or invalid payload
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '404':
+          description: Unit does not exist
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '409':
+          description: Unit already locked by another buyer, permanently sold, or Idempotency-Key payload mismatch
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+
+  /api/v1/escrow/holds/{holdId}:
+    get:
+      tags: [Escrow]
+      operationId: getEscrowHoldById
+      summary: Inspect an issued escrow hold receipt
+      parameters:
+        - name: holdId
+          in: path
+          required: true
+          schema:
+            type: string
+            example: ESC-K40P-8FA3C102
+      responses:
+        '200':
+          description: Active or recorded escrow hold receipt
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EscrowHoldReceipt'
+        '404':
+          description: Hold ID not found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+
+  /api/v1/architecture/solar-exposure:
+    post:
+      tags: [Architecture]
+      operationId: computeSolarExposure
+      summary: Compute Ho Chi Minh City (10.7725°N, 106.7219°E) solar position, thermal load (W/m²), sun penetration & daylight lux
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SolarExposureRequest'
+      responses:
+        '200':
+          description: Instantaneous solar exposure telemetry plus 06:00-18:00 hourly profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SolarExposureResult'
+        '400':
+          description: Invalid local hour or azimuth
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+
+components:
+  schemas:
+    ResidenceUnit:
+      type: object
+      required:
+        - id
+        - code
+        - nameEn
+        - nameVi
+        - floor
+        - wing
+        - tier
+        - bedrooms
+        - bathrooms
+        - areaSqm
+        - terraceSqm
+        - ceilingHeightM
+        - orientation
+        - compassDeg
+        - riverViewScore
+        - status
+        - priceVnd
+        - estMonthlyRentVnd
+        - maintenanceFeePerSqmVnd
+        - privateLift
+        - parkingSlots
+        - handoverQuarter
+      properties:
+        id: { type: string, example: knx-40p }
+        code: { type: string, example: K-40P }
+        nameEn: { type: string, example: Obsidian Sky Penthouse }
+        nameVi: { type: string, example: Obsidian Sky Penthouse }
+        floor: { type: integer, example: 40 }
+        wing: { type: string, example: CROWN }
+        tier: { type: string, enum: [oneBr, twoBr, threeBr, penthouse] }
+        bedrooms: { type: integer }
+        bathrooms: { type: integer }
+        areaSqm: { type: number }
+        terraceSqm: { type: number }
+        ceilingHeightM: { type: number }
+        orientation: { type: string, enum: [riverPanoramic, sunsetCbd, botanical] }
+        compassDeg: { type: integer, example: 258 }
+        riverViewScore: { type: integer, example: 99 }
+        status: { type: string, enum: [available, reserved, sold] }
+        priceVnd: { type: integer, format: int64, example: 68500000000 }
+        estMonthlyRentVnd: { type: integer, format: int64, example: 410000000 }
+        maintenanceFeePerSqmVnd: { type: integer, format: int64, example: 52000 }
+        monthlyMaintenanceFeeVnd: { type: integer, format: int64 }
+        grossRentalYieldPct: { type: number }
+        privateLift: { type: boolean }
+        parkingSlots: { type: integer }
+        handoverQuarter: { type: string, example: Q2 2028 }
+
+    UnderwritingStressTestRequest:
+      type: object
+      required:
+        - propertyPriceVnd
+        - downPaymentPct
+        - loanTermYears
+        - annualInterestRatePct
+        - estimatedMonthlyRentVnd
+        - monthlyMaintenanceFeeVnd
+        - annualAppreciationPct
+        - monthlyIncomeVnd
+      properties:
+        propertyPriceVnd: { type: integer, format: int64, example: 68500000000 }
+        downPaymentPct: { type: number, example: 30 }
+        loanTermYears: { type: integer, example: 20 }
+        annualInterestRatePct: { type: number, example: 7.2 }
+        estimatedMonthlyRentVnd: { type: integer, format: int64, example: 410000000 }
+        monthlyMaintenanceFeeVnd: { type: integer, format: int64, example: 14976000 }
+        annualAppreciationPct: { type: number, example: 6.0 }
+        monthlyIncomeVnd: { type: integer, format: int64, example: 950000000 }
+        activeRateShockPct: { type: number, default: 2.0 }
+        vacancyMonthsPerYear: { type: number, default: 0.8 }
+        managementAndTaxRatePct: { type: number, default: 10.0 }
+        leverageLtvPct: { type: number, default: 70.0 }
+
+    AmortizationYearRow:
+      type: object
+      properties:
+        year: { type: integer }
+        openingBalanceVnd: { type: integer, format: int64 }
+        annualPaymentVnd: { type: integer, format: int64 }
+        principalPaidVnd: { type: integer, format: int64 }
+        interestPaidVnd: { type: integer, format: int64 }
+        endingBalanceVnd: { type: integer, format: int64 }
+        cumulativeInterestVnd: { type: integer, format: int64 }
+        cumulativePrincipalVnd: { type: integer, format: int64 }
+
+    InterestStressScenario:
+      type: object
+      properties:
+        shockPct: { type: number }
+        effectiveRatePct: { type: number }
+        monthlyPaymentVnd: { type: integer, format: int64 }
+        deltaMonthlyPaymentVnd: { type: integer, format: int64 }
+        totalInterestVnd: { type: integer, format: int64 }
+        deltaTotalInterestVnd: { type: integer, format: int64 }
+        monthlyNetCashFlowVnd: { type: integer, format: int64 }
+        dtiRatioPct: { type: number }
+        dtiSafetyTier: { type: string, enum: [safe, caution, highRisk] }
+
+    UnderwritingStressTestResponse:
+      type: object
+      properties:
+        propertyPriceVnd: { type: integer, format: int64 }
+        downPaymentVnd: { type: integer, format: int64 }
+        loanPrincipalVnd: { type: integer, format: int64 }
+        baseMonthlyAnnuityPmtVnd: { type: integer, format: int64 }
+        totalAnnuityInterestVnd: { type: integer, format: int64 }
+        grossRentalYieldPct: { type: number }
+        netRentalYieldPct: { type: number }
+        monthlyNetCashFlowVnd: { type: integer, format: int64 }
+        reducingBalance:
+          type: object
+          properties:
+            firstMonthPaymentVnd: { type: integer, format: int64 }
+            finalMonthPaymentVnd: { type: integer, format: int64 }
+            averageMonthlyPaymentVnd: { type: integer, format: int64 }
+            totalPaymentsVnd: { type: integer, format: int64 }
+            totalInterestVnd: { type: integer, format: int64 }
+            interestSavingsVsAnnuityVnd: { type: integer, format: int64 }
+            schedule:
+              type: array
+              items:
+                $ref: '#/components/schemas/AmortizationYearRow'
+        activeStressScenario:
+          $ref: '#/components/schemas/InterestStressScenario'
+        benchmarkScenarios:
+          type: array
+          items:
+            $ref: '#/components/schemas/InterestStressScenario'
+        fixedAnnuitySchedule:
+          type: array
+          items:
+            $ref: '#/components/schemas/AmortizationYearRow'
+        tenYearLeverageComparison:
+          type: object
+          properties:
+            horizonYears: { type: integer }
+            irrSpreadPct: { type: number }
+            capitalFreedVnd: { type: integer, format: int64 }
+
+    EscrowHoldRequest:
+      type: object
+      required: [unitId, buyerName, buyerEmail, depositAmountVnd]
+      properties:
+        unitId: { type: string, example: knx-40p }
+        buyerName: { type: string, example: Alexander Tran }
+        buyerEmail: { type: string, format: email, example: alex@privatewealth.sg }
+        depositAmountVnd: { type: integer, format: int64, minimum: 50000000, example: 500000000 }
+        linkedVipPassCode: { type: [string, 'null'], example: KNX-2026-A84F }
+        holdDurationHours: { type: integer, minimum: 1, maximum: 168, default: 72 }
+
+    EscrowHoldReceipt:
+      type: object
+      properties:
+        holdId: { type: string, example: ESC-K40P-8FA3C102 }
+        idempotencyKey: { type: string }
+        unitId: { type: string }
+        unitCode: { type: string }
+        buyerName: { type: string }
+        buyerEmail: { type: string }
+        depositAmountVnd: { type: integer, format: int64 }
+        bankBin: { type: string, example: '970407' }
+        accountNumber: { type: string, example: '19036888999001' }
+        accountName: { type: string, example: THE KINETIX RESIDENCES ESCROW }
+        transferMemo: { type: string }
+        createdAtUtc: { type: string, format: date-time }
+        expiresAtUtc: { type: string, format: date-time }
+        linkedVipPassCode: { type: [string, 'null'] }
+
+    SolarExposureRequest:
+      type: object
+      required: [localHour, season, facadeAzimuthDeg]
+      properties:
+        localHour: { type: number, minimum: 6.0, maximum: 18.0, example: 15.0 }
+        season:
+          type: string
+          enum: [vernalEquinox, summerSolstice, autumnEquinox, winterSolstice]
+        facadeAzimuthDeg: { type: number, example: 258.0 }
+        overhangDepthM: { type: number, default: 2.2 }
+        ceilingHeightM: { type: number, default: 3.5 }
+        glazingShgc: { type: number, default: 0.36 }
+
+    SolarExposureResult:
+      type: object
+      properties:
+        latitudeDeg: { type: number, example: 10.7725 }
+        longitudeDeg: { type: number, example: 106.7219 }
+        season: { type: string }
+        dayOfYear: { type: integer }
+        localHour: { type: number }
+        trueSolarHour: { type: number }
+        declinationDeg: { type: number }
+        solarAltitudeDeg: { type: number }
+        solarAzimuthDeg: { type: number }
+        facadeAzimuthDeg: { type: number }
+        facadeCardinal: { type: string }
+        relativeAzimuthDeg: { type: number }
+        incidenceAngleDeg: { type: number }
+        directSunHit: { type: boolean }
+        shadedFraction: { type: number }
+        penetrationDepthM: { type: number }
+        directNormalIrradianceWm2: { type: integer }
+        exteriorFacadeIrradianceWm2: { type: integer }
+        interiorSolarGainWm2: { type: integer }
+        naturalDaylightLux: { type: integer }
+        daylightComfortTier: { type: string, enum: [optimalDaylight, brightDirectGlare, ambientDiffuse, twilightLow] }
+        thermalLoadTier: { type: string, enum: [coolMorning, balanced, elevatedSolarGain, peakWestLoad] }
+        solarNoonAltitudeDeg: { type: number }
+        solarNoonCardinal: { type: string, enum: [N, S] }
+        dailyProfile:
+          type: array
+          items:
+            type: object
+            properties:
+              localHour: { type: integer }
+              altitudeDeg: { type: number }
+              azimuthDeg: { type: number }
+              exteriorIrradianceWm2: { type: integer }
+              interiorSolarGainWm2: { type: integer }
+              daylightLux: { type: integer }
+              directSunHit: { type: boolean }
+
+    ProblemDetails:
+      type: object
+      properties:
+        type: { type: string }
+        title: { type: string }
+        status: { type: integer }
+        detail: { type: string }
+        conflictCode: { type: string }
+        existingHoldId: { type: [string, 'null'] }
+        expiresAtUtc: { type: [string, 'null'], format: date-time }

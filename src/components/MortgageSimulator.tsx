@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import type {
   Currency,
   DtiSafetyTier,
@@ -14,6 +14,7 @@ import {
   buildInvestmentDossierJson,
   buildInvestmentDossierMarkdown,
 } from '../engines/mortgageEngine';
+import { compareCashVsLeverage } from '../engines/leverageEngine';
 import { formatCurrency } from '../engines/currencyEngine';
 import {
   AlertTriangleIcon,
@@ -89,6 +90,12 @@ export const MortgageSimulator: React.FC<MortgageSimulatorProps> = ({
   const [hoveredYear, setHoveredYear] = useState<number>(10);
   const [scheduleScope, setScheduleScope] = useState<'10y' | 'full'>('10y');
   const [exportStatus, setExportStatus] = useState<'idle' | 'md' | 'json' | 'csv'>('idle');
+  const [leverageLtvPct, setLeverageLtvPct] = useState<number>(70);
+
+  const leverageComparison = useMemo(
+    () => compareCashVsLeverage(inputs, leverageLtvPct, 10),
+    [inputs, leverageLtvPct]
+  );
 
   const principalPct =
     analysis.totalPaymentsVnd > 0
@@ -217,7 +224,7 @@ export const MortgageSimulator: React.FC<MortgageSimulatorProps> = ({
           <div className="max-w-2xl">
             <div className="flex items-center gap-3">
               <span className="font-mono-tabular text-xs font-semibold" style={{ color: 'var(--accent)' }}>
-                02
+                03
               </span>
               <span className="h-px w-8" style={{ backgroundColor: 'var(--accent)' }} />
               <span
@@ -1080,6 +1087,269 @@ export const MortgageSimulator: React.FC<MortgageSimulatorProps> = ({
                   })}
                 </svg>
               </div>
+            </div>
+
+            {/* Side-by-Side 10-Year Cash Purchase vs 70% Bank Leverage & Net IRR Matrix */}
+            <div
+              data-testid="leverage-irr-simulator"
+              className="border p-5 sm:p-6"
+              style={{
+                backgroundColor: 'var(--bg-secondary)',
+                borderColor: 'var(--border-subtle)',
+                boxShadow: 'var(--shadow-card)',
+              }}
+            >
+              <div
+                className="flex flex-col justify-between gap-3 border-b pb-4 sm:flex-row sm:items-start"
+                style={{ borderColor: 'var(--border-subtle)' }}
+              >
+                <div>
+                  <div
+                    className="font-mono-tabular text-[10px] font-semibold tracking-[0.2em] uppercase"
+                    style={{ color: 'var(--accent)' }}
+                  >
+                    {copy.leverageEyebrow}
+                  </div>
+                  <h3
+                    className="font-display mt-1 text-xl font-semibold sm:text-2xl"
+                    style={{ color: 'var(--text-heading)' }}
+                  >
+                    {copy.leverageTitle}
+                  </h3>
+                  <p className="mt-0.5 text-xs leading-relaxed" style={{ color: 'var(--text-muted)' }}>
+                    {copy.leverageSubtitle}
+                  </p>
+                </div>
+
+                {/* Quick LTV Benchmark Switch (50% / 60% / 70%) */}
+                <div className="flex shrink-0 items-center gap-1.5" role="group" aria-label="Leverage LTV">
+                  {[50, 60, 70].map((ltv) => {
+                    const active = leverageLtvPct === ltv;
+                    return (
+                      <button
+                        key={ltv}
+                        type="button"
+                        onClick={() => setLeverageLtvPct(ltv)}
+                        className="font-mono-tabular cursor-pointer rounded-sm border px-2.5 py-1.5 text-[11px] font-semibold transition-colors"
+                        style={{
+                          borderColor: active ? 'var(--cta-bg)' : 'var(--border-subtle)',
+                          backgroundColor: active ? 'var(--cta-bg)' : 'var(--bg-primary)',
+                          color: active ? 'var(--cta-ink)' : 'var(--text-secondary)',
+                        }}
+                      >
+                        {ltv}% LTV
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* 3 Executive Leverage Alpha Telemetry Callouts */}
+              <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
+                <div
+                  className="border p-3"
+                  style={{
+                    borderColor:
+                      leverageComparison.irrSpreadPct >= 0
+                        ? 'var(--status-available-border)'
+                        : 'var(--status-reserved-border)',
+                    backgroundColor:
+                      leverageComparison.irrSpreadPct >= 0
+                        ? 'var(--status-available-bg)'
+                        : 'var(--status-reserved-bg)',
+                  }}
+                >
+                  <div
+                    className="text-[10.5px]"
+                    style={{
+                      color:
+                        leverageComparison.irrSpreadPct >= 0
+                          ? 'var(--status-available)'
+                          : 'var(--status-reserved)',
+                    }}
+                  >
+                    {copy.leverageAlphaLabel}
+                  </div>
+                  <div
+                    data-testid="leverage-irr-spread"
+                    className="font-mono-tabular mt-1 text-lg font-bold"
+                    style={{
+                      color:
+                        leverageComparison.irrSpreadPct >= 0
+                          ? 'var(--status-available)'
+                          : 'var(--status-reserved)',
+                    }}
+                  >
+                    {leverageComparison.irrSpreadPct >= 0 ? '+' : ''}
+                    {leverageComparison.irrSpreadPct.toFixed(2)}% p.a.
+                  </div>
+                </div>
+
+                <div
+                  className="border p-3"
+                  style={{ borderColor: 'var(--border-subtle)', backgroundColor: 'var(--bg-primary)' }}
+                >
+                  <div className="text-[10.5px]" style={{ color: 'var(--text-muted)' }}>
+                    {copy.leverageCapitalFreed}
+                  </div>
+                  <div
+                    className="font-mono-tabular mt-1 text-lg font-semibold"
+                    style={{ color: 'var(--text-heading)' }}
+                  >
+                    {formatCurrency(leverageComparison.capitalFreedVnd, currency, lang, { compact: true })}
+                  </div>
+                </div>
+
+                <div
+                  className="border p-3"
+                  style={{ borderColor: 'var(--border-subtle)', backgroundColor: 'var(--bg-primary)' }}
+                >
+                  <div className="text-[10.5px]" style={{ color: 'var(--text-muted)' }}>
+                    {copy.leverageMultipleAdv}
+                  </div>
+                  <div
+                    className="font-mono-tabular mt-1 text-lg font-semibold"
+                    style={{ color: 'var(--accent)' }}
+                  >
+                    {leverageComparison.equityMultipleAdvantage >= 0 ? '+' : ''}
+                    {leverageComparison.equityMultipleAdvantage.toFixed(2)}x
+                  </div>
+                </div>
+              </div>
+
+              {/* Side-by-Side Comparison Ledger Table */}
+              <div className="mt-4 overflow-x-auto">
+                <table className="w-full min-w-[480px] border-collapse text-left text-xs">
+                  <thead>
+                    <tr className="border-b" style={{ borderColor: 'var(--border-subtle)', color: 'var(--text-muted)' }}>
+                      <th className="py-2.5 pr-3 font-semibold">{copy.colScenario}</th>
+                      <th className="px-3 py-2.5 text-right font-semibold">{copy.leverageCashTitle}</th>
+                      <th className="py-2.5 pl-3 text-right font-semibold" style={{ color: 'var(--accent)' }}>
+                        {copy.leverageBankTitle} ({leverageLtvPct}% LTV)
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="font-mono-tabular divide-y" style={{ borderColor: 'var(--border-subtle)' }}>
+                    <tr className="editorial-table-row">
+                      <td className="py-2.5 pr-3 font-sans font-medium" style={{ color: 'var(--text-secondary)' }}>
+                        {copy.leverageRowInitialEquity}
+                      </td>
+                      <td className="px-3 py-2.5 text-right" style={{ color: 'var(--text-heading)' }}>
+                        {formatCurrency(leverageComparison.cashStrategy.initialEquityVnd, currency, lang, { compact: true })}
+                      </td>
+                      <td className="py-2.5 pl-3 text-right font-semibold" style={{ color: 'var(--text-heading)' }}>
+                        {formatCurrency(leverageComparison.leveragedStrategy.initialEquityVnd, currency, lang, { compact: true })}
+                      </td>
+                    </tr>
+                    <tr className="editorial-table-row">
+                      <td className="py-2.5 pr-3 font-sans font-medium" style={{ color: 'var(--text-secondary)' }}>
+                        {copy.leverageRowGrossRent}
+                      </td>
+                      <td className="px-3 py-2.5 text-right" style={{ color: 'var(--status-available)' }}>
+                        {formatCurrency(leverageComparison.cashStrategy.tenYearGrossRentVnd, currency, lang, { compact: true })}
+                      </td>
+                      <td className="py-2.5 pl-3 text-right" style={{ color: 'var(--status-available)' }}>
+                        {formatCurrency(leverageComparison.leveragedStrategy.tenYearGrossRentVnd, currency, lang, { compact: true })}
+                      </td>
+                    </tr>
+                    <tr className="editorial-table-row">
+                      <td className="py-2.5 pr-3 font-sans font-medium" style={{ color: 'var(--text-secondary)' }}>
+                        {copy.leverageRowOpFees}
+                      </td>
+                      <td className="px-3 py-2.5 text-right" style={{ color: 'var(--text-muted)' }}>
+                        -{formatCurrency(leverageComparison.cashStrategy.tenYearOperatingFeesVnd, currency, lang, { compact: true })}
+                      </td>
+                      <td className="py-2.5 pl-3 text-right" style={{ color: 'var(--text-muted)' }}>
+                        -{formatCurrency(leverageComparison.leveragedStrategy.tenYearOperatingFeesVnd, currency, lang, { compact: true })}
+                      </td>
+                    </tr>
+                    <tr className="editorial-table-row">
+                      <td className="py-2.5 pr-3 font-sans font-medium" style={{ color: 'var(--text-secondary)' }}>
+                        {copy.leverageRowInterest}
+                      </td>
+                      <td className="px-3 py-2.5 text-right" style={{ color: 'var(--text-muted)' }}>
+                        {formatCurrency(0, currency, lang, { compact: true })}
+                      </td>
+                      <td className="py-2.5 pl-3 text-right" style={{ color: 'var(--status-reserved)' }}>
+                        -{formatCurrency(leverageComparison.leveragedStrategy.tenYearInterestPaidVnd, currency, lang, { compact: true })}
+                      </td>
+                    </tr>
+                    <tr className="editorial-table-row">
+                      <td className="py-2.5 pr-3 font-sans font-medium" style={{ color: 'var(--text-secondary)' }}>
+                        {copy.leverageRowExitVal}
+                      </td>
+                      <td className="px-3 py-2.5 text-right" style={{ color: 'var(--text-heading)' }}>
+                        {formatCurrency(leverageComparison.cashStrategy.year10PropertyValueVnd, currency, lang, { compact: true })}
+                      </td>
+                      <td className="py-2.5 pl-3 text-right" style={{ color: 'var(--text-heading)' }}>
+                        {formatCurrency(leverageComparison.leveragedStrategy.year10PropertyValueVnd, currency, lang, { compact: true })}
+                      </td>
+                    </tr>
+                    <tr className="editorial-table-row">
+                      <td className="py-2.5 pr-3 font-sans font-medium" style={{ color: 'var(--text-secondary)' }}>
+                        {copy.leverageRowNetExit}
+                      </td>
+                      <td className="px-3 py-2.5 text-right" style={{ color: 'var(--text-heading)' }}>
+                        {formatCurrency(leverageComparison.cashStrategy.netExitProceedsVnd, currency, lang, { compact: true })}
+                      </td>
+                      <td className="py-2.5 pl-3 text-right" style={{ color: 'var(--text-heading)' }}>
+                        {formatCurrency(leverageComparison.leveragedStrategy.netExitProceedsVnd, currency, lang, { compact: true })}
+                      </td>
+                    </tr>
+                    <tr className="editorial-table-row">
+                      <td className="py-2.5 pr-3 font-sans font-semibold" style={{ color: 'var(--text-heading)' }}>
+                        {copy.leverageRowNetProfit}
+                      </td>
+                      <td className="px-3 py-2.5 text-right font-semibold" style={{ color: 'var(--text-heading)' }}>
+                        {formatCurrency(leverageComparison.cashStrategy.totalNetProfitVnd, currency, lang, { compact: true, signed: true })}
+                      </td>
+                      <td className="py-2.5 pl-3 text-right font-semibold" style={{ color: 'var(--text-heading)' }}>
+                        {formatCurrency(leverageComparison.leveragedStrategy.totalNetProfitVnd, currency, lang, { compact: true, signed: true })}
+                      </td>
+                    </tr>
+                    <tr className="editorial-table-row">
+                      <td className="py-2.5 pr-3 font-sans font-semibold" style={{ color: 'var(--text-heading)' }}>
+                        {copy.leverageRowMultiple}
+                      </td>
+                      <td className="px-3 py-2.5 text-right font-semibold" style={{ color: 'var(--text-heading)' }}>
+                        {leverageComparison.cashStrategy.equityMultiple.toFixed(2)}x
+                      </td>
+                      <td className="py-2.5 pl-3 text-right font-bold" style={{ color: 'var(--accent)' }}>
+                        {leverageComparison.leveragedStrategy.equityMultiple.toFixed(2)}x
+                      </td>
+                    </tr>
+                    <tr
+                      className="border-t-2"
+                      style={{
+                        borderColor: 'var(--border-strong)',
+                        backgroundColor: 'var(--accent-soft)',
+                      }}
+                    >
+                      <td className="py-3 pr-3 font-sans text-xs font-bold" style={{ color: 'var(--text-heading)' }}>
+                        {copy.leverageRowNetIrr}
+                      </td>
+                      <td
+                        data-testid="leverage-cash-irr"
+                        className="px-3 py-3 text-right text-sm font-bold"
+                        style={{ color: 'var(--text-heading)' }}
+                      >
+                        {leverageComparison.cashStrategy.netIrrPct.toFixed(2)}%
+                      </td>
+                      <td
+                        data-testid="leverage-bank-irr"
+                        className="py-3 pl-3 text-right text-sm font-bold"
+                        style={{ color: 'var(--status-available)' }}
+                      >
+                        {leverageComparison.leveragedStrategy.netIrrPct.toFixed(2)}%
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <p className="mt-3 text-[11px] leading-relaxed" style={{ color: 'var(--text-muted)' }}>
+                {copy.leverageNote}
+              </p>
             </div>
 
             {/* Year-by-Year 10-Year / Full-Term Amortization Schedule Ledger */}

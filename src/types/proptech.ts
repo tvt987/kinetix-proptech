@@ -178,3 +178,116 @@ export interface DepositHoldRecord {
   accountNumber: string;
   accountName: string;
 }
+
+export type SolarSeason =
+  | 'VERNAL_EQUINOX'
+  | 'SUMMER_SOLSTICE'
+  | 'AUTUMN_EQUINOX'
+  | 'WINTER_SOLSTICE';
+
+export type DaylightComfortTier =
+  | 'OPTIMAL_DAYLIGHT'
+  | 'BRIGHT_DIRECT_GLARE'
+  | 'AMBIENT_DIFFUSE'
+  | 'TWILIGHT_LOW';
+
+export type ThermalLoadTier =
+  | 'COOL_MORNING'
+  | 'BALANCED'
+  | 'ELEVATED_SOLAR_GAIN'
+  | 'PEAK_WEST_LOAD';
+
+export interface SolarExposureInput {
+  /** Local clock hour in Ho Chi Minh City (UTC+7), 6.0 to 18.0 */
+  localHour: number;
+  season: SolarSeason;
+  /** Facade / balcony outward normal azimuth in degrees clockwise from True North (0=N, 90=E, 180=S, 270=W) */
+  facadeAzimuthDeg: number;
+  /** Architectural loggia overhang depth in meters (default 2.2m) */
+  overhangDepthM?: number;
+  /** Clear interior ceiling height in meters (default 3.5m) */
+  ceilingHeightM?: number;
+  /** Triple Low-E glazing SHGC (default 0.36) */
+  glazingShgc?: number;
+}
+
+export interface SolarHourlySample {
+  localHour: number;
+  altitudeDeg: number;
+  azimuthDeg: number;
+  exteriorIrradianceWm2: number;
+  interiorSolarGainWm2: number;
+  daylightLux: number;
+  directSunHit: boolean;
+}
+
+export interface SolarExposureResult {
+  latitudeDeg: number;
+  longitudeDeg: number;
+  season: SolarSeason;
+  dayOfYear: number;
+  localHour: number;
+  trueSolarHour: number;
+  declinationDeg: number;
+  solarAltitudeDeg: number;
+  solarAzimuthDeg: number;
+  facadeAzimuthDeg: number;
+  facadeCardinal: string;
+  relativeAzimuthDeg: number;
+  incidenceAngleDeg: number;
+  directSunHit: boolean;
+  shadedFraction: number;
+  penetrationDepthM: number;
+  directNormalIrradianceWm2: number;
+  exteriorFacadeIrradianceWm2: number;
+  interiorSolarGainWm2: number;
+  naturalDaylightLux: number;
+  daylightComfortTier: DaylightComfortTier;
+  thermalLoadTier: ThermalLoadTier;
+  solarNoonAltitudeDeg: number;
+  solarNoonCardinal: 'N' | 'S';
+  dailyProfile: SolarHourlySample[];
+}
+
+export interface LeverageYearPoint {
+  year: number;
+  cashAnnualNetCashflowVnd: number;
+  leveragedAnnualNetCashflowVnd: number;
+  cashCumulativeCashflowVnd: number;
+  leveragedCumulativeCashflowVnd: number;
+  cashNetWealthVnd: number;
+  leveragedNetWealthVnd: number;
+  propertyValueVnd: number;
+  remainingDebtVnd: number;
+}
+
+export interface LeverageStrategyMetrics {
+  label: 'CASH_100' | 'LEVERAGED_70';
+  ltvPct: number;
+  initialEquityVnd: number;
+  loanPrincipalVnd: number;
+  annualInterestRatePct: number;
+  tenYearGrossRentVnd: number;
+  tenYearOperatingFeesVnd: number;
+  tenYearNetOperatingIncomeVnd: number;
+  tenYearDebtServiceVnd: number;
+  tenYearInterestPaidVnd: number;
+  year10PropertyValueVnd: number;
+  year10RemainingDebtVnd: number;
+  exitTransactionCostVnd: number;
+  netExitProceedsVnd: number;
+  totalNetProfitVnd: number;
+  equityMultiple: number;
+  netIrrPct: number;
+  averageAnnualCashOnCashPct: number;
+}
+
+export interface LeverageComparisonResult {
+  horizonYears: number;
+  cashStrategy: LeverageStrategyMetrics;
+  leveragedStrategy: LeverageStrategyMetrics;
+  irrSpreadPct: number;
+  equityMultipleAdvantage: number;
+  capitalFreedVnd: number;
+  yearlyComparison: LeverageYearPoint[];
+}

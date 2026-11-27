@@ -177,7 +177,7 @@ export const Header: React.FC<HeaderProps> = ({
           </a>
 
           {/* Primary Desktop Magazine Navigation */}
-          <nav className="hidden items-center gap-6 lg:flex" aria-label="Main navigation">
+          <nav className="hidden items-center gap-5 lg:flex" aria-label="Main navigation">
             <a
               href="#tower-explorer"
               className="flex items-center gap-1.5 border-b border-transparent py-1 text-[11px] font-semibold tracking-[0.14em] uppercase transition-colors hover:border-[#B48A3E]"
@@ -185,6 +185,14 @@ export const Header: React.FC<HeaderProps> = ({
             >
               <BuildingIcon className="h-3.5 w-3.5" style={{ color: 'var(--accent)' }} />
               <span>{copy.tower}</span>
+            </a>
+            <a
+              href="#solar-lab"
+              className="flex items-center gap-1.5 border-b border-transparent py-1 text-[11px] font-semibold tracking-[0.14em] uppercase transition-colors hover:border-[#B48A3E]"
+              style={{ color: 'var(--text-primary)' }}
+            >
+              <SunIcon className="h-3.5 w-3.5" style={{ color: 'var(--accent)' }} />
+              <span>{copy.solar}</span>
             </a>
             <a
               href="#mortgage-simulator"
@@ -332,6 +340,15 @@ export const Header: React.FC<HeaderProps> = ({
             >
               <BuildingIcon className="h-4 w-4" style={{ color: 'var(--accent)' }} />
               <span>{copy.tower}</span>
+            </a>
+            <a
+              href="#solar-lab"
+              onClick={() => setMobileOpen(false)}
+              className="flex items-center gap-2.5 rounded-sm border px-3.5 py-2.5 text-xs font-semibold tracking-[0.12em] uppercase"
+              style={{ borderColor: 'var(--border-subtle)', color: 'var(--text-primary)' }}
+            >
+              <SunIcon className="h-4 w-4" style={{ color: 'var(--accent)' }} />
+              <span>{copy.solar}</span>
             </a>
             <a
               href="#mortgage-simulator"

@@ -3,6 +3,7 @@ import type { Language } from '../types/proptech';
 export interface CopyBundle {
   nav: {
     tower: string;
+    solar: string;
     simulator: string;
     compare: string;
     vault: string;
@@ -145,6 +146,53 @@ export interface CopyBundle {
     scheduleTab10Y: string;
     scheduleTabFull: string;
     totalRowLabel: string;
+    leverageEyebrow: string;
+    leverageTitle: string;
+    leverageSubtitle: string;
+    leverageCashTitle: string;
+    leverageBankTitle: string;
+    leverageAlphaLabel: string;
+    leverageCapitalFreed: string;
+    leverageMultipleAdv: string;
+    leverageRowInitialEquity: string;
+    leverageRowGrossRent: string;
+    leverageRowOpFees: string;
+    leverageRowInterest: string;
+    leverageRowExitVal: string;
+    leverageRowNetExit: string;
+    leverageRowNetProfit: string;
+    leverageRowMultiple: string;
+    leverageRowNetIrr: string;
+    leverageNote: string;
+  };
+  solar: {
+    eyebrow: string;
+    title: string;
+    subtitle: string;
+    coordsBadge: string;
+    timeSliderLabel: string;
+    seasonLabel: string;
+    orientationLabel: string;
+    syncedUnitPrefix: string;
+    presetMorning: string;
+    presetNoon: string;
+    presetAfternoon: string;
+    presetSunset: string;
+    altitudeLabel: string;
+    azimuthLabel: string;
+    thermalLoadLabel: string;
+    interiorGainLabel: string;
+    penetrationLabel: string;
+    daylightLuxLabel: string;
+    noonPeakPrefix: string;
+    beamActiveBadge: string;
+    beamShadedBadge: string;
+    compassCaption: string;
+    profileTitle: string;
+    profileSubtitle: string;
+    lowESpecNote: string;
+    comfortTiers: Record<'OPTIMAL_DAYLIGHT' | 'BRIGHT_DIRECT_GLARE' | 'AMBIENT_DIFFUSE' | 'TWILIGHT_LOW', string>;
+    thermalTiers: Record<'COOL_MORNING' | 'BALANCED' | 'ELEVATED_SOLAR_GAIN' | 'PEAK_WEST_LOAD', string>;
   };
   compare: {
     dockLabel: string;
@@ -278,6 +326,7 @@ export const TRANSLATIONS: Record<Language, CopyBundle> = {
   vi: {
     nav: {
       tower: 'Tháp & Mặt Bằng',
+      solar: 'Hướng Nắng',
       simulator: 'Tính Vay & ROI',
       compare: 'So Sánh',
       vault: 'VIP Vault',
@@ -445,6 +494,63 @@ export const TRANSLATIONS: Record<Language, CopyBundle> = {
       scheduleTab10Y: 'Lịch 10 Năm Đầu',
       scheduleTabFull: 'Toàn Kỳ Vay',
       totalRowLabel: 'Tổng Cộng Kỳ Đang Xem',
+      leverageEyebrow: 'SO SÁNH ĐÒN BẨY ĐẦU TƯ 10 NĂM & NET IRR',
+      leverageTitle: 'Mua Tiền Mặt 100% vs Đòn Bẩy Ngân Hàng 70% LTV',
+      leverageSubtitle: 'Đối chiếu trực tiếp hiệu suất vốn tự có, tổng phí quản lý, chi phí lãi vay, giá trị tăng trưởng và tỷ suất hoàn vốn nội bộ ròng (Net IRR) sau thuế chuyển nhượng 2% tại năm thứ 10.',
+      leverageCashTitle: 'Mua Tiền Mặt 100% (0% LTV)',
+      leverageBankTitle: 'Đòn Bẩy Ngân Hàng',
+      leverageAlphaLabel: 'Biên Độ Leverage Alpha (Net IRR)',
+      leverageCapitalFreed: 'Vốn Giải Phóng Tái Đầu Tư',
+      leverageMultipleAdv: 'Chênh Lệch Bội Số Vốn',
+      leverageRowInitialEquity: 'Vốn Tự Có Ban Đầu',
+      leverageRowGrossRent: 'Tổng Tiền Thuê Gộp (10 Năm)',
+      leverageRowOpFees: 'Phí Quản Lý, Trống & Thuế (10N)',
+      leverageRowInterest: 'Tổng Lãi Vay Ngân Hàng (10N)',
+      leverageRowExitVal: 'Định Giá Thoái Vốn Năm 10',
+      leverageRowNetExit: 'Thu Ròng Thoái Vốn (Sau Thuế 2%)',
+      leverageRowNetProfit: 'Tổng Lợi Nhuận Ròng 10 Năm',
+      leverageRowMultiple: 'Bội Số Vốn Chủ Sở Hữu (MOIC)',
+      leverageRowNetIrr: 'Tỷ Suất Hoàn Vốn Ròng (Net IRR)',
+      leverageNote: 'Giả định tăng giá thuê bảo thủ 3%/năm, 0.8 tháng trống/năm, 10% thuế cho thuê chuẩn VN và 2% thuế TNCN khi chuyển nhượng cuối năm 10.',
+    },
+    solar: {
+      eyebrow: 'PHÒNG THÍ NGHIỆM HÌNH HỌC MẶT TRỜI SÀI GÒN',
+      title: 'Quỹ Đạo Mặt Trời & Ánh Sáng Tự Nhiên Theo Hướng Ban Công',
+      subtitle: 'Mô phỏng thiên văn chính xác tại tọa độ Thủ Thiêm (10.7725° N, 106.7219° E) theo từng khung giờ 06:00–18:00 và bốn mùa Xuân/Hạ/Thu/Đông để đo bức xạ nhiệt W/m², độ xuyên nắng mặt bằng và cường độ chiếu sáng tự nhiên.',
+      coordsBadge: '10.7725° N · 106.7219° E · UTC+7',
+      timeSliderLabel: 'Khung Giờ Địa Phương (Sài Gòn)',
+      seasonLabel: 'Chu Kỳ Mùa Thiên Văn',
+      orientationLabel: 'Hướng Ban Công Mặt Đứng',
+      syncedUnitPrefix: 'Đồng bộ mặt bằng căn',
+      presetMorning: '07:30 Nắng Sớm',
+      presetNoon: '12:00 Chính Ngọ',
+      presetAfternoon: '15:30 Đỉnh Tây',
+      presetSunset: '17:15 Hoàng Hôn',
+      altitudeLabel: 'Góc Cao Mặt Trời',
+      azimuthLabel: 'Góc Phương Vị',
+      thermalLoadLabel: 'Tải Nhiệt Mặt Đứng',
+      interiorGainLabel: 'Nhiệt Vào Kính Low-E',
+      penetrationLabel: 'Độ Xuyên Nắng Sàn',
+      daylightLuxLabel: 'Ánh Sáng Tự Nhiên',
+      noonPeakPrefix: 'Đỉnh ngọ',
+      beamActiveBadge: 'CHIẾU NẮNG TRỰC TIẾP',
+      beamShadedBadge: 'ÁNH SÁNG TÁN XẠ DỊU',
+      compassCaption: 'La bàn kiến trúc kết hợp quỹ đạo mặt trời thực tế và tia chiếu xuyên qua mặt bằng căn hộ theo hướng ban công.',
+      profileTitle: 'Biểu Đồ Bức Xạ Nhiệt Theo Giờ (06:00 – 18:00)',
+      profileSubtitle: 'Cường độ bức xạ ngoài kính (W/m²) so với nhiệt lượng truyền qua hệ kính Low-E 3 lớp + logia sâu 2.2m',
+      lowESpecNote: 'Hệ kính hộp Low-E 3 lớp chuẩn SHGC 0.36 · VLT 62% kết hợp logia che nắng sâu 2.2m cắt giảm >64% tải nhiệt bức xạ trực tiếp.',
+      comfortTiers: {
+        OPTIMAL_DAYLIGHT: 'Ánh Sáng Lý Tưởng',
+        BRIGHT_DIRECT_GLARE: 'Nắng Gắt · Cần Rèm',
+        AMBIENT_DIFFUSE: 'Ánh Sáng Dịu Tự Nhiên',
+        TWILIGHT_LOW: 'Bình Minh / Hoàng Hôn',
+      },
+      thermalTiers: {
+        COOL_MORNING: 'Mát Mẻ Dịu Nhẹ',
+        BALANCED: 'Cân Bằng Nhiệt',
+        ELEVATED_SOLAR_GAIN: 'Bức Xạ Trung Bình Cao',
+        PEAK_WEST_LOAD: 'Tải Nhiệt Tây Đỉnh Điểm',
+      },
     },
     compare: {
       dockLabel: 'Danh sách so sánh căn hộ',
@@ -579,6 +685,7 @@ export const TRANSLATIONS: Record<Language, CopyBundle> = {
   en: {
     nav: {
       tower: 'Tower & Floorplans',
+      solar: 'Sun-Path Lab',
       simulator: 'Mortgage & ROI',
       compare: 'Compare',
       vault: 'VIP Vault',
@@ -746,6 +853,63 @@ export const TRANSLATIONS: Record<Language, CopyBundle> = {
       scheduleTab10Y: '10-Year Schedule',
       scheduleTabFull: 'Full Loan Term',
       totalRowLabel: 'Displayed Period Total',
+      leverageEyebrow: '10-YEAR INVESTOR YIELD & LEVERAGE CASHFLOW MATRIX',
+      leverageTitle: '100% Cash Acquisition vs 70% Bank Leverage & Net IRR',
+      leverageSubtitle: 'Side-by-side institutional comparison across rental yield, tower management & statutory taxes, interest expense, capital appreciation, equity multiple, and exact Net IRR upon Year-10 exit.',
+      leverageCashTitle: '100% Cash Purchase (0% LTV)',
+      leverageBankTitle: 'Bank Leverage Strategy',
+      leverageAlphaLabel: 'Leverage Alpha (Net IRR Spread)',
+      leverageCapitalFreed: 'Capital Freed for Co-Investment',
+      leverageMultipleAdv: 'Equity Multiple Advantage',
+      leverageRowInitialEquity: 'Initial Equity Deployed',
+      leverageRowGrossRent: '10-Year Gross Rental Income',
+      leverageRowOpFees: '10Y Management, Vacancy & Tax',
+      leverageRowInterest: '10-Year Bank Interest Paid',
+      leverageRowExitVal: 'Year-10 Exit Valuation',
+      leverageRowNetExit: 'Net Exit Proceeds (Post 2% Tax)',
+      leverageRowNetProfit: '10-Year Total Net Profit',
+      leverageRowMultiple: 'Equity Multiple (MOIC)',
+      leverageRowNetIrr: 'Net Annualized IRR',
+      leverageNote: 'Models 3%/yr conservative rental escalation, 0.8-month annual vacancy, 10% Vietnam statutory rental tax, and 2% resale transfer tax at Year-10 exit.',
+    },
+    solar: {
+      eyebrow: 'SAIGON SOLAR GEOMETRY & DAYLIGHT ORIENTATION LAB',
+      title: 'Interactive Sun-Path & Floorplan Daylight Exposure',
+      subtitle: 'Astronomical solar geometry calibrated for Thu Thiem, Ho Chi Minh City (10.7725° N, 106.7219° E) across 06:00–18:00 and all four solstices/equinoxes — computing altitude, azimuth, facade thermal load (W/m²), sun penetration, and natural daylight lux.',
+      coordsBadge: '10.7725° N · 106.7219° E · UTC+7',
+      timeSliderLabel: 'Local Time of Day (Saigon)',
+      seasonLabel: 'Solar Season / Declination',
+      orientationLabel: 'Balcony & Facade Orientation',
+      syncedUnitPrefix: 'Floorplan synced to',
+      presetMorning: '07:30 Dawn Light',
+      presetNoon: '12:00 Solar Noon',
+      presetAfternoon: '15:30 West Peak',
+      presetSunset: '17:15 Golden Hour',
+      altitudeLabel: 'Solar Altitude',
+      azimuthLabel: 'Solar Azimuth',
+      thermalLoadLabel: 'Facade Thermal Load',
+      interiorGainLabel: 'Interior Low-E Gain',
+      penetrationLabel: 'Direct Sun Penetration',
+      daylightLuxLabel: 'Natural Daylight Lux',
+      noonPeakPrefix: 'Noon zenith',
+      beamActiveBadge: 'DIRECT SUN PENETRATION',
+      beamShadedBadge: 'DIFFUSE RIVER DAYLIGHT',
+      compassCaption: 'Polar sun-path compass coupled with the selected residence floorplan and dynamic directional sunlight beam.',
+      profileTitle: 'Hourly Facade Thermal Load Profile (06:00 – 18:00)',
+      profileSubtitle: 'Exterior vertical irradiance (W/m²) versus interior solar heat gain through triple Low-E glazing + 2.2m loggia overhang',
+      lowESpecNote: 'Triple-glazed acoustic Low-E curtain wall (SHGC 0.36 · VLT 62%) paired with a 2.2m recessed architectural loggia mitigates >64% of peak radiant heat load.',
+      comfortTiers: {
+        OPTIMAL_DAYLIGHT: 'Optimal Daylight',
+        BRIGHT_DIRECT_GLARE: 'High Glare · Shade Advised',
+        AMBIENT_DIFFUSE: 'Soft Ambient Daylight',
+        TWILIGHT_LOW: 'Dawn / Dusk Horizon',
+      },
+      thermalTiers: {
+        COOL_MORNING: 'Cool & Shaded',
+        BALANCED: 'Balanced Thermal Envelope',
+        ELEVATED_SOLAR_GAIN: 'Elevated Solar Load',
+        PEAK_WEST_LOAD: 'Peak West Thermal Load',
+      },
     },
     compare: {
       dockLabel: 'Residence comparison tray',

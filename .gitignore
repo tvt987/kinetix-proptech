@@ -5,3 +5,10 @@ dist
 .env
 .env.*
 coverage
+
+# .NET 10 Build Artifacts
+backend/**/bin/
+backend/**/obj/
+backend/TestResults/
+*.user
+.vs/
