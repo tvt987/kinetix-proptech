@@ -137,3 +137,42 @@ input[type='range'].kinetix-slider::-moz-range-thumb {
 ::-webkit-scrollbar-thumb:hover {
   background: var(--accent);
 }
+
+/* Formal Printable A4 Investment Dossier (@media print) */
+.print-only-dossier {
+  display: none;
+}
+
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 12mm 14mm;
+  }
+
+  html,
+  body,
+  #root,
+  #root > div {
+    background: #ffffff !important;
+    background-color: #ffffff !important;
+    color: #14161b !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    overflow: visible !important;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  .print-only-dossier {
+    display: block !important;
+    background: #ffffff !important;
+    color: #14161b !important;
+  }
+
+  .print-break-avoid {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+}

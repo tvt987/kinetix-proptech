@@ -117,3 +117,97 @@ export const ChevronDownIcon: React.FC<IconProps> = ({ className = 'w-4 h-4', st
     <path d="m6 9 6 6 6-6" strokeLinecap="round" strokeLinejoin="round" />
   </svg>
 );
+
+export const BookmarkIcon: React.FC<IconProps & { filled?: boolean }> = ({
+  className = 'w-4 h-4',
+  style,
+  filled = false,
+}) => (
+  <svg
+    viewBox="0 0 24 24"
+    fill={filled ? 'currentColor' : 'none'}
+    stroke="currentColor"
+    strokeWidth="1.75"
+    className={className}
+    style={style}
+    aria-hidden="true"
+  >
+    <path d="M6 4.5A1.5 1.5 0 0 1 7.5 3h9A1.5 1.5 0 0 1 18 4.5V21l-6-4-6 4V4.5Z" strokeLinejoin="round" />
+  </svg>
+);
+
+export const VaultIcon: React.FC<IconProps> = ({ className = 'w-4 h-4', style }) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" className={className} style={style} aria-hidden="true">
+    <rect x="3" y="4" width="18" height="16" rx="2.5" />
+    <circle cx="12" cy="12" r="3.2" />
+    <path d="M12 8.8V7M12 17v-1.8M15.2 12H17M7 12h1.8" strokeLinecap="round" />
+  </svg>
+);
+
+export const PrinterIcon: React.FC<IconProps> = ({ className = 'w-4 h-4', style }) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" className={className} style={style} aria-hidden="true">
+    <path d="M7 8V4h10v4" strokeLinejoin="round" />
+    <rect x="4" y="8" width="16" height="8" rx="2" />
+    <path d="M7 14h10v6H7v-6Z" strokeLinejoin="round" />
+    <circle cx="17" cy="11" r="0.8" fill="currentColor" stroke="none" />
+  </svg>
+);
+
+export const QrCodeIcon: React.FC<IconProps> = ({ className = 'w-4 h-4', style }) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" className={className} style={style} aria-hidden="true">
+    <rect x="3.5" y="3.5" width="6.5" height="6.5" rx="1" />
+    <rect x="14" y="3.5" width="6.5" height="6.5" rx="1" />
+    <rect x="3.5" y="14" width="6.5" height="6.5" rx="1" />
+    <path d="M14 14h2.5v2.5H14V14Zm4 0h2.5v2.5M14 20.5h6.5V18" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
+
+export const ShieldCheckIcon: React.FC<IconProps> = ({ className = 'w-4 h-4', style }) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" className={className} style={style} aria-hidden="true">
+    <path d="M12 3 5 6v5.8c0 4.5 3 8.3 7 9.7 4-1.4 7-5.2 7-9.7V6l-7-3Z" strokeLinejoin="round" />
+    <path d="m9.2 12.2 2 2 3.8-4.2" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
+
+export const AlertTriangleIcon: React.FC<IconProps> = ({ className = 'w-4 h-4', style }) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" className={className} style={style} aria-hidden="true">
+    <path d="M10.4 4.2 3.2 17a1.8 1.8 0 0 0 1.6 2.7h14.4a1.8 1.8 0 0 0 1.6-2.7L13.6 4.2a1.8 1.8 0 0 0-3.2 0Z" strokeLinejoin="round" />
+    <path d="M12 9.5v4.2" strokeLinecap="round" />
+    <circle cx="12" cy="16.4" r="0.9" fill="currentColor" stroke="none" />
+  </svg>
+);
+
+export const CopyIcon: React.FC<IconProps> = ({ className = 'w-4 h-4', style }) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" className={className} style={style} aria-hidden="true">
+    <rect x="9" y="9" width="11" height="11" rx="2" />
+    <path d="M5 15H4a1.5 1.5 0 0 1-1.5-1.5v-9A1.5 1.5 0 0 1 4 3h9a1.5 1.5 0 0 1 1.5 1.5V5" strokeLinecap="round" />
+  </svg>
+);
+
+export const CalendarPlusIcon: React.FC<IconProps> = ({ className = 'w-4 h-4', style }) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" className={className} style={style} aria-hidden="true">
+    <rect x="3" y="5" width="18" height="16" rx="2" />
+    <path d="M16 3v4M8 3v4M3 10h18" strokeLinecap="round" />
+    <path d="M12 13v5M9.5 15.5h5" strokeLinecap="round" />
+  </svg>
+);
+
+export const TrashIcon: React.FC<IconProps> = ({ className = 'w-4 h-4', style }) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" className={className} style={style} aria-hidden="true">
+    <path d="M4 7h16M9.5 4h5M6.5 7l1 13h9l1-13" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M10 11v5M14 11v5" strokeLinecap="round" />
+  </svg>
+);
+
+export const FileSpreadsheetIcon: React.FC<IconProps> = ({ className = 'w-4 h-4', style }) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" className={className} style={style} aria-hidden="true">
+    <path d="M6 3h8l5 5v12a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 5 20V4.5A1.5 1.5 0 0 1 6.5 3Z" strokeLinejoin="round" />
+    <path d="M14 3v5h5M8 13h8M8 17h8M12 11v8" strokeLinecap="round" />
+  </svg>
+);
+
+export const PulseIcon: React.FC<IconProps> = ({ className = 'w-4 h-4', style }) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className={className} style={style} aria-hidden="true">
+    <path d="M3 12h4l2.5-6 4 12 2.5-6H21" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);

@@ -10,6 +10,7 @@ import {
   KinetixMark,
   MoonIcon,
   SunIcon,
+  VaultIcon,
 } from './Icons';
 
 interface HeaderProps {
@@ -20,7 +21,9 @@ interface HeaderProps {
   theme: ThemeMode;
   toggleTheme: () => void;
   compareCount: number;
+  vaultCount: number;
   onOpenCompare: () => void;
+  onOpenVault: () => void;
   onOpenScheduler: () => void;
   copy: CopyBundle['nav'];
 }
@@ -33,7 +36,9 @@ export const Header: React.FC<HeaderProps> = ({
   theme,
   toggleTheme,
   compareCount,
+  vaultCount,
   onOpenCompare,
+  onOpenVault,
   onOpenScheduler,
   copy,
 }) => {
@@ -41,7 +46,7 @@ export const Header: React.FC<HeaderProps> = ({
 
   return (
     <header
-      className="sticky top-0 z-40 border-b backdrop-blur-xl transition-colors"
+      className="no-print sticky top-0 z-40 border-b backdrop-blur-xl transition-colors"
       style={{
         backgroundColor: 'var(--bg-glass)',
         borderColor: 'var(--border-subtle)',
@@ -104,6 +109,24 @@ export const Header: React.FC<HeaderProps> = ({
               }}
             >
               {compareCount}/3
+            </span>
+          </button>
+          <button
+            type="button"
+            onClick={onOpenVault}
+            className="flex cursor-pointer items-center gap-1.5 text-sm font-medium transition-colors"
+            style={{ color: vaultCount > 0 ? 'var(--accent)' : 'var(--text-secondary)' }}
+          >
+            <VaultIcon className="h-4 w-4" />
+            <span>{copy.vault}</span>
+            <span
+              className="font-mono-tabular rounded-full px-1.5 py-0.5 text-[11px] font-semibold"
+              style={{
+                backgroundColor: vaultCount > 0 ? 'var(--accent)' : 'var(--bg-elevated)',
+                color: vaultCount > 0 ? 'var(--accent-ink)' : 'var(--text-muted)',
+              }}
+            >
+              {vaultCount}
             </span>
           </button>
         </nav>
@@ -293,6 +316,23 @@ export const Header: React.FC<HeaderProps> = ({
               </span>
               <span className="font-mono-tabular text-xs font-semibold" style={{ color: 'var(--accent)' }}>
                 {compareCount}/3
+              </span>
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setMobileOpen(false);
+                onOpenVault();
+              }}
+              className="flex cursor-pointer items-center justify-between rounded-lg border px-3 py-2.5 text-sm font-medium"
+              style={{ borderColor: 'var(--border-subtle)', color: 'var(--text-primary)' }}
+            >
+              <span className="flex items-center gap-2">
+                <VaultIcon className="h-4 w-4" style={{ color: 'var(--accent)' }} />
+                {copy.vault}
+              </span>
+              <span className="font-mono-tabular text-xs font-semibold" style={{ color: 'var(--accent)' }}>
+                {vaultCount}
               </span>
             </button>
             <button

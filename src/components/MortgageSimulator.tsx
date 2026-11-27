@@ -1,20 +1,42 @@
-import React, { useMemo, useState } from 'react';
-import type { Currency, Language, MortgageInputs, Residence } from '../types/proptech';
+import React, { useState } from 'react';
+import type {
+  Currency,
+  DtiSafetyTier,
+  InterestStressTestSummary,
+  Language,
+  MortgageAnalysisResult,
+  MortgageInputs,
+  Residence,
+} from '../types/proptech';
 import type { CopyBundle } from '../data/translations';
 import {
-  analyzeMortgageAndRoi,
+  buildInvestmentCashflowCsv,
   buildInvestmentDossierJson,
   buildInvestmentDossierMarkdown,
 } from '../engines/mortgageEngine';
 import { formatCurrency } from '../engines/currencyEngine';
-import { ChevronDownIcon, DownloadIcon } from './Icons';
+import {
+  AlertTriangleIcon,
+  DownloadIcon,
+  FileSpreadsheetIcon,
+  PrinterIcon,
+  PulseIcon,
+  ShieldCheckIcon,
+} from './Icons';
 
 interface MortgageSimulatorProps {
   selectedResidence: Residence;
   inputs: MortgageInputs;
   onChangeInputs: (updater: (prev: MortgageInputs) => MortgageInputs) => void;
+  analysis: MortgageAnalysisResult;
+  stressSummary: InterestStressTestSummary;
+  rateShockPct: number;
+  onChangeRateShock: (shock: number) => void;
+  monthlyIncomeVnd: number;
+  onChangeMonthlyIncome: (incomeVnd: number) => void;
   isCustomMode: boolean;
   onToggleMode: (custom: boolean) => void;
+  onPrintDossier: () => void;
   currency: Currency;
   lang: Language;
   copy: CopyBundle['simulator'];
@@ -27,21 +49,34 @@ const BANK_PRESETS = [
   { label: 'Stress 10.5%', rate: 10.5 },
 ];
 
+const SHOCK_PRESETS = [0, 2, 4] as const;
+
+const DTI_STYLE: Record<DtiSafetyTier, { bg: string; border: string; text: string }> = {
+  SAFE: { bg: 'rgba(16, 185, 129, 0.14)', border: 'rgba(16, 185, 129, 0.35)', text: '#10B981' },
+  CAUTION: { bg: 'rgba(245, 158, 11, 0.14)', border: 'rgba(245, 158, 11, 0.35)', text: '#F59E0B' },
+  HIGH_RISK: { bg: 'rgba(239, 68, 68, 0.14)', border: 'rgba(239, 68, 68, 0.35)', text: '#EF4444' },
+};
+
 export const MortgageSimulator: React.FC<MortgageSimulatorProps> = ({
   selectedResidence,
   inputs,
   onChangeInputs,
+  analysis,
+  stressSummary,
+  rateShockPct,
+  onChangeRateShock,
+  monthlyIncomeVnd,
+  onChangeMonthlyIncome,
   isCustomMode,
   onToggleMode,
+  onPrintDossier,
   currency,
   lang,
   copy,
 }) => {
   const [hoveredYear, setHoveredYear] = useState<number>(10);
-  const [showFullAmortization, setShowFullAmortization] = useState(false);
-  const [exportStatus, setExportStatus] = useState<'idle' | 'md' | 'json'>('idle');
-
-  const analysis = useMemo(() => analyzeMortgageAndRoi(inputs), [inputs]);
+  const [scheduleScope, setScheduleScope] = useState<'10y' | 'full'>('10y');
+  const [exportStatus, setExportStatus] = useState<'idle' | 'md' | 'json' | 'csv'>('idle');
 
   const principalPct =
     analysis.totalPaymentsVnd > 0
@@ -83,7 +118,7 @@ export const MortgageSimulator: React.FC<MortgageSimulatorProps> = ({
 
   const equityAreaPath = `${equityPath} L ${xForYear(10).toFixed(1)} ${(padT + innerH).toFixed(1)} L ${xForYear(1).toFixed(1)} ${(padT + innerH).toFixed(1)} Z`;
 
-  const triggerDownload = (content: string, filename: string, mimeType: string, kind: 'md' | 'json') => {
+  const triggerDownload = (content: string, filename: string, mimeType: string, kind: 'md' | 'json' | 'csv') => {
     const blob = new Blob([content], { type: mimeType });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
@@ -120,16 +155,45 @@ export const MortgageSimulator: React.FC<MortgageSimulatorProps> = ({
     triggerDownload(json, `kinetix-dossier-${slug}.json`, 'application/json;charset=utf-8', 'json');
   };
 
-  const displayedAmortization = showFullAmortization
-    ? analysis.amortizationSchedule
-    : analysis.amortizationSchedule.filter(
-        (_r, idx, arr) => idx < 5 || idx === arr.length - 1
-      );
+  const handleExportCsv = () => {
+    const csv = buildInvestmentCashflowCsv(
+      analysis,
+      inputs,
+      stressSummary,
+      currency,
+      lang,
+      isCustomMode ? null : selectedResidence
+    );
+    const slug = isCustomMode ? 'custom-asset' : selectedResidence.code.toLowerCase();
+    triggerDownload(csv, `kinetix-cashflow-${slug}.csv`, 'text/csv;charset=utf-8;', 'csv');
+  };
+
+  const getDtiLabel = (tier: DtiSafetyTier) => {
+    if (tier === 'SAFE') return copy.dtiSafeLabel;
+    if (tier === 'CAUTION') return copy.dtiCautionLabel;
+    return copy.dtiRiskLabel;
+  };
+
+  const displayedAmortization =
+    scheduleScope === 'full'
+      ? analysis.amortizationSchedule
+      : analysis.amortizationSchedule.slice(0, 10);
+
+  const displayedTotals = displayedAmortization.reduce(
+    (acc, row) => ({
+      annualPaymentVnd: acc.annualPaymentVnd + row.annualPaymentVnd,
+      principalPaidVnd: acc.principalPaidVnd + row.principalPaidVnd,
+      interestPaidVnd: acc.interestPaidVnd + row.interestPaidVnd,
+    }),
+    { annualPaymentVnd: 0, principalPaidVnd: 0, interestPaidVnd: 0 }
+  );
+
+  const activeDtiPalette = DTI_STYLE[stressSummary.activeScenario.dtiSafetyTier];
 
   return (
     <section
       id="mortgage-simulator"
-      className="border-t py-16 lg:py-20"
+      className="no-print border-t py-16 lg:py-20"
       style={{ borderColor: 'var(--border-subtle)', backgroundColor: 'var(--bg-primary)' }}
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -181,10 +245,10 @@ export const MortgageSimulator: React.FC<MortgageSimulatorProps> = ({
         </div>
 
         {/* Main 12-Col FinTech Layout */}
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
-          {/* Left Panel: Interactive Financial Parameters */}
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-12 lg:items-start">
+          {/* Left Panel: Interactive Financial Parameters (sticky on desktop) */}
           <div
-            className="flex flex-col justify-between rounded-2xl border p-5 sm:p-6 lg:col-span-5"
+            className="flex flex-col justify-between rounded-2xl border p-5 sm:p-6 lg:sticky lg:top-20 lg:col-span-5"
             style={{
               backgroundColor: 'var(--bg-secondary)',
               borderColor: 'var(--border-subtle)',
@@ -410,27 +474,53 @@ export const MortgageSimulator: React.FC<MortgageSimulatorProps> = ({
 
             {/* Export Investment Dossier Actions */}
             <div className="mt-7 border-t pt-5" style={{ borderColor: 'var(--border-subtle)' }}>
-              <div className="flex flex-wrap gap-2.5">
+              <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                 <button
                   type="button"
-                  onClick={handleExportMd}
-                  className="inline-flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-xs font-semibold transition-all hover:brightness-110"
+                  onClick={handleExportCsv}
+                  className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl px-3.5 py-2.5 text-xs font-semibold transition-all hover:brightness-110"
                   style={{ backgroundColor: 'var(--accent)', color: 'var(--accent-ink)' }}
                 >
-                  <DownloadIcon className="h-4 w-4" />
-                  <span>{exportStatus === 'md' ? copy.copiedLabel : copy.exportMdBtn}</span>
+                  <FileSpreadsheetIcon className="h-4 w-4" />
+                  <span>{exportStatus === 'csv' ? copy.copiedLabel : copy.exportCsvBtn}</span>
                 </button>
                 <button
                   type="button"
-                  onClick={handleExportJson}
-                  className="inline-flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-xl border px-4 py-2.5 text-xs font-semibold transition-all"
+                  onClick={onPrintDossier}
+                  className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl border px-3.5 py-2.5 text-xs font-semibold transition-all"
                   style={{
                     borderColor: 'var(--border-strong)',
                     backgroundColor: 'var(--accent-soft)',
                     color: 'var(--accent)',
                   }}
                 >
-                  <DownloadIcon className="h-4 w-4" />
+                  <PrinterIcon className="h-4 w-4" />
+                  <span>{copy.printPdfBtn}</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={handleExportMd}
+                  className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl border px-3.5 py-2 text-xs font-semibold transition-all"
+                  style={{
+                    borderColor: 'var(--border-subtle)',
+                    backgroundColor: 'var(--bg-elevated)',
+                    color: 'var(--text-primary)',
+                  }}
+                >
+                  <DownloadIcon className="h-3.5 w-3.5" />
+                  <span>{exportStatus === 'md' ? copy.copiedLabel : copy.exportMdBtn}</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={handleExportJson}
+                  className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl border px-3.5 py-2 text-xs font-semibold transition-all"
+                  style={{
+                    borderColor: 'var(--border-subtle)',
+                    backgroundColor: 'var(--bg-elevated)',
+                    color: 'var(--text-primary)',
+                  }}
+                >
+                  <DownloadIcon className="h-3.5 w-3.5" />
                   <span>{exportStatus === 'json' ? copy.copiedLabel : copy.exportJsonBtn}</span>
                 </button>
               </div>
@@ -553,6 +643,216 @@ export const MortgageSimulator: React.FC<MortgageSimulatorProps> = ({
                     +{analysis.tenYearTotalRoiPct.toFixed(0)}%
                   </div>
                 </div>
+              </div>
+            </div>
+
+            {/* Live Interest-Rate Stress Test (+0% / +2% / +4%) & DTI Safety Rating */}
+            <div
+              className="rounded-2xl border p-5 sm:p-6"
+              style={{
+                backgroundColor: 'var(--bg-secondary)',
+                borderColor: 'var(--border-subtle)',
+                boxShadow: 'var(--shadow-card)',
+              }}
+            >
+              <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-start">
+                <div>
+                  <div className="font-mono-tabular flex items-center gap-1.5 text-[10px] font-semibold tracking-[0.2em] uppercase" style={{ color: 'var(--accent)' }}>
+                    <PulseIcon className="h-3.5 w-3.5" />
+                    <span>{copy.stressEyebrow}</span>
+                  </div>
+                  <h3 className="mt-1 text-base font-semibold" style={{ color: 'var(--text-primary)' }}>
+                    {copy.stressTitle}
+                  </h3>
+                  <p className="mt-0.5 text-xs" style={{ color: 'var(--text-muted)' }}>
+                    {copy.stressSubtitle}
+                  </p>
+                </div>
+
+                {/* Quick Shock Scenario Buttons (+0% / +2% / +4%) */}
+                <div className="flex shrink-0 flex-wrap gap-1.5" role="group" aria-label={copy.rateShockLabel}>
+                  {SHOCK_PRESETS.map((shock) => {
+                    const active = Math.abs(rateShockPct - shock) < 0.05;
+                    const label =
+                      shock === 0 ? copy.shockBase : shock === 2 ? copy.shockModerate : copy.shockSevere;
+                    return (
+                      <button
+                        key={shock}
+                        type="button"
+                        onClick={() => onChangeRateShock(shock)}
+                        className="font-mono-tabular cursor-pointer rounded-lg border px-2.5 py-1.5 text-[11px] font-semibold transition-all"
+                        style={{
+                          borderColor: active ? 'var(--accent)' : 'var(--border-subtle)',
+                          backgroundColor: active ? 'var(--accent)' : 'var(--bg-elevated)',
+                          color: active ? 'var(--accent-ink)' : 'var(--text-secondary)',
+                        }}
+                      >
+                        {label}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Dual Interactive Controls: Rate Shock Slider + Monthly Investor Income Slider */}
+              <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div className="rounded-xl border p-3.5" style={{ borderColor: 'var(--border-subtle)', backgroundColor: 'var(--bg-elevated)' }}>
+                  <div className="mb-2 flex items-baseline justify-between gap-2">
+                    <label htmlFor="sim-shock" className="text-xs font-semibold" style={{ color: 'var(--text-secondary)' }}>
+                      {copy.rateShockLabel}
+                    </label>
+                    <span className="font-mono-tabular text-sm font-semibold" style={{ color: 'var(--accent)' }}>
+                      +{rateShockPct.toFixed(1)}% ({stressSummary.activeScenario.effectiveRatePct.toFixed(1)}%)
+                    </span>
+                  </div>
+                  <input
+                    id="sim-shock"
+                    type="range"
+                    min={0}
+                    max={4.5}
+                    step={0.5}
+                    value={rateShockPct}
+                    onChange={(e) => onChangeRateShock(Number(e.target.value))}
+                    className="kinetix-slider"
+                  />
+                  <div className="font-mono-tabular mt-1 flex justify-between text-[10px]" style={{ color: 'var(--text-muted)' }}>
+                    <span>+0%</span>
+                    <span>+2%</span>
+                    <span>+4%</span>
+                  </div>
+                </div>
+
+                <div className="rounded-xl border p-3.5" style={{ borderColor: 'var(--border-subtle)', backgroundColor: 'var(--bg-elevated)' }}>
+                  <div className="mb-2 flex items-baseline justify-between gap-2">
+                    <label htmlFor="sim-income" className="text-xs font-semibold" style={{ color: 'var(--text-secondary)' }}>
+                      {copy.monthlyIncomeLabel}
+                    </label>
+                    <span className="font-mono-tabular text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>
+                      {formatCurrency(monthlyIncomeVnd, currency, lang, { compact: true })}
+                    </span>
+                  </div>
+                  <input
+                    id="sim-income"
+                    type="range"
+                    min={100_000_000}
+                    max={2_000_000_000}
+                    step={25_000_000}
+                    value={monthlyIncomeVnd}
+                    onChange={(e) => onChangeMonthlyIncome(Number(e.target.value))}
+                    className="kinetix-slider"
+                  />
+                  <div className="font-mono-tabular mt-1 flex justify-between text-[10px]" style={{ color: 'var(--text-muted)' }}>
+                    <span>{formatCurrency(100_000_000, currency, lang, { compact: true })}</span>
+                    <span>{formatCurrency(1_000_000_000, currency, lang, { compact: true })}</span>
+                    <span>{formatCurrency(2_000_000_000, currency, lang, { compact: true })}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Active Shock Telemetry & DTI Safety Badge */}
+              <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
+                <div className="rounded-xl border p-3" style={{ borderColor: 'var(--border-subtle)', backgroundColor: 'var(--bg-primary)' }}>
+                  <div className="text-[11px]" style={{ color: 'var(--text-muted)' }}>{copy.stressedPmtLabel}</div>
+                  <div className="font-mono-tabular mt-1 text-base font-semibold" style={{ color: 'var(--text-primary)' }}>
+                    {formatCurrency(stressSummary.activeScenario.monthlyPaymentVnd, currency, lang, { compact: true })}
+                  </div>
+                </div>
+
+                <div className="rounded-xl border p-3" style={{ borderColor: 'var(--border-subtle)', backgroundColor: 'var(--bg-primary)' }}>
+                  <div className="text-[11px]" style={{ color: 'var(--text-muted)' }}>{copy.shockDeltaLabel}</div>
+                  <div className="font-mono-tabular mt-1 text-base font-semibold text-amber-500">
+                    {stressSummary.activeScenario.deltaMonthlyPaymentVnd > 0
+                      ? `+${formatCurrency(stressSummary.activeScenario.deltaMonthlyPaymentVnd, currency, lang, { compact: true })}`
+                      : formatCurrency(0, currency, lang, { compact: true })}
+                  </div>
+                </div>
+
+                <div
+                  className="rounded-xl border p-3"
+                  style={{
+                    borderColor: activeDtiPalette.border,
+                    backgroundColor: activeDtiPalette.bg,
+                  }}
+                >
+                  <div className="flex items-center justify-between text-[11px]" style={{ color: activeDtiPalette.text }}>
+                    <span>{copy.dtiRatioLabel}</span>
+                    {stressSummary.activeScenario.dtiSafetyTier === 'SAFE' ? (
+                      <ShieldCheckIcon className="h-4 w-4" />
+                    ) : (
+                      <AlertTriangleIcon className="h-4 w-4" />
+                    )}
+                  </div>
+                  <div className="font-mono-tabular mt-1 text-base font-bold" style={{ color: activeDtiPalette.text }}>
+                    {stressSummary.activeScenario.dtiRatioPct.toFixed(1)}%
+                  </div>
+                  <div className="mt-0.5 text-[10px] font-semibold" style={{ color: activeDtiPalette.text }}>
+                    {getDtiLabel(stressSummary.activeScenario.dtiSafetyTier)}
+                  </div>
+                </div>
+              </div>
+
+              {/* 3-Scenario Benchmark Stress Table (+0% / +2% / +4%) */}
+              <div className="mt-4 overflow-x-auto">
+                <table className="w-full min-w-[520px] border-collapse text-left text-xs">
+                  <thead>
+                    <tr className="border-b" style={{ borderColor: 'var(--border-subtle)', color: 'var(--text-muted)' }}>
+                      <th className="py-2 pr-2 font-semibold">{copy.colScenario}</th>
+                      <th className="px-2 py-2 text-right font-semibold">{copy.colEffRate}</th>
+                      <th className="px-2 py-2 text-right font-semibold">{copy.colMonthlyPmt}</th>
+                      <th className="px-2 py-2 text-right font-semibold">{copy.colDeltaPmt}</th>
+                      <th className="px-2 py-2 text-right font-semibold">{copy.colNetCashFlow}</th>
+                      <th className="py-2 pl-2 text-right font-semibold">{copy.colDti}</th>
+                    </tr>
+                  </thead>
+                  <tbody className="font-mono-tabular divide-y" style={{ borderColor: 'var(--border-subtle)' }}>
+                    {stressSummary.benchmarkScenarios.map((sc) => {
+                      const isCurrent = Math.abs(sc.shockPct - rateShockPct) < 0.05;
+                      const tierStyle = DTI_STYLE[sc.dtiSafetyTier];
+                      const scenarioName =
+                        sc.shockPct === 0 ? copy.shockBase : sc.shockPct === 2 ? copy.shockModerate : copy.shockSevere;
+                      return (
+                        <tr
+                          key={sc.shockPct}
+                          onClick={() => onChangeRateShock(sc.shockPct)}
+                          className="cursor-pointer transition-colors"
+                          style={{
+                            backgroundColor: isCurrent ? 'var(--accent-soft)' : 'transparent',
+                          }}
+                        >
+                          <td className="py-2.5 pr-2 font-semibold" style={{ color: isCurrent ? 'var(--accent)' : 'var(--text-primary)' }}>
+                            {scenarioName}
+                          </td>
+                          <td className="px-2 py-2.5 text-right" style={{ color: 'var(--text-secondary)' }}>
+                            {sc.effectiveRatePct.toFixed(1)}%
+                          </td>
+                          <td className="px-2 py-2.5 text-right font-semibold" style={{ color: 'var(--text-primary)' }}>
+                            {formatCurrency(sc.monthlyPaymentVnd, currency, lang, { compact: true })}
+                          </td>
+                          <td className="px-2 py-2.5 text-right text-amber-500">
+                            {sc.deltaMonthlyPaymentVnd > 0
+                              ? `+${formatCurrency(sc.deltaMonthlyPaymentVnd, currency, lang, { compact: true })}`
+                              : '—'}
+                          </td>
+                          <td
+                            className={`px-2 py-2.5 text-right ${
+                              sc.monthlyNetCashFlowVnd >= 0 ? 'text-emerald-500' : 'text-amber-500'
+                            }`}
+                          >
+                            {formatCurrency(sc.monthlyNetCashFlowVnd, currency, lang, { compact: true, signed: true })}
+                          </td>
+                          <td className="py-2.5 pl-2 text-right">
+                            <span
+                              className="inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold"
+                              style={{ backgroundColor: tierStyle.bg, color: tierStyle.text }}
+                            >
+                              {sc.dtiRatioPct.toFixed(1)}% · {sc.dtiSafetyTier}
+                            </span>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
               </div>
             </div>
 
@@ -728,7 +1028,7 @@ export const MortgageSimulator: React.FC<MortgageSimulatorProps> = ({
               </div>
             </div>
 
-            {/* Year-by-Year Amortization Table */}
+            {/* Year-by-Year 10-Year / Full-Term Amortization Schedule Table */}
             <div
               className="rounded-2xl border p-5 sm:p-6"
               style={{
@@ -747,25 +1047,49 @@ export const MortgageSimulator: React.FC<MortgageSimulatorProps> = ({
                   </p>
                 </div>
 
-                <button
-                  type="button"
-                  onClick={() => setShowFullAmortization((prev) => !prev)}
-                  className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-semibold transition-colors"
-                  style={{
-                    borderColor: 'var(--border-strong)',
-                    backgroundColor: 'var(--accent-soft)',
-                    color: 'var(--accent)',
-                  }}
-                >
-                  <span>
-                    {showFullAmortization
-                      ? copy.toggleAmortizationHide
-                      : `${copy.toggleAmortizationShow} (${analysis.amortizationSchedule.length})`}
-                  </span>
-                  <ChevronDownIcon
-                    className={`h-3.5 w-3.5 transition-transform ${showFullAmortization ? 'rotate-180' : ''}`}
-                  />
-                </button>
+                <div className="flex flex-wrap items-center gap-2">
+                  <div
+                    className="inline-flex rounded-lg border p-0.5"
+                    style={{ borderColor: 'var(--border-subtle)', backgroundColor: 'var(--bg-elevated)' }}
+                  >
+                    <button
+                      type="button"
+                      onClick={() => setScheduleScope('10y')}
+                      className="cursor-pointer rounded-md px-2.5 py-1 text-[11px] font-semibold transition-colors"
+                      style={{
+                        backgroundColor: scheduleScope === '10y' ? 'var(--accent)' : 'transparent',
+                        color: scheduleScope === '10y' ? 'var(--accent-ink)' : 'var(--text-secondary)',
+                      }}
+                    >
+                      {copy.scheduleTab10Y}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setScheduleScope('full')}
+                      className="cursor-pointer rounded-md px-2.5 py-1 text-[11px] font-semibold transition-colors"
+                      style={{
+                        backgroundColor: scheduleScope === 'full' ? 'var(--accent)' : 'transparent',
+                        color: scheduleScope === 'full' ? 'var(--accent-ink)' : 'var(--text-secondary)',
+                      }}
+                    >
+                      {copy.scheduleTabFull} ({analysis.amortizationSchedule.length})
+                    </button>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={handleExportCsv}
+                    className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-[11px] font-semibold transition-colors"
+                    style={{
+                      borderColor: 'var(--border-strong)',
+                      backgroundColor: 'var(--accent-soft)',
+                      color: 'var(--accent)',
+                    }}
+                  >
+                    <FileSpreadsheetIcon className="h-3.5 w-3.5" />
+                    <span>{exportStatus === 'csv' ? copy.copiedLabel : 'CSV'}</span>
+                  </button>
+                </div>
               </div>
 
               <div className="mt-4 overflow-x-auto">
@@ -781,46 +1105,65 @@ export const MortgageSimulator: React.FC<MortgageSimulatorProps> = ({
                     </tr>
                   </thead>
                   <tbody className="font-mono-tabular divide-y" style={{ borderColor: 'var(--border-subtle)' }}>
-                    {displayedAmortization.map((row, idx) => {
-                      const prevRow = displayedAmortization[idx - 1];
-                      const hasGap = prevRow && row.year - prevRow.year > 1;
+                    {displayedAmortization.map((row) => {
+                      const principalSharePct =
+                        row.annualPaymentVnd > 0
+                          ? Math.min(100, Math.round((row.principalPaidVnd / row.annualPaymentVnd) * 100))
+                          : 0;
                       return (
-                        <React.Fragment key={row.year}>
-                          {hasGap && (
-                            <tr>
-                              <td
-                                colSpan={6}
-                                className="py-2 text-center text-[11px]"
-                                style={{ color: 'var(--text-muted)' }}
-                              >
-                                ··· {row.year - prevRow.year - 1} {copy.yearsUnit} ···
-                              </td>
-                            </tr>
-                          )}
-                          <tr className="hover:bg-white/[0.02]">
-                            <td className="py-2.5 pr-3 font-semibold" style={{ color: 'var(--accent)' }}>
-                              Y{row.year}
-                            </td>
-                            <td className="px-3 py-2.5 text-right" style={{ color: 'var(--text-secondary)' }}>
-                              {formatCurrency(row.openingBalanceVnd, currency, lang, { compact: true })}
-                            </td>
-                            <td className="px-3 py-2.5 text-right" style={{ color: 'var(--text-primary)' }}>
-                              {formatCurrency(row.annualPaymentVnd, currency, lang, { compact: true })}
-                            </td>
-                            <td className="px-3 py-2.5 text-right text-emerald-500">
-                              {formatCurrency(row.principalPaidVnd, currency, lang, { compact: true })}
-                            </td>
-                            <td className="px-3 py-2.5 text-right text-amber-500">
-                              {formatCurrency(row.interestPaidVnd, currency, lang, { compact: true })}
-                            </td>
-                            <td className="py-2.5 pl-3 text-right font-semibold" style={{ color: 'var(--text-primary)' }}>
-                              {formatCurrency(row.endingBalanceVnd, currency, lang, { compact: true })}
-                            </td>
-                          </tr>
-                        </React.Fragment>
+                        <tr key={row.year} className="hover:bg-white/[0.02]">
+                          <td className="py-2.5 pr-3 font-semibold" style={{ color: 'var(--accent)' }}>
+                            Y{row.year}
+                          </td>
+                          <td className="px-3 py-2.5 text-right" style={{ color: 'var(--text-secondary)' }}>
+                            {formatCurrency(row.openingBalanceVnd, currency, lang, { compact: true })}
+                          </td>
+                          <td className="px-3 py-2.5 text-right" style={{ color: 'var(--text-primary)' }}>
+                            {formatCurrency(row.annualPaymentVnd, currency, lang, { compact: true })}
+                          </td>
+                          <td className="px-3 py-2.5 text-right text-emerald-500">
+                            <div>{formatCurrency(row.principalPaidVnd, currency, lang, { compact: true })}</div>
+                            <div className="mt-1 ml-auto h-1 w-14 overflow-hidden rounded-full bg-black/25">
+                              <div
+                                className="h-full rounded-full bg-emerald-500"
+                                style={{ width: `${principalSharePct}%` }}
+                              />
+                            </div>
+                          </td>
+                          <td className="px-3 py-2.5 text-right text-amber-500">
+                            {formatCurrency(row.interestPaidVnd, currency, lang, { compact: true })}
+                          </td>
+                          <td className="py-2.5 pl-3 text-right font-semibold" style={{ color: 'var(--text-primary)' }}>
+                            {formatCurrency(row.endingBalanceVnd, currency, lang, { compact: true })}
+                          </td>
+                        </tr>
                       );
                     })}
                   </tbody>
+                  <tfoot>
+                    <tr className="font-mono-tabular border-t-2 font-semibold" style={{ borderColor: 'var(--border-strong)' }}>
+                      <td className="py-2.5 pr-3 text-[11px]" colSpan={2} style={{ color: 'var(--accent)' }}>
+                        {copy.totalRowLabel} ({displayedAmortization.length} {copy.yearsUnit})
+                      </td>
+                      <td className="px-3 py-2.5 text-right" style={{ color: 'var(--text-primary)' }}>
+                        {formatCurrency(displayedTotals.annualPaymentVnd, currency, lang, { compact: true })}
+                      </td>
+                      <td className="px-3 py-2.5 text-right text-emerald-500">
+                        {formatCurrency(displayedTotals.principalPaidVnd, currency, lang, { compact: true })}
+                      </td>
+                      <td className="px-3 py-2.5 text-right text-amber-500">
+                        {formatCurrency(displayedTotals.interestPaidVnd, currency, lang, { compact: true })}
+                      </td>
+                      <td className="py-2.5 pl-3 text-right" style={{ color: 'var(--text-primary)' }}>
+                        {formatCurrency(
+                          displayedAmortization[displayedAmortization.length - 1]?.endingBalanceVnd ?? 0,
+                          currency,
+                          lang,
+                          { compact: true }
+                        )}
+                      </td>
+                    </tr>
+                  </tfoot>
                 </table>
               </div>
             </div>

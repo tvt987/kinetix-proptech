@@ -65,6 +65,7 @@ export interface ResidenceFilterState {
   floor: number | null;
   maxPriceVnd: number;
   sortBy: SortOption;
+  shortlistOnly?: boolean;
 }
 
 export interface MortgageInputs {
@@ -142,4 +143,38 @@ export interface VipPassRecord extends ViewingBookingInput {
   advisorTitleEn: string;
   issuedAtIso: string;
   qrMatrix: boolean[][];
+}
+
+export type DtiSafetyTier = 'SAFE' | 'CAUTION' | 'HIGH_RISK';
+
+export interface InterestStressScenario {
+  shockPct: number; // e.g. 0, 2, 4
+  effectiveRatePct: number;
+  monthlyPaymentVnd: number;
+  deltaMonthlyPaymentVnd: number;
+  totalInterestVnd: number;
+  deltaTotalInterestVnd: number;
+  monthlyNetCashFlowVnd: number;
+  dtiRatioPct: number;
+  dtiSafetyTier: DtiSafetyTier;
+}
+
+export interface InterestStressTestSummary {
+  monthlyIncomeVnd: number;
+  activeShockPct: number;
+  activeScenario: InterestStressScenario;
+  benchmarkScenarios: InterestStressScenario[];
+}
+
+export interface DepositHoldRecord {
+  holdId: string;
+  residenceId: string;
+  residenceCode: string;
+  amountVnd: number;
+  transferMemo: string;
+  passCode?: string;
+  createdAtIso: string;
+  bankBin: string;
+  accountNumber: string;
+  accountName: string;
 }

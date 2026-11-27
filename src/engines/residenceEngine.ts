@@ -30,9 +30,12 @@ export function computeResidenceGrossYieldPct(residence: Residence): number {
 
 export function filterAndSortResidences(
   residences: Residence[],
-  filters: ResidenceFilterState
+  filters: ResidenceFilterState,
+  shortlistIds?: string[]
 ): Residence[] {
+  const shortlistSet = shortlistIds ? new Set(shortlistIds) : null;
   const filtered = residences.filter((unit) => {
+    if (filters.shortlistOnly && shortlistSet && !shortlistSet.has(unit.id)) return false;
     if (filters.tier !== 'ALL' && unit.tier !== filters.tier) return false;
     if (filters.orientation !== 'ALL' && unit.orientation !== filters.orientation) return false;
     if (filters.status !== 'ALL' && unit.status !== filters.status) return false;

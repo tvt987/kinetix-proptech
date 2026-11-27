@@ -50,7 +50,7 @@ export const ComparisonDrawer: React.FC<ComparisonDrawerProps> = ({
       {/* Sleek Floating Comparison Tray (Bottom-Right when items exist & modal is closed) */}
       {residences.length > 0 && !isOpen && (
         <div
-          className="fixed right-4 bottom-4 z-30 flex max-w-[calc(100vw-2rem)] items-center gap-2.5 rounded-2xl border p-2.5 shadow-2xl backdrop-blur-xl sm:right-6 sm:bottom-6"
+          className="no-print fixed right-4 bottom-4 z-30 flex max-w-[calc(100vw-2rem)] items-center gap-2.5 rounded-2xl border p-2.5 shadow-2xl backdrop-blur-xl sm:right-6 sm:bottom-6"
           style={{
             backgroundColor: 'var(--bg-glass)',
             borderColor: 'var(--border-strong)',
@@ -99,7 +99,7 @@ export const ComparisonDrawer: React.FC<ComparisonDrawerProps> = ({
       {/* Side-by-Side Comparison Matrix Modal */}
       {isOpen && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 p-3 backdrop-blur-sm sm:p-6"
+          className="no-print fixed inset-0 z-50 flex items-center justify-center bg-black/75 p-3 backdrop-blur-sm sm:p-6"
           role="dialog"
           aria-modal="true"
           aria-label={copy.modalTitle}

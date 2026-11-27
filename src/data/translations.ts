@@ -5,6 +5,7 @@ export interface CopyBundle {
     tower: string;
     simulator: string;
     compare: string;
+    vault: string;
     schedule: string;
     themeDark: string;
     themeLight: string;
@@ -65,6 +66,11 @@ export interface CopyBundle {
     floorPrefix: string;
     highlightsTitle: string;
     terraceIncluded: string;
+    shortlistFilterBtn: string;
+    saveShortlistBtn: string;
+    savedShortlistBtn: string;
+    holdDepositBtn: string;
+    printDossierBtn: string;
   };
   simulator: {
     eyebrow: string;
@@ -111,8 +117,34 @@ export interface CopyBundle {
     colEnding: string;
     exportMdBtn: string;
     exportJsonBtn: string;
+    exportCsvBtn: string;
+    printPdfBtn: string;
     copiedLabel: string;
     exportNote: string;
+    stressEyebrow: string;
+    stressTitle: string;
+    stressSubtitle: string;
+    rateShockLabel: string;
+    monthlyIncomeLabel: string;
+    shockBase: string;
+    shockModerate: string;
+    shockSevere: string;
+    stressedPmtLabel: string;
+    shockDeltaLabel: string;
+    dtiRatioLabel: string;
+    dtiSafeLabel: string;
+    dtiCautionLabel: string;
+    dtiRiskLabel: string;
+    colScenario: string;
+    colEffRate: string;
+    colMonthlyPmt: string;
+    colDeltaPmt: string;
+    colNetCashFlow: string;
+    colDti: string;
+    colSafety: string;
+    scheduleTab10Y: string;
+    scheduleTabFull: string;
+    totalRowLabel: string;
   };
   compare: {
     dockLabel: string;
@@ -170,9 +202,67 @@ export interface CopyBundle {
     passAdvisorLabel: string;
     passQrNote: string;
     downloadPassBtn: string;
+    downloadIcsBtn: string;
+    holdDepositCta: string;
+    savedToVaultBadge: string;
+    openVaultBtn: string;
     bookAnotherBtn: string;
     poweredBy: string;
     validationError: string;
+  };
+  vault: {
+    eyebrow: string;
+    title: string;
+    subtitle: string;
+    tabShortlist: string;
+    tabPasses: string;
+    emptyShortlist: string;
+    emptyPasses: string;
+    activeHoldsTitle: string;
+    inspectBtn: string;
+    simulateBtn: string;
+    depositBtn: string;
+    bookBtn: string;
+    downloadIcsBtn: string;
+    downloadTxtBtn: string;
+    removeBtn: string;
+    persistedNote: string;
+    bookNewViewingBtn: string;
+  };
+  deposit: {
+    eyebrow: string;
+    title: string;
+    subtitle: string;
+    selectTierLabel: string;
+    qrTitle: string;
+    qrLiveBadge: string;
+    qrFallbackBadge: string;
+    qrScanHint: string;
+    bankLabel: string;
+    accountNoLabel: string;
+    accountHolderLabel: string;
+    amountLabel: string;
+    memoLabel: string;
+    copyBtn: string;
+    copiedBtn: string;
+    guaranteeTitle: string;
+    guaranteeBody: string;
+    saveHoldBtn: string;
+    holdSavedLabel: string;
+    closeBtn: string;
+  };
+  print: {
+    eyebrow: string;
+    title: string;
+    generatedOn: string;
+    assetSection: string;
+    underwritingSection: string;
+    stressSection: string;
+    amortizationSection: string;
+    depositSection: string;
+    refundNotice: string;
+    signatureAdvisor: string;
+    signatureClient: string;
   };
   footer: {
     brandDesc: string;
@@ -190,6 +280,7 @@ export const TRANSLATIONS: Record<Language, CopyBundle> = {
       tower: 'Tháp & Mặt Bằng',
       simulator: 'Tính Vay & ROI',
       compare: 'So Sánh',
+      vault: 'VIP Vault',
       schedule: 'Đặt Lịch VIP',
       themeDark: 'Obsidian',
       themeLight: 'Limestone',
@@ -274,6 +365,11 @@ export const TRANSLATIONS: Record<Language, CopyBundle> = {
       floorPrefix: 'Tầng',
       highlightsTitle: 'Điểm Nhấn Kiến Trúc & Bàn Giao',
       terraceIncluded: 'gồm logia/sân thượng',
+      shortlistFilterBtn: 'Danh Sách Đã Lưu',
+      saveShortlistBtn: 'Lưu Vào Shortlist',
+      savedShortlistBtn: 'Đã Lưu Shortlist',
+      holdDepositBtn: 'Giữ Căn VietQR',
+      printDossierBtn: 'In Hồ Sơ A4 PDF',
     },
     simulator: {
       eyebrow: 'FINTECH MORTGAGE & INVESTMENT ENGINE',
@@ -321,8 +417,34 @@ export const TRANSLATIONS: Record<Language, CopyBundle> = {
       colEnding: 'Dư Nợ Cuối Kỳ',
       exportMdBtn: 'Xuất Hồ Sơ (.md)',
       exportJsonBtn: 'Xuất Dữ Liệu (.json)',
+      exportCsvBtn: 'Xuất Excel CSV (BOM)',
+      printPdfBtn: 'In Hồ Sơ A4 PDF',
       copiedLabel: 'Đã tải xuống',
-      exportNote: 'Lợi suất ròng đã trừ phí quản lý tòa nhà, 0.8 tháng trống dự phòng và 10% thuế cho thuê chuẩn VN.',
+      exportNote: 'Lợi suất ròng đã trừ phí quản lý tòa nhà, 0.8 tháng trống dự phòng và 10% thuế cho thuê chuẩn VN. File CSV chuẩn UTF-8 BOM mở trực tiếp trên Excel.',
+      stressEyebrow: 'STRESS TEST LÃI SUẤT THẢ NỔI & NGƯỠNG AN TOÀN DTI',
+      stressTitle: 'Kiểm Thử Sốc Lãi Suất Sau Ưu Đãi (+0% / +2% / +4%)',
+      stressSubtitle: 'Mô phỏng áp lực trả nợ hàng tháng khi lãi suất chuyển sang thả nổi và xếp hạng an toàn tỷ lệ Nợ/Thu nhập (DTI) chuẩn ngân hàng.',
+      rateShockLabel: 'Biên Độ Sốc Lãi Thả Nổi',
+      monthlyIncomeLabel: 'Thu Nhập Ròng Nhà Đầu Tư / Tháng',
+      shockBase: '+0% Cơ Sở',
+      shockModerate: '+2% Thả Nổi',
+      shockSevere: '+4% Sốc Cao',
+      stressedPmtLabel: 'Trả Góp Khi Sốc Lãi',
+      shockDeltaLabel: 'Tăng Thêm / Tháng',
+      dtiRatioLabel: 'Tỷ Lệ Nợ / Thu Nhập (DTI)',
+      dtiSafeLabel: 'An Toàn Ngân Hàng (<=35%)',
+      dtiCautionLabel: 'Cần Đệm Thanh Khoản (<=50%)',
+      dtiRiskLabel: 'Cảnh Báo Vượt Ngưỡng (>50%)',
+      colScenario: 'Kịch Bản',
+      colEffRate: 'Lãi Suất',
+      colMonthlyPmt: 'Trả Góp/Tháng',
+      colDeltaPmt: 'Tăng Thêm',
+      colNetCashFlow: 'Dòng Tiền Ròng',
+      colDti: 'DTI',
+      colSafety: 'Xếp Hạng',
+      scheduleTab10Y: 'Lịch 10 Năm Đầu',
+      scheduleTabFull: 'Toàn Kỳ Vay',
+      totalRowLabel: 'Tổng Cộng Kỳ Đang Xem',
     },
     compare: {
       dockLabel: 'Danh sách so sánh căn hộ',
@@ -381,9 +503,67 @@ export const TRANSLATIONS: Record<Language, CopyBundle> = {
       passAdvisorLabel: 'Cố Vấn Chuyên Biệt',
       passQrNote: 'Xuất trình mã QR tại sảnh Private Lounge Kinetix Thủ Thiêm để nhận đặc quyền đón tiếp không chờ đợi.',
       downloadPassBtn: 'Tải Thẻ VIP (.txt)',
+      downloadIcsBtn: 'Thêm Lịch (.ics)',
+      holdDepositCta: 'Đặt Cọc Giữ Căn (VietQR)',
+      savedToVaultBadge: 'Đã lưu tự động vào VIP Vault',
+      openVaultBtn: 'Mở VIP Vault',
       bookAnotherBtn: 'Đặt Thêm Lịch Khác',
       poweredBy: 'Private Client Desk · Powered by TVT Studio',
       validationError: 'Vui lòng nhập đầy đủ Họ tên, Số điện thoại và Email hợp lệ.',
+    },
+    vault: {
+      eyebrow: 'PRIVATE CLIENT VAULT · LƯU TRỮ CỤC BỘ BẢO MẬT',
+      title: 'Két Lưu Trữ Shortlist & Thẻ VIP Pass',
+      subtitle: 'Toàn bộ căn hộ quan tâm, lịch hẹn xem nhà riêng và biên nhận giữ chỗ hoàn lại được lưu bền vững trên trình duyệt của quý khách.',
+      tabShortlist: 'Căn Đã Lưu',
+      tabPasses: 'Thẻ VIP & Lịch Hẹn',
+      emptyShortlist: 'Quý khách chưa lưu căn hộ nào. Nhấn biểu tượng đánh dấu trên từng căn hộ để xây dựng danh mục theo dõi riêng.',
+      emptyPasses: 'Chưa có lịch hẹn xem nhà riêng nào trong Vault. Hãy đặt lịch VIP để nhận mã QR và tệp lịch .ics.',
+      activeHoldsTitle: 'Biên Nhận Giữ Chỗ Hoàn Lại Đã Ghi Nhận',
+      inspectBtn: 'Xem Hồ Sơ',
+      simulateBtn: 'Tính Vay',
+      depositBtn: 'Giữ Căn VietQR',
+      bookBtn: 'Đặt Lịch VIP',
+      downloadIcsBtn: 'Tải Lịch (.ics)',
+      downloadTxtBtn: 'Thẻ (.txt)',
+      removeBtn: 'Xóa',
+      persistedNote: 'Dữ liệu lưu cục bộ trên trình duyệt (localStorage) — tự động khôi phục khi tải lại trang.',
+      bookNewViewingBtn: 'Đặt Lịch Xem Nhà Mới',
+    },
+    deposit: {
+      eyebrow: 'TECHCOMBANK VIETQR · ĐẶT CỌC GIỮ CHỖ HOÀN LẠI 100%',
+      title: 'Giữ Quyền Ưu Tiên Căn Hộ Qua VietQR',
+      subtitle: 'Quét mã Techcombank VietQR trực tiếp để thanh toán hoặc xem trước lệnh đặt cọc giữ chỗ có hoàn lại cho quỹ căn Kinetix.',
+      selectTierLabel: 'Chọn Mức Đặt Cọc Giữ Chỗ Hoàn Lại',
+      qrTitle: 'Mã Thanh Toán Techcombank VietQR',
+      qrLiveBadge: 'VIETQR TRỰC TIẾP',
+      qrFallbackBadge: 'EMVCO OFFLINE QR',
+      qrScanHint: 'Mở ứng dụng Ngân hàng bất kỳ tại Việt Nam để quét mã NAPAS 247 tự động điền số tiền và nội dung.',
+      bankLabel: 'Ngân Hàng Thụ Hưởng',
+      accountNoLabel: 'Số Tài Khoản',
+      accountHolderLabel: 'Chủ Tài Khoản',
+      amountLabel: 'Số Tiền Giữ Chỗ',
+      memoLabel: 'Nội Dung Chuyển Khoản',
+      copyBtn: 'Sao Chép',
+      copiedBtn: 'Đã Chép',
+      guaranteeTitle: 'Cam Kết Hoàn Tiền 100% Không Rủi Ro',
+      guaranteeBody: 'Khoản đặt cọc giữ chỗ được bảo lãnh hoàn lại 100% trong vòng 7 ngày làm việc nếu quý khách quyết định không ký hợp đồng sau buổi tham quan thực tế.',
+      saveHoldBtn: 'Lưu Lệnh Giữ Chỗ Vào VIP Vault',
+      holdSavedLabel: 'Đã Lưu Vào VIP Vault',
+      closeBtn: 'Đóng',
+    },
+    print: {
+      eyebrow: 'THE KINETIX RESIDENCES · THỦ THIÊM RIVERFRONT · HỒ SƠ THẨM ĐỊNH ĐẦU TƯ A4',
+      title: 'Hồ Sơ Phân Tích Tài Chính & Dòng Tiền Bất Động Sản',
+      generatedOn: 'Ngày lập hồ sơ',
+      assetSection: '1. Thông Số Kiến Trúc & Định Giá Tài Sản',
+      underwritingSection: '2. Chỉ Số Vay Ngân Hàng & Lợi Suất Cho Thuê',
+      stressSection: '3. Kiểm Thử Sốc Lãi Suất Thả Nổi (+0% / +2% / +4%) & DTI',
+      amortizationSection: '4. Lịch Khấu Hao Dư Nợ & Dự Phóng Vốn Chủ Sở Hữu 10 Năm',
+      depositSection: '5. Thông Tin Đặt Cọc Giữ Chỗ Hoàn Lại (Techcombank VietQR)',
+      refundNotice: 'Khoản đặt cọc giữ chỗ hoàn lại 100% trong 7 ngày làm việc nếu khách hàng không tiến hành giao dịch sau khi tham quan.',
+      signatureAdvisor: 'Cố Vấn Khách Hàng Cao Cấp · Private Client Desk',
+      signatureClient: 'Xác Nhận Của Nhà Đầu Tư',
     },
     footer: {
       brandDesc:
@@ -401,6 +581,7 @@ export const TRANSLATIONS: Record<Language, CopyBundle> = {
       tower: 'Tower & Floorplans',
       simulator: 'Mortgage & ROI',
       compare: 'Compare',
+      vault: 'VIP Vault',
       schedule: 'VIP Viewing',
       themeDark: 'Obsidian',
       themeLight: 'Limestone',
@@ -485,6 +666,11 @@ export const TRANSLATIONS: Record<Language, CopyBundle> = {
       floorPrefix: 'Floor',
       highlightsTitle: 'Architectural Specifications & Finish',
       terraceIncluded: 'incl. sky terrace',
+      shortlistFilterBtn: 'Saved Shortlist',
+      saveShortlistBtn: 'Save to Shortlist',
+      savedShortlistBtn: 'Saved in Shortlist',
+      holdDepositBtn: 'Hold Deposit (VietQR)',
+      printDossierBtn: 'Print A4 Dossier PDF',
     },
     simulator: {
       eyebrow: 'FINTECH MORTGAGE & INVESTMENT ENGINE',
@@ -532,8 +718,34 @@ export const TRANSLATIONS: Record<Language, CopyBundle> = {
       colEnding: 'Ending Balance',
       exportMdBtn: 'Export Dossier (.md)',
       exportJsonBtn: 'Export JSON (.json)',
+      exportCsvBtn: 'Export Excel CSV (BOM)',
+      printPdfBtn: 'Print A4 Dossier PDF',
       copiedLabel: 'Downloaded',
-      exportNote: 'Net yield deducts monthly tower service fees, 0.8-month vacancy reserve, and 10% Vietnam statutory rental tax.',
+      exportNote: 'Net yield deducts monthly tower service fees, 0.8-month vacancy reserve, and 10% Vietnam statutory rental tax. UTF-8 BOM CSV opens natively in Microsoft Excel.',
+      stressEyebrow: 'FLOATING-RATE STRESS TEST & BANK DTI UNDERWRITING',
+      stressTitle: 'Post-Promo Interest-Rate Shock (+0% / +2% / +4%)',
+      stressSubtitle: 'Stress-test monthly debt service against floating-rate jumps after promotional lock expires and evaluate bank-grade Debt-to-Income (DTI) safety.',
+      rateShockLabel: 'Post-Promo Rate Shock',
+      monthlyIncomeLabel: 'Monthly Investor / Household Income',
+      shockBase: '+0% Base',
+      shockModerate: '+2% Floating',
+      shockSevere: '+4% Severe Shock',
+      stressedPmtLabel: 'Stressed Monthly PMT',
+      shockDeltaLabel: 'Monthly Payment Impact',
+      dtiRatioLabel: 'Debt-to-Income (DTI)',
+      dtiSafeLabel: 'Bank-Grade Safe (<=35%)',
+      dtiCautionLabel: 'Moderate Stretch (<=50%)',
+      dtiRiskLabel: 'Elevated DTI Risk (>50%)',
+      colScenario: 'Scenario',
+      colEffRate: 'Eff. Rate',
+      colMonthlyPmt: 'Monthly PMT',
+      colDeltaPmt: 'Shock Delta',
+      colNetCashFlow: 'Net Cash Flow',
+      colDti: 'DTI',
+      colSafety: 'Safety Tier',
+      scheduleTab10Y: '10-Year Schedule',
+      scheduleTabFull: 'Full Loan Term',
+      totalRowLabel: 'Displayed Period Total',
     },
     compare: {
       dockLabel: 'Residence comparison tray',
@@ -592,9 +804,67 @@ export const TRANSLATIONS: Record<Language, CopyBundle> = {
       passAdvisorLabel: 'Assigned Private Advisor',
       passQrNote: 'Present this QR code at the Kinetix Private Arrival Lounge for seamless priority reception.',
       downloadPassBtn: 'Download Pass (.txt)',
+      downloadIcsBtn: 'Add to Calendar (.ics)',
+      holdDepositCta: 'Hold Unit Deposit (VietQR)',
+      savedToVaultBadge: 'Persisted in VIP Vault',
+      openVaultBtn: 'Open VIP Vault',
       bookAnotherBtn: 'Schedule Another Viewing',
       poweredBy: 'Private Client Desk · Powered by TVT Studio',
       validationError: 'Please provide your full name, phone number, and a valid email address.',
+    },
+    vault: {
+      eyebrow: 'PRIVATE CLIENT VAULT · PERSISTENT LOCAL STORAGE',
+      title: 'Saved Shortlist & VIP Viewing Pass Vault',
+      subtitle: 'Your bookmarked sky-residences, scheduled private viewing appointments, and refundable reservation hold receipts persist securely across reloads.',
+      tabShortlist: 'Saved Shortlist',
+      tabPasses: 'VIP Viewing Passes',
+      emptyShortlist: 'No bookmarked residences yet. Click the bookmark icon on any sky-residence to curate your private shortlist.',
+      emptyPasses: 'No private viewing appointments saved yet. Schedule a VIP viewing to issue a deterministic QR pass and .ics calendar invite.',
+      activeHoldsTitle: 'Recorded Refundable Hold Previews',
+      inspectBtn: 'Inspect Unit',
+      simulateBtn: 'Simulate',
+      depositBtn: 'VietQR Deposit',
+      bookBtn: 'Book VIP',
+      downloadIcsBtn: 'Calendar (.ics)',
+      downloadTxtBtn: 'Pass (.txt)',
+      removeBtn: 'Remove',
+      persistedNote: 'Stored locally in browser storage (localStorage) — restored automatically across page reloads.',
+      bookNewViewingBtn: 'Schedule New Viewing',
+    },
+    deposit: {
+      eyebrow: 'TECHCOMBANK VIETQR · 100% REFUNDABLE PRIORITY HOLD',
+      title: 'Refundable Unit Hold Deposit via VietQR',
+      subtitle: 'Scan the live Techcombank NAPAS 247 VietQR code to execute or preview a 100% refundable priority reservation lock on this residence.',
+      selectTierLabel: 'Select Refundable Priority Hold Tier',
+      qrTitle: 'Live Techcombank VietQR Code',
+      qrLiveBadge: 'LIVE VIETQR',
+      qrFallbackBadge: 'EMVCO OFFLINE QR',
+      qrScanHint: 'Scan with any Vietnamese mobile banking app to auto-fill Techcombank beneficiary, hold amount, and transfer reference.',
+      bankLabel: 'Beneficiary Bank',
+      accountNoLabel: 'Account Number',
+      accountHolderLabel: 'Beneficiary Name',
+      amountLabel: 'Hold Deposit Amount',
+      memoLabel: 'Transfer Reference Memo',
+      copyBtn: 'Copy',
+      copiedBtn: 'Copied',
+      guaranteeTitle: '100% Risk-Free Refund Guarantee',
+      guaranteeBody: 'Priority unit hold deposits are 100% refundable within 7 business days if you choose not to proceed after inspecting the residence.',
+      saveHoldBtn: 'Save Hold Preview to VIP Vault',
+      holdSavedLabel: 'Saved to VIP Vault',
+      closeBtn: 'Close',
+    },
+    print: {
+      eyebrow: 'THE KINETIX RESIDENCES · THU THIEM RIVERFRONT · EXECUTIVE A4 INVESTMENT DOSSIER',
+      title: 'Institutional Property Underwriting & Cashflow Dossier',
+      generatedOn: 'Issued Date',
+      assetSection: '1. Architectural Specifications & Valuation',
+      underwritingSection: '2. Mortgage Structure & Rental Yield Telemetry',
+      stressSection: '3. Post-Promo Floating-Rate Stress Test (+0% / +2% / +4%) & DTI',
+      amortizationSection: '4. 10-Year Amortization & Net Equity Trajectory',
+      depositSection: '5. Refundable Priority Hold Instructions (Techcombank VietQR)',
+      refundNotice: 'Priority hold deposit is 100% refundable within 7 business days if buyer declines after private gallery inspection.',
+      signatureAdvisor: 'Director of Private Client Advisory',
+      signatureClient: 'Investor / Principal Counterparty',
     },
     footer: {
       brandDesc:

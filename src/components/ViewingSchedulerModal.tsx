@@ -1,14 +1,25 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import type { Language, Residence, ViewingFormat, VipPassRecord } from '../types/proptech';
 import type { CopyBundle } from '../data/translations';
-import { issueVipPass } from '../engines/vipPassEngine';
-import { CalendarIcon, CheckIcon, CloseIcon, DownloadIcon } from './Icons';
+import { buildViewingIcsContent, issueVipPass } from '../engines/vipPassEngine';
+import {
+  CalendarIcon,
+  CalendarPlusIcon,
+  CheckIcon,
+  CloseIcon,
+  DownloadIcon,
+  QrCodeIcon,
+  VaultIcon,
+} from './Icons';
 
 interface ViewingSchedulerModalProps {
   isOpen: boolean;
   onClose: () => void;
   residences: Residence[];
   initialResidence: Residence;
+  onPassIssued: (pass: VipPassRecord) => void;
+  onOpenVault: () => void;
+  onOpenDeposit: (unit: Residence, passCode?: string) => void;
   lang: Language;
   copy: CopyBundle['scheduler'];
 }
@@ -39,6 +50,9 @@ export const ViewingSchedulerModal: React.FC<ViewingSchedulerModalProps> = ({
   onClose,
   residences,
   initialResidence,
+  onPassIssued,
+  onOpenVault,
+  onOpenDeposit,
   lang,
   copy,
 }) => {
@@ -90,6 +104,21 @@ export const ViewingSchedulerModal: React.FC<ViewingSchedulerModalProps> = ({
       notes: notes.trim() || undefined,
     });
     setIssuedPass(pass);
+    onPassIssued(pass);
+  };
+
+  const handleDownloadIcs = () => {
+    if (!issuedPass) return;
+    const ics = buildViewingIcsContent(issuedPass, selectedUnit, lang);
+    const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${issuedPass.passCode}.ics`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
   };
 
   const handleDownloadPass = () => {
@@ -121,7 +150,7 @@ export const ViewingSchedulerModal: React.FC<ViewingSchedulerModalProps> = ({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 p-3 backdrop-blur-sm sm:p-6"
+      className="no-print fixed inset-0 z-50 flex items-center justify-center bg-black/75 p-3 backdrop-blur-sm sm:p-6"
       role="dialog"
       aria-modal="true"
       aria-label={copy.title}
@@ -408,9 +437,18 @@ export const ViewingSchedulerModal: React.FC<ViewingSchedulerModalProps> = ({
               >
                 <div className="flex flex-col justify-between gap-6 sm:flex-row sm:items-center">
                   <div className="space-y-3">
-                    <div className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/15 px-3 py-1 text-xs font-semibold text-emerald-500">
-                      <CheckIcon className="h-3.5 w-3.5" />
-                      <span>VIP CREDENTIAL ACTIVE</span>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <div className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/15 px-3 py-1 text-xs font-semibold text-emerald-500">
+                        <CheckIcon className="h-3.5 w-3.5" />
+                        <span>VIP CREDENTIAL ACTIVE</span>
+                      </div>
+                      <div
+                        className="inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-semibold"
+                        style={{ borderColor: 'var(--border-strong)', backgroundColor: 'var(--accent-soft)', color: 'var(--accent)' }}
+                      >
+                        <VaultIcon className="h-3 w-3" />
+                        <span>{copy.savedToVaultBadge}</span>
+                      </div>
                     </div>
 
                     <div>
@@ -489,28 +527,70 @@ export const ViewingSchedulerModal: React.FC<ViewingSchedulerModalProps> = ({
                 </div>
               </div>
 
-              <div className="flex flex-wrap items-center justify-between gap-3">
-                <span className="font-mono-tabular text-[11px]" style={{ color: 'var(--text-muted)' }}>
-                  {copy.poweredBy}
-                </span>
-                <div className="flex flex-wrap gap-2.5">
+              <div className="flex flex-col gap-3">
+                <div className="flex flex-wrap gap-2">
                   <button
                     type="button"
-                    onClick={() => setIssuedPass(null)}
-                    className="cursor-pointer rounded-xl border px-4 py-2.5 text-xs font-semibold"
-                    style={{ borderColor: 'var(--border-subtle)', color: 'var(--text-secondary)' }}
-                  >
-                    {copy.bookAnotherBtn}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={handleDownloadPass}
-                    className="inline-flex cursor-pointer items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-semibold"
+                    onClick={handleDownloadIcs}
+                    className="inline-flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-xs font-semibold transition-all hover:brightness-110"
                     style={{ backgroundColor: 'var(--accent)', color: 'var(--accent-ink)' }}
                   >
-                    <DownloadIcon className="h-4 w-4" />
-                    <span>{copy.downloadPassBtn}</span>
+                    <CalendarPlusIcon className="h-4 w-4" />
+                    <span>{copy.downloadIcsBtn}</span>
                   </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      onClose();
+                      onOpenDeposit(selectedUnit, issuedPass.passCode);
+                    }}
+                    className="inline-flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-xl border px-4 py-2.5 text-xs font-semibold"
+                    style={{
+                      borderColor: 'var(--border-strong)',
+                      backgroundColor: 'var(--accent-soft)',
+                      color: 'var(--accent)',
+                    }}
+                  >
+                    <QrCodeIcon className="h-4 w-4" />
+                    <span>{copy.holdDepositCta}</span>
+                  </button>
+                </div>
+
+                <div className="flex flex-wrap items-center justify-between gap-2.5">
+                  <span className="font-mono-tabular text-[11px]" style={{ color: 'var(--text-muted)' }}>
+                    {copy.poweredBy}
+                  </span>
+                  <div className="flex flex-wrap gap-2">
+                    <button
+                      type="button"
+                      onClick={handleDownloadPass}
+                      className="inline-flex cursor-pointer items-center gap-1.5 rounded-xl border px-3 py-2 text-xs font-semibold"
+                      style={{ borderColor: 'var(--border-subtle)', color: 'var(--text-primary)' }}
+                    >
+                      <DownloadIcon className="h-3.5 w-3.5" />
+                      <span>{copy.downloadPassBtn}</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        onClose();
+                        onOpenVault();
+                      }}
+                      className="inline-flex cursor-pointer items-center gap-1.5 rounded-xl border px-3 py-2 text-xs font-semibold"
+                      style={{ borderColor: 'var(--border-subtle)', color: 'var(--accent)' }}
+                    >
+                      <VaultIcon className="h-3.5 w-3.5" />
+                      <span>{copy.openVaultBtn}</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setIssuedPass(null)}
+                      className="cursor-pointer rounded-xl border px-3 py-2 text-xs font-semibold"
+                      style={{ borderColor: 'var(--border-subtle)', color: 'var(--text-secondary)' }}
+                    >
+                      {copy.bookAnotherBtn}
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>

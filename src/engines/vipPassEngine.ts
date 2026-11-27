@@ -1,4 +1,4 @@
-import type { ViewingBookingInput, VipPassRecord } from '../types/proptech';
+import type { Language, Residence, ViewingBookingInput, VipPassRecord } from '../types/proptech';
 
 /**
  * Deterministic 32-bit FNV-1a hash for generating repeatable VIP pass codes
@@ -121,4 +121,95 @@ export function issueVipPass(input: ViewingBookingInput, issuedAtIso?: string): 
     issuedAtIso: issuedAtIso ?? new Date().toISOString(),
     qrMatrix: generateDeterministicQrMatrix(qrPayload),
   };
+}
+
+/**
+ * Escapes RFC 5545 text values for safe iCalendar (.ics) generation.
+ */
+export function escapeIcsText(value: string): string {
+  return String(value ?? '')
+    .replace(/\\/g, '\\\\')
+    .replace(/\r\n|\r|\n/g, '\\n')
+    .replace(/;/g, '\\;')
+    .replace(/,/g, '\\,');
+}
+
+function formatIcsLocalDateTime(dateIso: string, hours: number, minutes: number): string {
+  const cleanDate = dateIso.replace(/[^0-9]/g, '').slice(0, 8);
+  const safeDate = cleanDate.length === 8 ? cleanDate : '20261201';
+  const hh = String(Math.max(0, Math.min(23, hours))).padStart(2, '0');
+  const mm = String(Math.max(0, Math.min(59, minutes))).padStart(2, '0');
+  return `${safeDate}T${hh}${mm}00`;
+}
+
+/**
+ * Generates an RFC 5545 compliant iCalendar (.ics) invite for a VIP private viewing appointment.
+ * Supports Apple Calendar, Google Calendar, and Microsoft Outlook with Asia/Ho_Chi_Minh timezone.
+ */
+export function buildViewingIcsContent(
+  pass: VipPassRecord,
+  residence: Residence | undefined,
+  lang: Language = 'vi'
+): string {
+  const match = pass.timeSlot.match(/(\d{1,2}):(\d{2})/);
+  const startHour = match ? Number(match[1]) : 10;
+  const startMin = match ? Number(match[2]) : 0;
+
+  // Standard 90-minute VIP viewing window
+  const totalEndMinutes = startHour * 60 + startMin + 90;
+  const endHour = Math.min(23, Math.floor(totalEndMinutes / 60));
+  const endMin = totalEndMinutes % 60;
+
+  const dtStart = formatIcsLocalDateTime(pass.dateIso, startHour, startMin);
+  const dtEnd = formatIcsLocalDateTime(pass.dateIso, endHour, endMin);
+  const dtStamp = pass.issuedAtIso
+    .replace(/[-:]/g, '')
+    .replace(/\.\d+Z$/, 'Z')
+    .slice(0, 16);
+  const safeStamp = /^\d{8}T\d{6}Z$/.test(dtStamp) ? dtStamp : '20261127T010000Z';
+
+  const unitName = residence
+    ? `${residence.code} — ${lang === 'vi' ? residence.nameVi : residence.nameEn} (F${residence.floor})`
+    : pass.residenceCode;
+
+  const summary =
+    lang === 'vi'
+      ? `Kinetix VIP Viewing: ${pass.residenceCode} (${pass.passCode})`
+      : `Kinetix Private VIP Viewing: ${pass.residenceCode} (${pass.passCode})`;
+
+  const location =
+    pass.format === 'GALLERY_ONSITE'
+      ? 'Kinetix Riverfront Gallery, Thu Thiem Peninsula, Ho Chi Minh City'
+      : 'Private 3D Architectural Video Walkthrough (Link via Kinetix Advisor)';
+
+  const descriptionLines = [
+    `VIP Pass Code: ${pass.passCode}`,
+    `Guest: ${pass.clientName}`,
+    `Residence: ${unitName}`,
+    `Private Advisor: ${pass.advisorName} (${lang === 'vi' ? pass.advisorTitleVi : pass.advisorTitleEn})`,
+    `Contact: ${pass.clientPhone} | ${pass.clientEmail}`,
+    pass.notes ? `Notes: ${pass.notes}` : '',
+    'Private Client Desk: +84 931 467 024 | tinhkun102@gmail.com',
+  ].filter(Boolean);
+
+  const lines = [
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//Kinetix PropTech//TVT Studio VIP Desk//EN',
+    'CALSCALE:GREGORIAN',
+    'METHOD:PUBLISH',
+    'BEGIN:VEVENT',
+    `UID:${escapeIcsText(pass.passCode)}@kinetix.tvtstudio.vn`,
+    `DTSTAMP:${safeStamp}`,
+    `DTSTART;TZID=Asia/Ho_Chi_Minh:${dtStart}`,
+    `DTEND;TZID=Asia/Ho_Chi_Minh:${dtEnd}`,
+    `SUMMARY:${escapeIcsText(summary)}`,
+    `LOCATION:${escapeIcsText(location)}`,
+    `DESCRIPTION:${escapeIcsText(descriptionLines.join('\n'))}`,
+    'STATUS:CONFIRMED',
+    'END:VEVENT',
+    'END:VCALENDAR',
+  ];
+
+  return `${lines.join('\r\n')}\r\n`;
 }

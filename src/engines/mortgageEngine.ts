@@ -1,13 +1,16 @@
 import type {
   AmortizationYearRow,
   Currency,
+  DtiSafetyTier,
   EquityProjectionPoint,
+  InterestStressScenario,
+  InterestStressTestSummary,
   Language,
   MortgageAnalysisResult,
   MortgageInputs,
   Residence,
 } from '../types/proptech';
-import { formatCurrency } from './currencyEngine';
+import { convertVndToUsd, formatCurrency } from './currencyEngine';
 
 /**
  * Standard fixed-rate annuity PMT formula:
@@ -299,4 +302,199 @@ export function buildInvestmentDossierJson(
     null,
     2
   );
+}
+
+/**
+ * Standard private-banking Debt-to-Income (DTI) safety classification:
+ * <= 35%: Bank-grade safe
+ * <= 50%: Moderate stretch / liquidity buffer advised
+ * > 50%: Elevated risk exceeding conservative underwriting threshold
+ */
+export function classifyDtiSafety(dtiRatioPct: number): DtiSafetyTier {
+  if (!Number.isFinite(dtiRatioPct) || dtiRatioPct <= 35) return 'SAFE';
+  if (dtiRatioPct <= 50) return 'CAUTION';
+  return 'HIGH_RISK';
+}
+
+/**
+ * Computes floating-rate interest shock scenarios (+0%, +2%, +4% plus custom active shock)
+ * showing monthly payment delta, total interest shock, net cash flow impact, and DTI safety tier.
+ */
+export function computeInterestRateStressTest(
+  inputs: MortgageInputs,
+  activeShockPct: number,
+  monthlyIncomeVnd: number
+): InterestStressTestSummary {
+  const safeShock = Math.max(0, Math.min(8, Number.isFinite(activeShockPct) ? activeShockPct : 0));
+  const safeIncome = Math.max(1, Number.isFinite(monthlyIncomeVnd) ? monthlyIncomeVnd : 1);
+
+  const baseAnalysis = analyzeMortgageAndRoi(inputs);
+  const monthlyNetRentVnd = baseAnalysis.netAnnualRentVnd / 12;
+
+  const evaluateScenario = (shockPct: number): InterestStressScenario => {
+    const effectiveRatePct = Math.max(0, inputs.annualInterestRatePct + shockPct);
+    const stressed =
+      shockPct === 0
+        ? baseAnalysis
+        : analyzeMortgageAndRoi({
+            ...inputs,
+            annualInterestRatePct: effectiveRatePct,
+          });
+
+    const deltaMonthlyPaymentVnd = Math.max(0, stressed.monthlyPaymentVnd - baseAnalysis.monthlyPaymentVnd);
+    const deltaTotalInterestVnd = Math.max(0, stressed.totalInterestVnd - baseAnalysis.totalInterestVnd);
+    const monthlyNetCashFlowVnd = Math.round(monthlyNetRentVnd - stressed.monthlyPaymentVnd);
+    const dtiRatioPct = (stressed.monthlyPaymentVnd / safeIncome) * 100;
+
+    return {
+      shockPct,
+      effectiveRatePct,
+      monthlyPaymentVnd: stressed.monthlyPaymentVnd,
+      deltaMonthlyPaymentVnd,
+      totalInterestVnd: stressed.totalInterestVnd,
+      deltaTotalInterestVnd,
+      monthlyNetCashFlowVnd,
+      dtiRatioPct,
+      dtiSafetyTier: classifyDtiSafety(dtiRatioPct),
+    };
+  };
+
+  const benchmarkScenarios = [0, 2, 4].map((shock) => evaluateScenario(shock));
+  const matchingBenchmark = benchmarkScenarios.find((s) => Math.abs(s.shockPct - safeShock) < 0.001);
+  const activeScenario = matchingBenchmark ?? evaluateScenario(safeShock);
+
+  return {
+    monthlyIncomeVnd: Math.round(safeIncome),
+    activeShockPct: safeShock,
+    activeScenario,
+    benchmarkScenarios,
+  };
+}
+
+/**
+ * Escapes a single CSV field cleanly and mitigates spreadsheet formula injection (OWASP CWE-1236)
+ * for text cells starting with =, +, -, @, tab, or carriage return.
+ */
+export function escapeCsvCell(value: string | number, protectFormula = true): string {
+  if (typeof value === 'number') {
+    return Number.isFinite(value) ? String(value) : '0';
+  }
+  let text = String(value ?? '');
+  if (protectFormula && /^[=+\-@\t\r]/.test(text)) {
+    text = `'${text}`;
+  }
+  if (/[",\r\n]/.test(text)) {
+    return `"${text.replace(/"/g, '""')}"`;
+  }
+  return text;
+}
+
+/**
+ * Generates an Excel-ready UTF-8 BOM (\uFEFF) CSV export containing:
+ * 1) Underwriting summary metadata
+ * 2) Interest-rate stress test (+0%, +2%, +4%) & DTI safety ratings
+ * 3) 10-Year Cashflow & Net Equity Projection
+ * 4) Complete Year-by-Year Amortization Schedule
+ */
+export function buildInvestmentCashflowCsv(
+  analysis: MortgageAnalysisResult,
+  inputs: MortgageInputs,
+  stressSummary: InterestStressTestSummary,
+  currency: Currency,
+  lang: Language,
+  residence: Residence | null
+): string {
+  const unitLabel = residence
+    ? `${residence.code} - ${lang === 'vi' ? residence.nameVi : residence.nameEn} (F${residence.floor})`
+    : lang === 'vi'
+      ? 'Tài Sản BĐS Tùy Chỉnh'
+      : 'Custom Property Asset';
+
+  const toAmount = (vnd: number): number =>
+    currency === 'USD' ? Math.round(convertVndToUsd(vnd)) : Math.round(vnd);
+  const unitSuffix = currency === 'USD' ? 'USD' : 'VND';
+
+  const row = (cells: Array<string | number>) => cells.map((c) => escapeCsvCell(c)).join(',');
+
+  const lines: string[] = [
+    row(['KINETIX PROPTECH v2.0 VIP PRO — INVESTMENT CASHFLOW & AMORTIZATION LEDGER']),
+    row([lang === 'vi' ? 'Tài Sản' : 'Asset', unitLabel]),
+    row([lang === 'vi' ? 'Đơn Vị Tiền Tệ' : 'Display Currency', unitSuffix]),
+    row([lang === 'vi' ? 'Giá Trị BĐS' : 'Property Valuation', toAmount(analysis.propertyPriceVnd), formatCurrency(analysis.propertyPriceVnd, currency, lang)]),
+    row([lang === 'vi' ? 'Vốn Tự Có (%)' : 'Down Payment (%)', inputs.downPaymentPct, toAmount(analysis.downPaymentVnd)]),
+    row([lang === 'vi' ? 'Dư Nợ Vay' : 'Loan Principal', toAmount(analysis.loanPrincipalVnd)]),
+    row([lang === 'vi' ? 'Thời Hạn Vay (Năm)' : 'Loan Tenure (Years)', inputs.loanTermYears]),
+    row([lang === 'vi' ? 'Lãi Suất Cơ Sở (%/năm)' : 'Base Interest Rate (% p.a.)', Number(inputs.annualInterestRatePct.toFixed(2))]),
+    row([lang === 'vi' ? 'Trả Góp Hàng Tháng (PMT)' : 'Base Monthly PMT', toAmount(analysis.monthlyPaymentVnd)]),
+    row([lang === 'vi' ? 'Lợi Suất Thuê Gộp (%)' : 'Gross Rental Yield (%)', Number(analysis.grossRentalYieldPct.toFixed(2))]),
+    row([lang === 'vi' ? 'Lợi Suất Thuê Ròng (%)' : 'Net Rental Yield (%)', Number(analysis.netRentalYieldPct.toFixed(2))]),
+    row([lang === 'vi' ? 'Tổng ROI 10 Năm (%)' : '10-Year Total Wealth ROI (%)', Number(analysis.tenYearTotalRoiPct.toFixed(2))]),
+    '',
+    row([lang === 'vi' ? 'PHÂN TÍCH STRESS TEST LÃI SUẤT THẢ NỔI & DTI' : 'FLOATING-RATE STRESS TEST & DTI SAFETY MATRIX']),
+    row([
+      lang === 'vi' ? 'Kịch Bản Sốc Lãi' : 'Rate Shock',
+      lang === 'vi' ? 'Lãi Suất Hiệu Lực (%)' : 'Effective Rate (%)',
+      lang === 'vi' ? `Trả Góp/Tháng (${unitSuffix})` : `Monthly PMT (${unitSuffix})`,
+      lang === 'vi' ? `Chênh Lệch/Tháng (${unitSuffix})` : `Monthly Delta (${unitSuffix})`,
+      lang === 'vi' ? `Dòng Tiền Ròng/Tháng (${unitSuffix})` : `Monthly Net Cash Flow (${unitSuffix})`,
+      lang === 'vi' ? 'Tỷ Lệ DTI (%)' : 'DTI Ratio (%)',
+      lang === 'vi' ? 'Xếp Hạng An Toàn' : 'Safety Rating',
+    ]),
+    ...stressSummary.benchmarkScenarios.map((sc) =>
+      row([
+        sc.shockPct === 0 ? 'Base (+0.0%)' : `Shock +${sc.shockPct.toFixed(1)}%`,
+        Number(sc.effectiveRatePct.toFixed(2)),
+        toAmount(sc.monthlyPaymentVnd),
+        toAmount(sc.deltaMonthlyPaymentVnd),
+        toAmount(sc.monthlyNetCashFlowVnd),
+        Number(sc.dtiRatioPct.toFixed(1)),
+        sc.dtiSafetyTier,
+      ])
+    ),
+    '',
+    row([lang === 'vi' ? 'DỰ PHÓNG DÒNG TIỀN & VỐN CHỦ SỞ HỮU 10 NĂM' : '10-YEAR EQUITY & RENTAL CASHFLOW PROJECTION']),
+    row([
+      lang === 'vi' ? 'Năm' : 'Year',
+      lang === 'vi' ? `Giá Trị Tài Sản (${unitSuffix})` : `Projected Value (${unitSuffix})`,
+      lang === 'vi' ? `Dư Nợ Còn Lại (${unitSuffix})` : `Remaining Debt (${unitSuffix})`,
+      lang === 'vi' ? `Vốn Chủ Sở Hữu (${unitSuffix})` : `Net Equity (${unitSuffix})`,
+      lang === 'vi' ? `Tiền Thuê Tích Lũy (${unitSuffix})` : `Cumulative Net Rent (${unitSuffix})`,
+      lang === 'vi' ? `Tổng Tài Sản (${unitSuffix})` : `Total Wealth (${unitSuffix})`,
+      lang === 'vi' ? 'Tổng ROI (%)' : 'Total ROI (%)',
+    ]),
+    ...analysis.tenYearProjection.map((pt) =>
+      row([
+        pt.year,
+        toAmount(pt.propertyValueVnd),
+        toAmount(pt.remainingDebtVnd),
+        toAmount(pt.netEquityVnd),
+        toAmount(pt.cumulativeNetRentVnd),
+        toAmount(pt.totalWealthVnd),
+        Number(pt.roiPct.toFixed(2)),
+      ])
+    ),
+    '',
+    row([lang === 'vi' ? 'BẢNG KHẤU HAO DƯ NỢ CHI TIẾT THEO NĂM' : 'YEAR-BY-YEAR AMORTIZATION SCHEDULE']),
+    row([
+      lang === 'vi' ? 'Năm' : 'Year',
+      lang === 'vi' ? `Dư Nợ Đầu Kỳ (${unitSuffix})` : `Opening Balance (${unitSuffix})`,
+      lang === 'vi' ? `Tổng Trả Năm (${unitSuffix})` : `Annual Payment (${unitSuffix})`,
+      lang === 'vi' ? `Trả Gốc (${unitSuffix})` : `Principal Paid (${unitSuffix})`,
+      lang === 'vi' ? `Trả Lãi (${unitSuffix})` : `Interest Paid (${unitSuffix})`,
+      lang === 'vi' ? `Dư Nợ Cuối Kỳ (${unitSuffix})` : `Ending Balance (${unitSuffix})`,
+    ]),
+    ...analysis.amortizationSchedule.map((r) =>
+      row([
+        r.year,
+        toAmount(r.openingBalanceVnd),
+        toAmount(r.annualPaymentVnd),
+        toAmount(r.principalPaidVnd),
+        toAmount(r.interestPaidVnd),
+        toAmount(r.endingBalanceVnd),
+      ])
+    ),
+  ];
+
+  // Explicit UTF-8 BOM so Vietnamese characters render flawlessly in Microsoft Excel
+  return `\uFEFF${lines.join('\r\n')}\r\n`;
 }

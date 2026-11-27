@@ -21,6 +21,7 @@ import { TowerElevationSvg } from './TowerElevationSvg';
 import { FloorplanSchematicSvg } from './FloorplanSchematicSvg';
 import {
   BlueprintIcon,
+  BookmarkIcon,
   CalculatorIcon,
   CalendarIcon,
   CheckIcon,
@@ -28,6 +29,8 @@ import {
   CompassIcon,
   KeyIcon,
   PhotoIcon,
+  PrinterIcon,
+  QrCodeIcon,
 } from './Icons';
 
 interface ResidenceExplorerProps {
@@ -36,8 +39,12 @@ interface ResidenceExplorerProps {
   onSelectResidence: (unit: Residence) => void;
   compareIds: string[];
   onToggleCompare: (unitId: string) => void;
+  shortlistIds: string[];
+  onToggleShortlist: (unitId: string) => void;
   onBookViewing: (unit: Residence) => void;
+  onOpenDeposit: (unit: Residence) => void;
   onSimulateResidence: (unit: Residence) => void;
+  onPrintDossier: () => void;
   currency: Currency;
   lang: Language;
   copy: CopyBundle['explorer'];
@@ -57,8 +64,12 @@ export const ResidenceExplorer: React.FC<ResidenceExplorerProps> = ({
   onSelectResidence,
   compareIds,
   onToggleCompare,
+  shortlistIds,
+  onToggleShortlist,
   onBookViewing,
+  onOpenDeposit,
   onSimulateResidence,
+  onPrintDossier,
   currency,
   lang,
   copy,
@@ -70,6 +81,7 @@ export const ResidenceExplorer: React.FC<ResidenceExplorerProps> = ({
     floor: null,
     maxPriceVnd: DEFAULT_MAX_PRICE,
     sortBy: 'FLOOR_DESC',
+    shortlistOnly: false,
   });
 
   const [detailTab, setDetailTab] = useState<'gallery' | 'floorplan'>('gallery');
@@ -81,8 +93,8 @@ export const ResidenceExplorer: React.FC<ResidenceExplorerProps> = ({
   }, [selectedResidence.id]);
 
   const filteredResidences = useMemo(
-    () => filterAndSortResidences(residences, filters),
-    [residences, filters]
+    () => filterAndSortResidences(residences, filters, shortlistIds),
+    [residences, filters, shortlistIds]
   );
 
   const matchingIds = useMemo(
@@ -98,6 +110,7 @@ export const ResidenceExplorer: React.FC<ResidenceExplorerProps> = ({
       floor: null,
       maxPriceVnd: DEFAULT_MAX_PRICE,
       sortBy: 'FLOOR_DESC',
+      shortlistOnly: false,
     });
   };
 
@@ -110,6 +123,7 @@ export const ResidenceExplorer: React.FC<ResidenceExplorerProps> = ({
   };
 
   const isSelectedCompared = compareIds.includes(selectedResidence.id);
+  const isSelectedShortlisted = shortlistIds.includes(selectedResidence.id);
   const compareIsFull = compareIds.length >= 3 && !isSelectedCompared;
   const activePhoto = selectedResidence.gallery[activePhotoIndex] ?? selectedResidence.gallery[0];
   const monthlyMaintenanceVnd = computeResidenceMonthlyMaintenance(selectedResidence);
@@ -118,7 +132,7 @@ export const ResidenceExplorer: React.FC<ResidenceExplorerProps> = ({
   const statusPalette = STATUS_STYLE[selectedResidence.status];
 
   return (
-    <section id="tower-explorer" className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
+    <section id="tower-explorer" className="no-print mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
       {/* Section Heading */}
       <div className="mb-10 flex flex-col justify-between gap-4 lg:flex-row lg:items-end">
         <div className="max-w-2xl">
@@ -185,6 +199,26 @@ export const ResidenceExplorer: React.FC<ResidenceExplorerProps> = ({
                   </button>
                 );
               })}
+              <button
+                type="button"
+                onClick={() =>
+                  setFilters((prev) => ({
+                    ...prev,
+                    shortlistOnly: !prev.shortlistOnly,
+                    floor: null,
+                  }))
+                }
+                className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-medium transition-all"
+                style={{
+                  borderColor: filters.shortlistOnly ? 'var(--accent)' : 'var(--border-subtle)',
+                  backgroundColor: filters.shortlistOnly ? 'var(--accent)' : 'var(--bg-elevated)',
+                  color: filters.shortlistOnly ? 'var(--accent-ink)' : 'var(--text-secondary)',
+                }}
+              >
+                <BookmarkIcon className="h-3.5 w-3.5" filled={Boolean(filters.shortlistOnly)} />
+                <span>{copy.shortlistFilterBtn}</span>
+                <span className="font-mono-tabular opacity-80">({shortlistIds.length})</span>
+              </button>
             </div>
           </div>
 
@@ -568,7 +602,7 @@ export const ResidenceExplorer: React.FC<ResidenceExplorerProps> = ({
 
               <button
                 type="button"
-                onClick={() => onSimulateResidence(selectedResidence)}
+                onClick={() => onOpenDeposit(selectedResidence)}
                 className="inline-flex cursor-pointer items-center gap-2 rounded-xl border px-4 py-2.5 text-xs font-semibold transition-all sm:text-sm"
                 style={{
                   borderColor: 'var(--border-strong)',
@@ -576,15 +610,43 @@ export const ResidenceExplorer: React.FC<ResidenceExplorerProps> = ({
                   color: 'var(--accent)',
                 }}
               >
-                <CalculatorIcon className="h-4 w-4" />
+                <QrCodeIcon className="h-4 w-4" />
+                <span>{copy.holdDepositBtn}</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => onSimulateResidence(selectedResidence)}
+                className="inline-flex cursor-pointer items-center gap-2 rounded-xl border px-4 py-2.5 text-xs font-semibold transition-all sm:text-sm"
+                style={{
+                  borderColor: 'var(--border-subtle)',
+                  backgroundColor: 'var(--bg-elevated)',
+                  color: 'var(--text-primary)',
+                }}
+              >
+                <CalculatorIcon className="h-4 w-4" style={{ color: 'var(--accent)' }} />
                 <span>{copy.simulateBtn}</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => onToggleShortlist(selectedResidence.id)}
+                className="inline-flex cursor-pointer items-center gap-2 rounded-xl border px-3.5 py-2.5 text-xs font-semibold transition-all sm:text-sm"
+                style={{
+                  borderColor: isSelectedShortlisted ? 'var(--accent)' : 'var(--border-subtle)',
+                  backgroundColor: isSelectedShortlisted ? 'var(--accent-soft)' : 'var(--bg-elevated)',
+                  color: isSelectedShortlisted ? 'var(--accent)' : 'var(--text-primary)',
+                }}
+              >
+                <BookmarkIcon className="h-4 w-4" filled={isSelectedShortlisted} />
+                <span>{isSelectedShortlisted ? copy.savedShortlistBtn : copy.saveShortlistBtn}</span>
               </button>
 
               <button
                 type="button"
                 disabled={compareIsFull}
                 onClick={() => onToggleCompare(selectedResidence.id)}
-                className="inline-flex cursor-pointer items-center gap-2 rounded-xl border px-4 py-2.5 text-xs font-semibold transition-all disabled:cursor-not-allowed disabled:opacity-45 sm:text-sm"
+                className="inline-flex cursor-pointer items-center gap-2 rounded-xl border px-3.5 py-2.5 text-xs font-semibold transition-all disabled:cursor-not-allowed disabled:opacity-45 sm:text-sm"
                 style={{
                   borderColor: isSelectedCompared ? 'var(--accent)' : 'var(--border-subtle)',
                   backgroundColor: isSelectedCompared ? 'var(--accent-soft)' : 'var(--bg-elevated)',
@@ -599,6 +661,22 @@ export const ResidenceExplorer: React.FC<ResidenceExplorerProps> = ({
                       ? copy.compareFull
                       : copy.compareBtn}
                 </span>
+              </button>
+
+              <button
+                type="button"
+                onClick={onPrintDossier}
+                title={copy.printDossierBtn}
+                aria-label={copy.printDossierBtn}
+                className="inline-flex cursor-pointer items-center gap-1.5 rounded-xl border px-3 py-2.5 text-xs font-semibold transition-all sm:text-sm"
+                style={{
+                  borderColor: 'var(--border-subtle)',
+                  backgroundColor: 'var(--bg-elevated)',
+                  color: 'var(--text-secondary)',
+                }}
+              >
+                <PrinterIcon className="h-4 w-4" />
+                <span className="hidden sm:inline">A4 PDF</span>
               </button>
             </div>
           </div>
@@ -627,6 +705,7 @@ export const ResidenceExplorer: React.FC<ResidenceExplorerProps> = ({
                 {filteredResidences.map((unit) => {
                   const isSelected = unit.id === selectedResidence.id;
                   const inCompare = compareIds.includes(unit.id);
+                  const isShortlisted = shortlistIds.includes(unit.id);
                   const canAddCompare = compareIds.length < 3 || inCompare;
                   const unitNetYield = computeResidenceNetYieldPct(unit);
                   const unitStatus = STATUS_STYLE[unit.status];
@@ -671,24 +750,43 @@ export const ResidenceExplorer: React.FC<ResidenceExplorerProps> = ({
                           </span>
                         </div>
 
-                        <button
-                          type="button"
-                          disabled={!canAddCompare}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            onToggleCompare(unit.id);
-                          }}
-                          aria-label={`Compare ${unit.code}`}
-                          className="absolute top-2.5 right-2.5 flex cursor-pointer items-center gap-1 rounded-md border px-2 py-1 text-[10px] font-semibold backdrop-blur-md transition-colors disabled:opacity-40"
-                          style={{
-                            borderColor: inCompare ? '#D4A373' : 'rgba(255,255,255,0.25)',
-                            backgroundColor: inCompare ? '#D4A373' : 'rgba(10,11,14,0.68)',
-                            color: inCompare ? '#0A0B0E' : '#FFFFFF',
-                          }}
-                        >
-                          <CompareIcon className="h-3 w-3" />
-                          {inCompare ? <CheckIcon className="h-3 w-3" /> : <span>+</span>}
-                        </button>
+                        <div className="absolute top-2.5 right-2.5 flex items-center gap-1.5">
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              onToggleShortlist(unit.id);
+                            }}
+                            aria-label={`Bookmark ${unit.code}`}
+                            className="flex cursor-pointer items-center justify-center rounded-md border p-1 backdrop-blur-md transition-colors"
+                            style={{
+                              borderColor: isShortlisted ? '#D4A373' : 'rgba(255,255,255,0.25)',
+                              backgroundColor: isShortlisted ? '#D4A373' : 'rgba(10,11,14,0.68)',
+                              color: isShortlisted ? '#0A0B0E' : '#FFFFFF',
+                            }}
+                          >
+                            <BookmarkIcon className="h-3.5 w-3.5" filled={isShortlisted} />
+                          </button>
+
+                          <button
+                            type="button"
+                            disabled={!canAddCompare}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              onToggleCompare(unit.id);
+                            }}
+                            aria-label={`Compare ${unit.code}`}
+                            className="flex cursor-pointer items-center gap-1 rounded-md border px-2 py-1 text-[10px] font-semibold backdrop-blur-md transition-colors disabled:opacity-40"
+                            style={{
+                              borderColor: inCompare ? '#D4A373' : 'rgba(255,255,255,0.25)',
+                              backgroundColor: inCompare ? '#D4A373' : 'rgba(10,11,14,0.68)',
+                              color: inCompare ? '#0A0B0E' : '#FFFFFF',
+                            }}
+                          >
+                            <CompareIcon className="h-3 w-3" />
+                            {inCompare ? <CheckIcon className="h-3 w-3" /> : <span>+</span>}
+                          </button>
+                        </div>
 
                         <div className="absolute right-3 bottom-2.5 left-3 flex items-end justify-between">
                           <div className="font-display text-lg leading-tight font-semibold text-white">

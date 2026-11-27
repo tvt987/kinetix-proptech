@@ -18,7 +18,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   return (
     <section
       id="top"
-      className="relative overflow-hidden border-b"
+      className="no-print relative overflow-hidden border-b"
       style={{ borderColor: 'var(--border-subtle)', backgroundColor: '#07090D' }}
     >
       {/* Full-bleed Architectural Twilight Photography */}

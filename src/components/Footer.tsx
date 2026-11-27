@@ -9,7 +9,7 @@ interface FooterProps {
 export const Footer: React.FC<FooterProps> = ({ copy }) => {
   return (
     <footer
-      className="border-t py-12"
+      className="no-print border-t py-12"
       style={{
         borderColor: 'var(--border-subtle)',
         backgroundColor: 'var(--bg-secondary)',
