@@ -36,7 +36,7 @@ export const Footer: React.FC<FooterProps> = ({ copy }) => {
                   THE KINETIX
                 </span>
                 <span className="font-mono-tabular mt-0.5 text-[9.5px] tracking-[0.22em] uppercase" style={{ color: 'var(--accent)' }}>
-                  INTERNATIONAL RESIDENCES · PROPTECH
+                  INTERNATIONAL RESIDENCES · PROPTECH v5.0
                 </span>
               </div>
             </div>

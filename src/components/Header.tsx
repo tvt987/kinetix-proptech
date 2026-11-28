@@ -64,8 +64,8 @@ export const Header: React.FC<HeaderProps> = ({
               style={{ color: 'var(--masthead-muted)' }}
             >
               {lang === 'vi'
-                ? 'ẤN PHẨM DANH MỤC RIÊNG · BÁN ĐẢO THỦ THIÊM, TP.HCM'
-                : 'PRIVATE PORTFOLIO EDITION · THU THIEM PENINSULA, HCMC'}
+                ? 'ẤN PHẨM DANH MỤC RIÊNG v5.0 · BÁN ĐẢO THỦ THIÊM, TP.HCM'
+                : 'PRIVATE PORTFOLIO EDITION v5.0 · THU THIEM PENINSULA, HCMC'}
             </span>
           </div>
 

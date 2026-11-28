@@ -1,6 +1,6 @@
-# Kinetix PropTech v4.0 — Architectural Luxury Real Estate, Saigon Metro/Yield Cartography, Multi-Asset Wealth Benchmark & `.NET 10` API
+# Kinetix PropTech v5.0 — 60fps 3D Saigon Sky-Tower PBR Twin, Sun-Path Shadows, Metro Line-1 Twin, Yield Cartography & `.NET 10` API
 
-> Flagship architectural real estate portal, interactive **Ho Chi Minh City 6-Corridor Yield & Metro Line-1 / Thu Thiem Bridge-4 Cartographic Heatmap**, **10-Year Multi-Asset Wealth Benchmark Comparator** (70% LTV Sky-Residence vs Bank Deposit vs SJC Gold vs S&P 500 USD), astronomical **Saigon Sun-Path & Daylight Exposure Lab**, institutional mortgage / floating-rate DTI stress-test & 10-year leverage IRR simulator, and compiled **`.NET 10` Minimal API** for **The Kinetix Residences · Thu Thiem Riverfront, Ho Chi Minh City**.
+> Flagship architectural real estate portal featuring a **60fps 3D Three.js PBR Saigon Sky-Tower & Sun-Path Architectural Twin** on the primary hero stage (28-story Thủ Thiêm riverfront tower with direct 3D raycast unit selection, real-time `PCFSoftShadowMap` tropical sun-path shadows `06:00 → 12:30 → 17:30`, animated **Metro Line-1** elevated viaduct train, **Balcony POV** terrace camera, **X-Ray Floorplate** structural core cutaway, and idempotent **HTTP 201 / 409 Escrow Lock** state machine), plus the interactive **Ho Chi Minh City 6-Corridor Yield Heatmap**, **10-Year Multi-Asset Wealth Benchmark Comparator**, **Saigon Sun-Path & Daylight Exposure Lab**, institutional mortgage / DTI stress-test simulator, and compiled **`.NET 10` Minimal API**.
 
 **Live Demo (Frontend SPA):** [https://tvt987.github.io/kinetix-proptech/](https://tvt987.github.io/kinetix-proptech/)
 
@@ -39,9 +39,15 @@ flowchart LR
 
 ---
 
-## Core Engineering Capabilities (v4.0)
+## Core Engineering Capabilities (v5.0)
 
-### 1. Frontend — Daylight Architectural Luxury Magazine (`src/`)
+### 1. Frontend — 60fps 3D Architectural Twin & Daylight Luxury Magazine (`src/`)
+- **Primary Hero Stage — 60fps 3D Saigon Sky-Tower & Sun-Path Architectural Twin (`skyTower3dEngine.ts` + lazy `SaigonSkyTower3DStage.tsx`)**:
+  - Sculpted 28-story Italian travertine & triple Low-E glass tower on Thủ Thiêm peninsula surrounded by a shimmering Saigon River bend, Ba Son cable-stayed bridge, Landmark 81 & Bitexco silhouettes, and an elevated **Metro Line-1** viaduct with an animated glowing 3-car Hitachi train.
+  - **Direct 3D Raycast Unit Selection**: Click any color-coded 3D apartment floor (`Available` Emerald / `Reserved` Amber / `Sold` Slate) to smoothly interpolate the camera, illuminate its balcony rim, inspect real-time **Balcony Sightline Score**, **Solar Heat Gain (`kW/m²`)**, and **Balcony Shade (`%`)**, and execute idempotent **`LOCK ESCROW (409)`** transitions wired directly to the Techcombank VietQR Deposit Hold flow.
+  - **Real-Time Tropical Sun-Path Scrubber (`06:00 Dawn → 12:30 Noon → 17:30 Golden Sunset`)**: Sweeps `PCFSoftShadowMap` directional sunlight, sky dome gradients, color temperature (`2550K–5800K`), and golden-hour interior window illumination at `10.78°N`.
+  - **3 Interactive Camera Modes**: `ORBIT TOWER`, `BALCONY POV` (eye-level terrace sightline over river & Metro), and `X-RAY FLOORPLATE` (peels glass translucent to expose glowing structural core, express elevators, and 3D BIM penthouse rooms).
+  - **Aggressive Code-Splitting**: `React.lazy`-loaded `SaigonSkyTower3DStage` + Vite `manualChunks` isolating `'three'` keeps initial entry `index.js` lean at **`~78 kB`** (`~15 kB` gzip).
 - **Signature Editorial Design System**: Daylight Ivory architectural paper (`#FAF8F4`), institutional Midnight Navy (`#0F1D36`), and Brushed Brass (`#B48A3E`) with `Cormorant Garamond` serif display, `Plus Jakarta Sans` UI copy, and `JetBrains Mono` tabular numerals. Strict CSP & `Referrer-Policy` headers enforced; zero custom cursors, zero UI emojis, zero `dangerouslySetInnerHTML`/`innerHTML`/`eval`.
 - **Ch. 01 — Interactive Tower Elevation & SVG CAD Floorplans**: Clickable vertical stack across Floors 18–42, multi-axis filtering, interior galleries, interactive room-by-room SVG CAD blueprint inspection, 3-unit side-by-side comparison matrix, persistent VIP Vault (`localStorage`), deterministic `KNX-2026-XXXX` VIP Pass with `.ics` calendar export, real Techcombank NAPAS 247 VietQR refundable hold preview, and formal `@media print` A4 Investment Dossier.
 - **Ch. 02 — Saigon Sun-Path & Daylight Orientation Lab (`solarPathEngine.ts` + lazy `SolarDaylightLab.tsx`)**:
@@ -102,14 +108,14 @@ dotnet test backend/Kinetix.sln
 
 ---
 
-## Verification & Bundle Benchmark Summary (v4.0)
+## Verification & Bundle Benchmark Summary (v5.0)
 
 | Gate | Suite / Artifact | Result |
 | --- | --- | --- |
-| **Gate 1 — Frontend Tests** | Vitest (`6` files: residence, mortgage, currency/pass, vipProV2, solar/leverage, saigonMarket & multiAssetBenchmark) | **83 / 83 passed (100%)** |
-| **Gate 2 — Frontend Build** | `tsc -b && vite build` (`React.lazy` + `manualChunks`: `react`, `catalog`, `engines`) | **0 errors** · Entry `index.js` **`76.9 kB`** (`15.1 kB` gzip) · `SaigonYieldMapLab.js` `41.5 kB` (`10.4 kB` gzip) · `engines.js` `41.1 kB` (`15.7 kB` gzip) |
+| **Gate 1 — Frontend Tests** | Vitest (`7` files: `skyTower3dEngine` 32 tests + residence, mortgage, currency/pass, vipProV2, solar/leverage, saigonMarket & multiAssetBenchmark) | **115 / 115 passed (100%)** |
+| **Gate 2 — Frontend Build** | `tsc -b && vite build` (`React.lazy` + `manualChunks`: `three`, `react`, `catalog`, `engines`) | **0 errors** · Entry `index.js` **`< 80 kB`** (`~15.4 kB` gzip) · `SaigonSkyTower3DStage.js` lazy-loaded · `three.js` isolated chunk |
 | **Gate 3 — Backend `.NET 10`** | `dotnet test backend/Kinetix.sln` (`TreatWarningsAsErrors=true`, xUnit + `WebApplicationFactory`) | **36 / 36 passed (100%)** · **`0` warnings** · 10-way escrow race + Saigon Market + 10Y Multi-Asset Benchmark verified |
-| **Gate 4 — Headless E2E** | Playwright against `vite preview` at `1440×900` & `390×844` | **`0` console errors · `0` page errors · `0` failed requests · `0px` horizontal overflow** · Daylight Ivory `#FAF8F4` + Strict CSP + Cartographic Map + Multi-Asset SVG + Solar + VietQR verified |
+| **Gate 4 — Headless E2E** | Playwright WebGL/SwiftShader against `vite preview` at `1440×900` & `390×844` | **`0` console errors · `0` page errors · `0` failed requests · `0px` horizontal overflow** · 3D Sky-Tower, Golden Hour 17:30 Shadows, Metro Train, X-Ray BIM Core, Balcony POV, HTTP 201/409 Escrow & Mobile verified |
 
 ---
 

@@ -58,7 +58,7 @@ app.MapGet("/health", (UnitEscrowLocker escrow, ResidenceCatalog catalog, Saigon
     {
         status = "healthy",
         service = "Kinetix.Api",
-        version = "4.0.0",
+        version = "5.0.0",
         runtime = ".NET 10",
         residencesLoaded = catalog.GetAll().Count,
         saigonDistrictsLoaded = marketCatalog.GetAll().Count,

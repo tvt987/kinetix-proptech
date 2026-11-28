@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import type { Currency, Language, Residence } from '../types/proptech';
 import type { CopyBundle } from '../data/translations';
 import { buildComparisonMetrics } from '../engines/residenceEngine';
@@ -45,10 +45,21 @@ export const ComparisonDrawer: React.FC<ComparisonDrawerProps> = ({
     [residences, mortgageAssumptions]
   );
 
+  const [showFloatingTray, setShowFloatingTray] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => {
+      setShowFloatingTray(window.scrollY > 520);
+    };
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
   return (
     <>
-      {/* Editorial Floating Comparison Tray (Bottom-Right when items exist & modal is closed) */}
-      {residences.length > 0 && !isOpen && (
+      {/* Editorial Floating Comparison Tray (Bottom-Right once scrolled past Hero 3D Stage) */}
+      {residences.length > 0 && !isOpen && showFloatingTray && (
         <div
           className="no-print fixed right-4 bottom-4 z-30 flex max-w-[calc(100vw-2rem)] items-center gap-2.5 border-t-2 border-r border-b border-l p-2.5 backdrop-blur-xl sm:right-6 sm:bottom-6"
           style={{

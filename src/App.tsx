@@ -258,7 +258,14 @@ export const App: React.FC = () => {
           copy={copy.hero}
           availableCount={availableCount}
           totalCount={RESIDENCES.length}
-          onOpenScheduler={() => handleBookViewing(selectedResidence)}
+          residences={RESIDENCES}
+          selectedResidence={selectedResidence}
+          onSelectResidence={setSelectedResidence}
+          onOpenDeposit={(unit) => handleOpenDeposit(unit)}
+          onOpenScheduler={(unit) => handleBookViewing(unit ?? selectedResidence)}
+          currency={currency}
+          lang={lang}
+          theme={theme}
         />
 
         <ResidenceExplorer
